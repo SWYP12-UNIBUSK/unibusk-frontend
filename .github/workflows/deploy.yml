@@ -2,43 +2,94 @@ name: Deploy to Cloudflare Workers
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  preview:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    
     steps:
-      # Preview 배포 (PR)
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.26.2
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      # Cloudflare Workers용 빌드
+      - name: Build for Cloudflare
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_API_MOCKING: 'enabled'
+        run: pnpm exec opennextjs-cloudflare build
+      
+      # Cloudflare 배포
       - name: Deploy Preview
-        if: github.event.pull_request.state == 'opened'
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run preview -- --name unibusk-preview-${{ github.event.pull_request.number }}
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --name unibusk-preview-${{ github.event.pull_request.number }}
+          packageManager: pnpm
       
-      # Production 배포 (PR Merge)
-      - name: Deploy Production
-        if: github.event.pull_request.merged == true
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm run deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      
-      # 배포 결과 요약
       - name: Deployment Summary
         if: always()
         run: |
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          
-          if [ "${{ github.event.pull_request.state }}" == "opened" ]; then
-            echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev |" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ github.event.pull_request.merged }}" == "true" ]; then
-            echo "| Production | ${{ job.status }} | https://unibusk.workers.dev |" >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev |" >> $GITHUB_STEP_SUMMARY
+  
+  production:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.26.2
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      # Cloudflare Workers용 빌드
+      - name: Build for Cloudflare
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_API_MOCKING: 'enabled'
+        run: pnpm exec opennextjs-cloudflare build
+      
+      # Cloudflare 배포
+      - name: Deploy Production
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+          packageManager: pnpm
+      
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
+          echo "| Production | ${{ job.status }} | [https://unibusk.workers.dev](https://unibusk.workers.dev) |" >> $GITHUB_STEP_SUMMARY
