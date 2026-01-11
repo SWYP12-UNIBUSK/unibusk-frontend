@@ -1,8 +1,12 @@
-name: Cleanup Preview Cloudflare Worker
+name: Cleanup Preview Worker
 
 on:
   pull_request:
     types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   cleanup:
@@ -10,33 +14,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 10.26.2
-      
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24.12.0'
-          cache: 'pnpm'
-      
       - name: Delete Preview Worker
-        run: |
-          pnpm wrangler delete --name unibusk-preview-${{ github.event.pull_request.number }} --force
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        id: delete
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: delete --name unibusk-preview-${{ github.event.pull_request.number }}
       
       - name: Comment on PR
         uses: actions/github-script@v7
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
+            const success = '${{ steps.delete.outcome }}' === 'success';
+            const emoji = success ? '✅' : '⚠️';
+            const message = success 
+              ? `Worker \`unibusk-preview-${prNumber}\` has been removed.`
+              : `Worker \`unibusk-preview-${prNumber}\` was not found (may have been already deleted).`;
+            
             github.rest.issues.createComment({
               issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## 🗑️ Preview Worker Deleted
-              
-              Worker \`unibusk-preview-${prNumber}\` has been removed from Cloudflare.
-              `
+              body: `## ${emoji} Preview Cleanup\n\n${message}`
             });
