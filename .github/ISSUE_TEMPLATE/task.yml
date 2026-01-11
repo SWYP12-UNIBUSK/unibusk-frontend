@@ -1,0 +1,44 @@
+name: 작업 템플릿
+description: 표준 작업 Issue 템플릿
+title: "[작업] "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: "## 목적"
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 목적 설명
+      placeholder: 이 작업의 목적을 작성하세요.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "## 작업 내용"
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 작업 목록
+      value: "- [ ] "
+      render: markdown
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "## 예상 효과"
+  - type: textarea
+    id: effect
+    attributes:
+      label: 예상 효과
+      placeholder: 이 작업으로 인한 효과를 설명하세요.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "## 참고"
+  - type: textarea
+    id: reference
+    attributes:
+      label: 참고 자료
+      placeholder: 링크나 추가 정보를 입력하세요.
