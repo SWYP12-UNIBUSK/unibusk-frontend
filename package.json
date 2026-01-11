@@ -10,7 +10,6 @@
     "storybook": "storybook dev -p 6006",
     "test-storybook": "vitest --project=storybook",
     "build-storybook": "storybook build",
-    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "prepare": "husky"
