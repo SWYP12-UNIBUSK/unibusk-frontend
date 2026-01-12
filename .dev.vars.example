@@ -1,0 +1,7 @@
+# 필수 클라이언트 환경변수
+NEXT_PUBLIC_API_MOCKING=enabled
+NEXT_PUBLIC_API_URL=http://localhost:3000
+
+# 필수 서버 환경변수
+API_URL=http://localhost:3000
+TEMP_TEST_VAR=this-should-not-appear-in-cloudflare
