@@ -1,0 +1,96 @@
+name: Discord PR Notification
+
+on:
+  pull_request:
+    # pull_request 이벤트 중, 아래 액션에서만 워크플로우 실행
+    # opened   : PR이 처음 생성되었을 때
+    # reopened : 닫혔던 PR이 다시 열렸을 때
+    types: [opened, reopened]
+
+jobs:
+  # 디스코드 알림을 보내는 Job
+  notify:
+    # 실행 환경
+    runs-on: ubuntu-latest
+
+    steps:
+      # jq는 JSON payload를 안전하게 만들기 위한 도구
+      # (개행/따옴표/특수문자 포함 시에도 payload가 깨지지 않게 보장)
+      # ubuntu-latest에 기본 포함되는 경우가 많지만, 환경 차이로 실패하는 케이스가 있어 방어적으로 설치
+      - name: Ensure jq is installed
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+
+      # 실제 디스코드 webhook으로 메시지를 전송하는 단계
+      - name: Send Discord notification
+        # run 블록에서 재사용할 값들을 환경변수로 주입
+        env:
+          # GitHub Secrets에 저장된 Discord Webhook URL
+          # (워크플로 파일에 직접 적지 않고 Secret을 사용해 유출을 방지)
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+          # PR 상세 페이지 URL
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          # PR 제목
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          # PR 작성자 GitHub 아이디
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+
+          # base: 타겟 브랜치 (머지될 브랜치)
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          # head: 소스 브랜치 (PR 브랜치)
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+
+          # owner/repo 형태의 레포 식별자
+          REPO: ${{ github.repository }}
+
+          # 현재 이벤트 액션(opened / reopened)
+          ACTION: ${{ github.event.action }}
+
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL is empty. (fork PR이거나 secret 미설정일 수 있습니다)"
+            exit 0
+          fi
+
+          # opened / reopened 상황에 따라 메시지 라벨 변경
+          label="새 Pull Request!"
+          if [ "$ACTION" = "reopened" ]; then label="Pull Request 재오픈!"; fi
+
+          # opened / reopened 상황에 따라 카드 색상 변경 (원하시면 숫자만 바꿔서 테마 변경 가능)
+          color=5793266
+          if [ "$ACTION" = "reopened" ]; then color=16753920; fi
+
+          payload=$(jq -n \
+            --arg label "$label" \
+            --arg repo "$REPO" \
+            --arg author "$PR_AUTHOR" \
+            --arg title "$PR_TITLE" \
+            --arg url "$PR_URL" \
+            --arg head "$PR_HEAD" \
+            --arg base "$PR_BASE" \
+            --arg footer "GitHub Actions - PR 알림봇" \
+            --argjson color "$color" \
+            '{
+              username: "Github PR Bot",
+              embeds: [
+                {
+                  title: ("📝 " + $label),
+                  description: ("**작성자** - " + $author + "\n" + "**PR Message** - " + $title + "\n\n" + "🔗 [PR 보러가기](" + $url + ")"),
+                  color: $color,
+                  fields: [
+                    { name: "Repo", value: ("`" + $repo + "`"), inline: false },
+                    { name: "브랜치", value: ("`" + $head + "` → `" + $base + "`"), inline: false }
+                  ],
+                  footer: { text: $footer }
+                }
+              ]
+            }')
+
+          # Discord Webhook endpoint로 POST 요청
+          # -H : JSON 콘텐츠 타입 지정
+          # -d : payload(JSON body) 전달
+          curl -sS -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
