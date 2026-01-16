@@ -7,8 +7,9 @@ export function parseResponse<T extends z.ZodType>(schema: T) {
     if (!result.success) {
       console.error('API Response Contract Violation:', {
         errors: result.error.issues,
-        receivedData: data,
+        receivedData: process.env.NODE_ENV === 'development' ? data : undefined,
       });
+
       throw new Error('Invalid API response format');
     }
 
