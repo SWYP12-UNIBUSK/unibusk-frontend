@@ -21,7 +21,8 @@ class APIClient {
       url += `?${searchParams.toString()}`;
     }
 
-    const needsJsonContentType = body !== undefined
+    const hasValidBody = body !== undefined && body !== null && body !== '';
+    const needsJsonContentType = hasValidBody
       && !(
         body instanceof FormData
         || body instanceof Blob
@@ -101,6 +102,13 @@ class APIClient {
    * await api.post('/login', params);
    */
   async post<T>(endpoint: string, data?: unknown, config?: FetchConfig): Promise<T> {
+    if (data === undefined || data === null) {
+      return this.request<T>(endpoint, {
+        ...config,
+        method: 'POST',
+      });
+    }
+
     const body
       = data instanceof FormData
         || data instanceof Blob
@@ -122,6 +130,13 @@ class APIClient {
    * await api.put('/users/123', { name: 'Updated Name' });
    */
   async put<T>(endpoint: string, data?: unknown, config?: FetchConfig): Promise<T> {
+    if (data === undefined || data === null) {
+      return this.request<T>(endpoint, {
+        ...config,
+        method: 'PUT',
+      });
+    }
+
     const body
       = data instanceof FormData
         || data instanceof Blob
