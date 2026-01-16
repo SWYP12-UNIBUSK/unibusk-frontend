@@ -21,15 +21,16 @@ class APIClient {
       url += `?${searchParams.toString()}`;
     }
 
-    const needsJsonContentType = !(
-      body instanceof FormData
-      || body instanceof Blob
-      || body instanceof URLSearchParams
-    );
+    const needsJsonContentType = body !== undefined
+      && !(
+        body instanceof FormData
+        || body instanceof Blob
+        || body instanceof URLSearchParams
+      );
 
     const response = await fetch(url, {
       ...restConfig,
-      body,
+      ...(body !== undefined && { body }),
       headers: {
         ...(needsJsonContentType && { 'Content-Type': 'application/json' }),
         ...headers,
