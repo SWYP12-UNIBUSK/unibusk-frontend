@@ -9,22 +9,27 @@ class APIClient {
   }
 
   private async request<T>(endpoint: string, config: FetchConfig = {}): Promise<T> {
-    const { params, headers, ...restConfig } = config;
-
+    const { params, headers, body, ...restConfig } = config;
     let url = `${this.baseURL}${endpoint}`;
+
     if (params) {
       const searchParams = new URLSearchParams(params);
       url += `?${searchParams.toString()}`;
     }
 
-    const defaultHeaders: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...headers,
-    };
+    const needsJsonContentType = !(
+      body instanceof FormData
+      || body instanceof Blob
+      || body instanceof URLSearchParams
+    );
 
     const response = await fetch(url, {
       ...restConfig,
-      headers: defaultHeaders,
+      body,
+      headers: {
+        ...(needsJsonContentType && { 'Content-Type': 'application/json' }),
+        ...headers,
+      },
       credentials: 'include',
     });
 
@@ -43,18 +48,32 @@ class APIClient {
   }
 
   async post<T>(endpoint: string, data?: unknown, config?: FetchConfig): Promise<T> {
+    const body
+      = data instanceof FormData
+        || data instanceof Blob
+        || data instanceof URLSearchParams
+        ? data
+        : JSON.stringify(data);
+
     return this.request<T>(endpoint, {
       ...config,
       method: 'POST',
-      body: JSON.stringify(data),
+      body,
     });
   }
 
   async put<T>(endpoint: string, data?: unknown, config?: FetchConfig): Promise<T> {
+    const body
+      = data instanceof FormData
+        || data instanceof Blob
+        || data instanceof URLSearchParams
+        ? data
+        : JSON.stringify(data);
+
     return this.request<T>(endpoint, {
       ...config,
       method: 'PUT',
-      body: JSON.stringify(data),
+      body,
     });
   }
 
