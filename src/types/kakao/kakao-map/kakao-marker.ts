@@ -1,6 +1,6 @@
 interface LatLng { lat: number; lng: number }
 
-export interface KakaoMarkerProps {
+export interface KakaoMarkerInputs {
   id: string;
   position: LatLng;
   onClick?: () => void;
