@@ -1,4 +1,4 @@
-import { KakaoMapView } from '@/components';
+import { KakaoMapView } from '@/components/kakao-map';
 
 export default function BuskingMapPage() {
   return (

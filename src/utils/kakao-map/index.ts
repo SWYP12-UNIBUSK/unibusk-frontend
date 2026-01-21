@@ -1,1 +1,1 @@
-export * from './load-kakao-sdk';
+export { loadKakaoSdk } from './load-kakao-sdk';

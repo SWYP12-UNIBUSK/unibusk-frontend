@@ -1,7 +1,7 @@
 'use client';
 
-import type { Coordinate, KakaoMarkerInputs } from '@/types';
-import { useKakaoLoader, useKakaoMap } from '@/hooks';
+import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
+import { useKakaoLoader, useKakaoMap } from '@/hooks/kakao-map';
 
 interface KakaoMapViewProps {
   center: Coordinate;

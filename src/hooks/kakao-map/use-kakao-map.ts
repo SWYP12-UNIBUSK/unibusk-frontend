@@ -1,6 +1,6 @@
 'use client';
 
-import type { Coordinate } from '@/types';
+import type { Coordinate } from '@/types/kakao/kakao-map';
 import { useEffect, useRef } from 'react';
 
 interface UseKakaoMapProps {

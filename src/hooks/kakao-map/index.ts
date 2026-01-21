@@ -1,2 +1,2 @@
-export * from './use-kakao-loader';
-export * from './use-kakao-map';
+export { useKakaoLoader } from './use-kakao-loader';
+export { useKakaoMap } from './use-kakao-map';

@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ENV, loadKakaoSdk } from '@/utils';
+import { ENV } from '@/utils';
+import { loadKakaoSdk } from '@/utils/kakao-map';
 
 export function useKakaoLoader() {
   const appKey = ENV.NEXT_PUBLIC_KAKAO_MAP_APP_KEY ?? '';

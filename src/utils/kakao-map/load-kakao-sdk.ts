@@ -1,4 +1,4 @@
-import { buildKakaoMapSdkUrl, KAKAO_MAP_LIBRARIES, KAKAO_MAP_SCRIPT_ID } from '@/constants';
+import { buildKakaoMapSdkUrl, KAKAO_MAP_LIBRARIES, KAKAO_MAP_SCRIPT_ID } from '@/constants/kakao-map';
 
 let loaderPromise: Promise<void> | null = null;
 

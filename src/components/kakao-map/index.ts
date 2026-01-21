@@ -1,1 +1,1 @@
-export * from './kakao-map-view';
+export { KakaoMapView } from './kakao-map-view';
