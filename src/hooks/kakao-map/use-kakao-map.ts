@@ -1,12 +1,11 @@
 'use client';
 
+import type { Coordinate } from '@/types';
 import { useEffect, useRef } from 'react';
-
-interface LatLng { lat: number; lng: number }
 
 interface UseKakaoMapProps {
   isLoaded: boolean;
-  center: LatLng;
+  center: Coordinate;
   level: number;
 }
 

@@ -1,12 +1,10 @@
 'use client';
 
-import type { KakaoMarkerInputs } from '@/types';
+import type { Coordinate, KakaoMarkerInputs } from '@/types';
 import { useKakaoLoader, useKakaoMap } from '@/hooks';
 
-interface LatLng { lat: number; lng: number }
-
 interface KakaoMapViewProps {
-  center: LatLng;
+  center: Coordinate;
   level?: number;
   markers?: KakaoMarkerInputs[];
   className?: string;

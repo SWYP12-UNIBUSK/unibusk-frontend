@@ -1,7 +1,7 @@
-interface LatLng { lat: number; lng: number }
+import type { Coordinate } from './geography';
 
 export interface KakaoMarkerInputs {
   id: string;
-  position: LatLng;
+  position: Coordinate;
   onClick?: () => void;
 }
