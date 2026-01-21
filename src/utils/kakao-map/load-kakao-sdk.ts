@@ -30,7 +30,7 @@ function ensureScript(url: string) {
 export async function loadKakaoSdk(appKey: string) {
   // SSR에서 kakao_map_sdk 실행 차단
   if (typeof window === 'undefined') {
-    throw new TypeError('KAKAO_SDK 실행은 오직 브라우저에서 작동해야 합니다.');
+    return;
   }
 
   // 이미 SDK가 준비된 상태라면 즉시 종료
