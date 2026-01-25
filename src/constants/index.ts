@@ -1,0 +1,1 @@
+export { routePaths } from './routes';
