@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getUser } from '@/apis/api.service';
+import { getUser } from '@/apis/user';
 
 /**
  * 현재 로그인한 사용자 정보를 조회하는 Query Options
