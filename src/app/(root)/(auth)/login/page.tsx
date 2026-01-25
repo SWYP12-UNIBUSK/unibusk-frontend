@@ -1,7 +1,18 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/common/button';
+import { routePaths } from '@/constants';
+import { ENV } from '@/utils';
 
 export default function LoginPage() {
+  const handleKakaoLogin = () => {
+    const callbackURL = `${window.location.origin}${routePaths.oauthCallback('kakao')}`;
+    const encodedCallbackUrl = encodeURIComponent(callbackURL);
+
+    window.location.href = `${ENV.NEXT_PUBLIC_API_URL}${routePaths.kakaoLogin()}?state=${encodedCallbackUrl}`;
+  };
+
   return (
 
     <div className="flex min-h-[calc(100vh-160px)] items-center justify-center">
@@ -10,9 +21,10 @@ export default function LoginPage() {
 
         <div className="text-center">
           <Button
+            onClick={handleKakaoLogin}
             className={`
-              h-15 w-full cursor-pointer rounded-full bg-[#FEE500] p-0 text-base
-              font-medium text-[#000000]
+              flex h-15 w-full cursor-pointer items-center justify-center
+              rounded-full bg-[#FEE500] p-0 text-base font-medium text-[#000000]
               hover:bg-[#FEE500]/90
             `}
           >
@@ -46,6 +58,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-
   );
 }
