@@ -76,6 +76,7 @@ jobs:
           API_URL: ${{ secrets.API_URL }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NEXT_PUBLIC_API_MOCKING: 'enabled'
+          NEXT_PUBLIC_KAKAO_MAP_APP_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_MAP_APP_KEY }}
         run: pnpm exec opennextjs-cloudflare build
       
       # Cloudflare 배포
