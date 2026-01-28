@@ -1,0 +1,92 @@
+# VS Code 등 YAML Language Server가 CodeRabbit 설정 스키마로 인식해 자동완성/검증(오타 체크)을 해주도록 하는 에디터용 힌트
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+# CodeRabbit이 작성할 기본 언어(리뷰/요약/코멘트 언어)
+language: ko-KR
+
+# 리뷰 톤/스타일 지시
+tone_instructions: >
+  한국어로 간결히, 온화한 말투로 작성해 주세요.
+  각 지적은 (원인→영향→대안) 순서로 3줄 이내.
+  필수 이슈(버그/보안/성능/접근성)만 우선하고,
+  나머지는 Optional(캡션)으로 3개 이내 요약.
+  가능하면 해당 라인 범위에 인라인 코멘트로 남겨 주세요.
+
+reviews:
+  # 리뷰 성향 프리셋
+  # - chill: 핵심 위주, 코멘트 수/강도가 상대적으로 낮음
+  # - assertive: 더 적극적으로 문제를 집어냄
+  profile: assertive
+
+  # PR 상단에 “요약” 블록을 생성할지 여부
+  high_level_summary: true
+
+  # 요약 블록의 형식/길이 제한(리뷰가 길어지는 것을 방지)
+  high_level_summary_instructions: >
+    8줄 이내로 요약해 주세요.
+    - 목적(1줄)
+    - 주요 변경(2~3줄)
+    - 리스크/주의(1~2줄)
+    - 테스트/확인 포인트(1~2줄)
+
+  # “현재 PR이 머지 가능해 보이는지” 같은 상태 메시지를 표시할지 여부
+  review_status: true
+
+  # 파일/라인 단위로 매우 자세한 walkthrough(장문) 리뷰를 출력할지 여부
+  # - false: 요약/핵심 위주로 짧아짐(장문 방지 옵션)
+  # - true: 라인별/파일별 상세 설명이 늘어남(길어질 수 있음)
+  review_details: false
+
+  # GitHub Checks(커밋/PR 체크)에 CodeRabbit 결과를 남길지 여부
+  # - true면 PR 상단 “체크 통과/실패”처럼 상태가 보임
+  commit_status: true
+
+  # 리뷰에서 문제가 발견되면 Checks를 실패로 만들지 여부
+  # - false: 정보 제공 중심
+  # - true: 문제가 있으면 체크 실패
+  fail_commit_status: false
+
+  # 아래 항목들은 “부가 기능/노이즈”를 꺼서 리뷰를 짧고 실용적으로 유지하기 위한 설정들
+  poem: false # 시(재미 요소) 출력 여부
+  in_progress_fortune: false # 진행 중 운세/메시지 출력 여부
+  sequence_diagrams: false # 시퀀스 다이어그램 생성 여부
+  estimate_code_review_effort: false # 리뷰 난이도/소요 추정치 출력 여부
+  related_issues: false # 연관 이슈 자동 탐색/표시 여부
+  related_prs: false # 연관 PR 자동 탐색/표시 여부
+  assess_linked_issues: false # 링크된 이슈를 분석/평가할지 여부
+  suggested_labels: false # 라벨 추천 여부
+  auto_apply_labels: false # 라벨 자동 적용 여부
+  suggested_reviewers: false # 리뷰어 추천 여부
+  auto_assign_reviewers: false # 리뷰어 자동 할당 여부
+
+  # 리뷰 대상 파일 범위를 제한(리뷰 길이/노이즈 감소에 효과적)
+  # - 아래는 “포함(include)” 경로들
+  # - ! 로 시작하면 “제외(exclude)” 경로들
+  path_filters:
+    - 'src/**' # 실제 애플리케이션 코드
+    - 'docs/**' # 문서 리뷰
+    - '.github/**' # 워크플로우/템플릿 리뷰
+    - README.md
+
+    - '!.next/**' # Next.js 빌드 산출물 제외
+    - '!node_modules/**' # 의존성 폴더 제외
+    - '!dist/**' # 번들/배포 산출물 제외
+    - '!build/**' # 빌드 산출물 제외
+    - '!coverage/**' # 커버리지 산출물 제외
+    - '!public/**' # 정적 리소스 제외
+    - '!**/*.snap' # 스냅샷 제외(노이즈 방지)
+    - '!**/*.min.*' # minified 파일 제외
+    - '!pnpm-lock.yaml' # 락파일 제외(변경량이 커서 리뷰 피로 증가)
+    - '!package-lock.json'
+
+  # PR 생성/업데이트 시 자동 리뷰 실행 여부
+  auto_review:
+    enabled: true # 자동 리뷰 켬
+    drafts: false # Draft PR은 자동 리뷰 안 함
+
+  # 에이전트용 프롬프트를 추가로 출력/활용할지 여부
+  enable_prompt_for_ai_agents: false
+
+# PR에서 대화형 코멘트를 달았을 때 자동 응답할지 여부
+chat:
+  auto_reply: true
