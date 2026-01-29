@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './typography.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -135,6 +136,18 @@
 
   --color-error: var(--error);
   --color-kakao: var(--kakao);
+
+  /* 타이포그라피 토큰을 Tailwind 유틸(bg-*, text-*)로 노출하는 영역 */
+  --text-title-1: 3.5rem; /* 56px */
+  --text-title-2: 2.5rem; /* 40px */
+  --text-title-3: 2rem; /* 32px */
+  --text-title-4: 1.75rem; /* 28px */
+  --text-title-5: 1.5rem; /* 24px */
+  --text-body-1: 1.25rem; /* 20px */
+  --text-body-2: 1.125rem; /* 18px */
+  --text-body-3: 1rem; /* 16px */
+  --text-caption-1: 0.875rem; /* 14px */
+  --text-caption-2: 0.75rem; /* 12px */
 }
 
 @media (prefers-color-scheme: dark) {
