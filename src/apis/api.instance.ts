@@ -180,7 +180,13 @@ class APIClient {
 // todo: api instance 분리 작업을 진행하는 이유:
 // todo: route handler에서 검증 중복 로직 제거 +  서버 컴포넌트에서 불필요한 route handler 호출 방지
 function getApiUrl() {
-  return ENV.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  // 클라이언트 컴포넌트에서 데이터 패칭을 진행하는 경우에는 프록시를 사용.
+  // 서버 컴포넌트에서 데이터 패칭을 진행하는 경우 실제 서버 도메인으로 진행하기 위해서 window로 분기
+  if (typeof window === 'undefined') {
+    return ENV.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  }
+
+  return '';
 }
 
 export const api = new APIClient(getApiUrl());
