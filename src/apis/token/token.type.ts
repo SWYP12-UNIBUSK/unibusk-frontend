@@ -1,4 +1,4 @@
-import type z from 'zod';
+import type * as z from 'zod';
 import type { TokenExchangeRequestDtoSchema, TokenExchangeResponseDtoSchema } from './token.schema';
 
 export type TokenExchangeRequestDto = z.infer<typeof TokenExchangeRequestDtoSchema>;
