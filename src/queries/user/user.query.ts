@@ -10,7 +10,6 @@ import { getUser } from '@/apis/user';
  * - 5분간 캐시를 유지하여 불필요한 네트워크 요청을 방지합니다
  * - TanStack Query가 자동으로 AbortSignal을 제공하여 쿼리 취소를 처리합니다
  * - 쿼리가 오래되거나 컴포넌트가 언마운트되면 자동으로 요청이 취소됩니다
- * - 401 에러는 api.instance.ts의 interceptor에서 처리됩니다
  *
  * @example
  * ```tsx
