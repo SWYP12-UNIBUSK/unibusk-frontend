@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface TypoItem {
   id: string; // H1, B1 등
   name: string; // 메인타이틀, 강조본문 등
