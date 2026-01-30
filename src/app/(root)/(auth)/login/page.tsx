@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { routePaths } from '@/constants';
-import { ENV } from '@/utils';
+import { ENV, routePaths } from '@/utils';
 
 export default function LoginPage() {
   const handleKakaoLogin = () => {

@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import { ENV } from '@/utils';
 
 const nextConfig: NextConfig = {
   trailingSlash: false,
@@ -8,7 +7,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${ENV.NEXT_PUBLIC_API_URL}/api/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
       },
     ];
   },
