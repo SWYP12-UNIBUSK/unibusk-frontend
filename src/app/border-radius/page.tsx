@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface RadiusItem {
   label: string; // 20%
   pixelValue: string; // 20px
