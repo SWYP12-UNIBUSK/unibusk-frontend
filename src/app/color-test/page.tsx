@@ -7,8 +7,10 @@ interface ColorItem {
 const BGCOLORS: ColorItem[] = [
   { name: 'primary', bgClass: 'bg-primary', textClass: 'text-white' },
   { name: 'orange-100', bgClass: 'bg-orange-100', textClass: 'text-gray-800' },
+  { name: 'orange-150', bgClass: 'bg-orange-150', textClass: 'text-gray-800' },
   { name: 'orange-200', bgClass: 'bg-orange-200', textClass: 'text-gray-800' },
   { name: 'orange-300', bgClass: 'bg-orange-300', textClass: 'text-white' },
+  { name: 'orange-400', bgClass: 'bg-orange-400', textClass: 'text-white' },
 
   { name: 'gray-100', bgClass: 'bg-gray-100', textClass: 'text-gray-800' },
   { name: 'gray-200', bgClass: 'bg-gray-200', textClass: 'text-gray-800' },
@@ -30,8 +32,10 @@ const BGCOLORS: ColorItem[] = [
 const TEXTCOLORS = [
   'text-primary',
   'text-orange-100',
+  'text-orange-150',
   'text-orange-200',
   'text-orange-300',
+  'text-orange-400',
   'text-gray-100',
   'text-gray-200',
   'text-gray-300',
