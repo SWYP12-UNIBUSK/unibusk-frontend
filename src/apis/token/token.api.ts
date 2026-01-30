@@ -1,4 +1,4 @@
-import type { TokenExchangeRequestDto } from './token.type';
+import type { TokenExchangeRequestDto } from './token.schema';
 import { api, parseResponse } from '@/apis';
 import { TokenExchangeResponseDtoSchema } from './token.schema';
 

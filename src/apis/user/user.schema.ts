@@ -5,3 +5,5 @@ export const UserResponseDtoSchema = z.object({
   email: z.email(),
   name: z.string(),
 });
+
+export type UserResponseDto = z.infer<typeof UserResponseDtoSchema>;
