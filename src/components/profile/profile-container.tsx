@@ -13,13 +13,13 @@ export function ProfileContainer() {
 }
 
 function BaseProfile() {
-  const { data: user, isLoading } = useSuspenseQuery(userQueryOptions);
+  const { data: user, isPending } = useSuspenseQuery(userQueryOptions);
 
   if (!user) {
     return <div>사용자 정보를 불러올 수 없습니다.</div>;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <div>...로딩 중</div>;
   }
 
