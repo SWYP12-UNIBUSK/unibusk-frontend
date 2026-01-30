@@ -65,11 +65,11 @@
   --kakao: #ffe500;
 
   /* border-radius 토큰 */
-  --radius-10: 10px; /* 10% */
-  --radius-15: 15px; /* 15% */
-  --radius-20: 20px; /* 20% */
-  --radius-30: 30px; /* 30% */
-  --radius-45: 45px; /* 45% */
+  --radius-10: 10px;
+  --radius-15: 15px;
+  --radius-20: 20px;
+  --radius-30: 30px;
+  --radius-45: 45px;
 }
 
 @theme inline {
