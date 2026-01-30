@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './typography.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,8 +43,10 @@
 
   /* 디자인 토큰 */
   --orange-100: #ffe4f0;
+  --orange-150: #fff1ee;
   --orange-200: #ff9c82;
   --orange-300: #ff8160;
+  --orange-400: #ff7551;
 
   --gray-100: #f9f9f9;
   --gray-200: #f5f5f5;
@@ -60,6 +63,13 @@
 
   --error: #f52424;
   --kakao: #ffe500;
+
+  /* border-radius 토큰 */
+  --radius-10: 10px;
+  --radius-15: 15px;
+  --radius-20: 20px;
+  --radius-30: 30px;
+  --radius-45: 45px;
 }
 
 @theme inline {
@@ -107,18 +117,19 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  /*  border-radius 토큰 */
+  --radius-sm: var(--radius-10);
+  --radius-md: var(--radius-15);
+  --radius-lg: var(--radius-20);
+  --radius-xl: var(--radius-30);
+  --radius-2xl: var(--radius-45);
 
-  /* 팔레트 토큰을 Tailwind 유틸(bg-*, text-*)로 노출하는 영역 */
+  /* 컬러 토큰 */
   --color-orange-100: var(--orange-100);
+  --color-orange-150: var(--orange-150);
   --color-orange-200: var(--orange-200);
   --color-orange-300: var(--orange-300);
+  --color-orange-400: var(--orange-400);
 
   --color-gray-100: var(--gray-100);
   --color-gray-200: var(--gray-200);
@@ -135,6 +146,29 @@
 
   --color-error: var(--error);
   --color-kakao: var(--kakao);
+
+  /* 타이포그라피 토큰 */
+  --text-title-1: 3.5rem; /* 56px */
+  --text-title-2: 2.5rem; /* 40px */
+  --text-title-3: 2rem; /* 32px */
+  --text-title-4: 1.75rem; /* 28px */
+  --text-title-5: 1.5rem; /* 24px */
+  --text-body-1: 1.25rem; /* 20px */
+  --text-body-2: 1.125rem; /* 18px */
+  --text-body-3: 1rem; /* 16px */
+  --text-caption-1: 0.875rem; /* 14px */
+  --text-caption-2: 0.75rem; /* 12px */
+
+  /* 커스텀 z-index*/
+  --z-index-header: 100;
+  --z-index-sidebar: 200;
+
+  --z-index-modal-backdrop: 995;
+  --z-index-modal: 1000;
+  --z-index-modal-nested-backdrop: 1005;
+  --z-index-modal-nested: 1010;
+
+  --z-index-popup: 1100;
 }
 
 @media (prefers-color-scheme: dark) {
