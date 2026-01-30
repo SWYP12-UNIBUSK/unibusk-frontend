@@ -1,36 +1,26 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-
-// ! route path가 확정되면, constants/routes.ts의 routePath 함수로 교체 예정
-const PROTECTED_ROUTES = ['/profile'];
-const AUTH_ROUTES = ['/login', '/signup'];
+import { ROUTES } from './constants';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const accessToken = request.cookies.get('accessToken')?.value;
-
   const isAuthenticated = !!accessToken;
-  const isProtectedRoute = PROTECTED_ROUTES.some(route =>
-    pathname.startsWith(route),
-  );
-  const isAuthRoute = AUTH_ROUTES.some(route => pathname.startsWith(route));
 
-  // 케이스 1: 미인증 + 보호된 페이지
-  if (!isAuthenticated && isProtectedRoute) {
-    const url = request.nextUrl.clone();
-
-    url.pathname = '/login';
-
-    return NextResponse.redirect(url);
+  // 1. 로그인 페이지(/login)에 접근했을 때의 처리
+  if (pathname === ROUTES.LOGIN) {
+    // 이미 인증된 상태라면 홈으로 보냄 (케이스 2)
+    if (isAuthenticated) {
+      return NextResponse.redirect(new URL(ROUTES.HOME, request.url));
+    }
+    // 미인증 상태라면 그대로 로그인 페이지를 보여줌 (NextResponse.next)
+    return NextResponse.next();
   }
 
-  // 케이스 2: 인증됨 + 로그인 페이지
-  if (isAuthenticated && isAuthRoute) {
-    const url = request.nextUrl.clone();
-
-    url.pathname = '/';
-
-    return NextResponse.redirect(url);
+  // 2. 그 외 matcher에 걸린 보호된 페이지 접근 처리
+  if (!isAuthenticated) {
+    // 인증되지 않았다면 로그인 페이지로 보냄 (케이스 1)
+    return NextResponse.redirect(new URL(ROUTES.LOGIN, request.url));
   }
 
   return NextResponse.next();
@@ -40,6 +30,5 @@ export const config = {
   matcher: [
     '/profile/:path*',
     '/login',
-    '/signup',
   ],
 };
