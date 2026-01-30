@@ -24,6 +24,7 @@ export default function LoginPage() {
 
         <div className="flex flex-col space-y-1.25 text-center typo-body-m-1">
           <button
+            type="button"
             onClick={handleKakaoLogin}
             className={`
               flex h-15 w-full cursor-pointer items-center justify-center
