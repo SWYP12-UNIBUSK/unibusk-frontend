@@ -1,5 +1,6 @@
-import type { FetchConfig } from '@/apis/';
-import { api, parseResponse } from '@/apis/';
+import type { FetchConfig } from '../api.types';
+import { api } from '../api.instance';
+import { parseResponse } from '../api.parse';
 import { UserResponseDtoSchema } from './user.schema';
 
 export function getUser(config?: FetchConfig) {

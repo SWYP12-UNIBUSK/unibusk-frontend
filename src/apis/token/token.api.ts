@@ -1,5 +1,6 @@
 import type { TokenExchangeRequestDto } from './token.schema';
-import { api, parseResponse } from '@/apis';
+import { api } from '../api.instance';
+import { parseResponse } from '../api.parse';
 import { TokenExchangeResponseDtoSchema } from './token.schema';
 
 export function exchangeToken(tokenExchangeRequestDto: TokenExchangeRequestDto) {
