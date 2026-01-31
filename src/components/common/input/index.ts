@@ -1,1 +1,1 @@
-export { Input } from './input';
+export { ErrorMessage, FormInput, Input, Label } from './input';
