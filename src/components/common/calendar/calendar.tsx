@@ -52,7 +52,6 @@ function CalendarChevron({ className, orientation, ...props }: { className?: str
     );
   }
 
-  // For 'up' orientation, fallback to ChevronDownIcon rotated 180deg
   if (orientation === 'up') {
     return (
       <ChevronDownIcon className={cn('size-4 rotate-180', className)} {...props} />
@@ -69,12 +68,14 @@ function Calendar({
   classNames,
   showOutsideDays = true,
   captionLayout = 'label',
-  buttonVariant = 'ghost',
+  buttonColor = 'lightGray',
+  buttonAppearance = 'filled',
   formatters,
   components,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>['variant'];
+  buttonColor?: React.ComponentProps<typeof Button>['theme'];
+  buttonAppearance?: React.ComponentProps<typeof Button>['appearance'];
 }) {
   const defaultClassNames = getDefaultClassNames();
 
@@ -116,7 +117,11 @@ function Calendar({
           defaultClassNames.nav,
         ),
         button_previous: cn(
-          buttonVariants({ variant: buttonVariant }),
+          buttonVariants({
+            theme: buttonColor,
+            appearance: buttonAppearance,
+            size: 'sm',
+          }),
           `
             size-(--cell-size) p-0 select-none
             aria-disabled:opacity-50
@@ -124,7 +129,11 @@ function Calendar({
           defaultClassNames.button_previous,
         ),
         button_next: cn(
-          buttonVariants({ variant: buttonVariant }),
+          buttonVariants({
+            theme: buttonColor,
+            appearance: buttonAppearance,
+            size: 'sm',
+          }),
           `
             size-(--cell-size) p-0 select-none
             aria-disabled:opacity-50
@@ -250,16 +259,15 @@ function CalendarDayButton({
 
   return (
     <Button
+      theme="orange"
       ref={ref}
-      variant="ghost"
-      size="icon"
+      appearance="filled"
+      size="sm"
       data-day={day.date.toLocaleDateString()}
-      data-selected-single={
-        modifiers.selected
+      data-selected-single={modifiers.selected
         && !modifiers.range_start
         && !modifiers.range_end
-        && !modifiers.range_middle
-      }
+        && !modifiers.range_middle}
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
