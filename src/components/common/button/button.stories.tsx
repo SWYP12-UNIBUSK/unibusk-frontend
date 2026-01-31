@@ -9,7 +9,7 @@ const meta: Meta<typeof Button> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    color: {
+    theme: {
       control: 'select',
       options: ['orange', 'lightOrange', 'gray', 'lightGray'],
       description: '버튼의 브랜드 색상을 선택합니다.',
@@ -34,7 +34,7 @@ type Story = StoryObj<typeof Button>;
 export const LargeOrangeFilled: Story = {
   args: {
     size: 'lg',
-    color: 'orange',
+    theme: 'orange',
     appearance: 'filled',
     children: '내 공연 등록하기',
   },
@@ -44,7 +44,7 @@ export const LargeOrangeFilled: Story = {
 export const SmallOrangeOutline: Story = {
   args: {
     size: 'sm',
-    color: 'orange',
+    theme: 'orange',
     appearance: 'outline',
     children: '장소 찾기',
   },
@@ -60,18 +60,18 @@ export const OutlineSizeComparison: Story = {
     </div>
   ),
   args: {
-    color: 'orange',
+    theme: 'orange',
   },
 };
 
 /** 4. 다양한 색상의 Filled 버튼 조합 */
-export const ColorVariants: Story = {
+export const ThemeVariants: Story = {
   render: args => (
     <div className="flex items-center gap-4">
-      <Button {...args} color="orange">Orange</Button>
-      <Button {...args} color="gray">Gray</Button>
-      <Button {...args} color="lightGray">Light Gray</Button>
-      <Button {...args} color="lightOrange">Light Orange</Button>
+      <Button {...args} theme="orange">Orange</Button>
+      <Button {...args} theme="gray">Gray</Button>
+      <Button {...args} theme="lightGray">Light Gray</Button>
+      <Button {...args} theme="lightOrange">Light Orange</Button>
     </div>
   ),
   args: {
@@ -84,7 +84,7 @@ export const ColorVariants: Story = {
 export const Disabled: Story = {
   args: {
     size: 'md',
-    color: 'orange',
+    theme: 'orange',
     appearance: 'filled',
     children: '비활성화 버튼',
     disabled: true,

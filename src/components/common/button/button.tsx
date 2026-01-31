@@ -13,7 +13,7 @@ const buttonVariants = cva(
   `,
   {
     variants: {
-      color: {
+      theme: {
         orange: '',
         gray: '',
         lightGray: '',
@@ -37,7 +37,7 @@ const buttonVariants = cva(
 
       // Orange 조합
       {
-        color: 'orange',
+        theme: 'orange',
         appearance: 'filled',
         className: `
           bg-primary text-white
@@ -45,7 +45,7 @@ const buttonVariants = cva(
         `,
       },
       {
-        color: 'orange',
+        theme: 'orange',
         appearance: 'outline',
         className: `
           border-primary text-primary
@@ -55,7 +55,7 @@ const buttonVariants = cva(
 
       // Light Orange 조합
       {
-        color: 'lightOrange',
+        theme: 'lightOrange',
         appearance: 'filled',
         className: `
           bg-orange-150 text-primary
@@ -63,7 +63,7 @@ const buttonVariants = cva(
         `,
       },
       {
-        color: 'lightOrange',
+        theme: 'lightOrange',
         appearance: 'outline',
         className: `
           border-orange-200 text-orange-300
@@ -73,7 +73,7 @@ const buttonVariants = cva(
 
       // Gray 조합
       {
-        color: 'gray',
+        theme: 'gray',
         appearance: 'filled',
         className: `
           bg-gray-500 text-white
@@ -81,7 +81,7 @@ const buttonVariants = cva(
         `,
       },
       {
-        color: 'gray',
+        theme: 'gray',
         appearance: 'outline',
         className: `
           border-gray-500 text-gray-500
@@ -91,7 +91,7 @@ const buttonVariants = cva(
 
       // Light Gray 조합
       {
-        color: 'lightGray',
+        theme: 'lightGray',
         appearance: 'filled',
         className: `
           bg-gray-300 text-gray-800
@@ -99,7 +99,7 @@ const buttonVariants = cva(
         `,
       },
       {
-        color: 'lightGray',
+        theme: 'lightGray',
         appearance: 'outline',
         className: `
           border-gray-300 text-gray-500
@@ -109,7 +109,7 @@ const buttonVariants = cva(
 
     ],
     defaultVariants: {
-      color: 'orange',
+      theme: 'orange',
       appearance: 'filled',
       size: 'md',
     },
@@ -120,14 +120,14 @@ interface ButtonProps
   extends React.ComponentProps<'button'>,
   VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  color: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
+  theme: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
   appearance: 'filled' | 'outline';
   size: 'lg' | 'md' | 'sm';
 }
 
 function Button({
   className,
-  color,
+  theme,
   appearance,
   size,
   asChild = false,
@@ -138,7 +138,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ color, appearance, size, className }))}
+      className={cn(buttonVariants({ theme, appearance, size, className }))}
       {...props}
     />
   );
