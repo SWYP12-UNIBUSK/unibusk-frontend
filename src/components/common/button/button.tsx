@@ -8,6 +8,8 @@ const buttonVariants = cva(
     inline-flex shrink-0 cursor-pointer items-center justify-center gap-2
     rounded-full whitespace-nowrap transition-all duration-300 ease-in-out
     outline-none
+    focus-visible:border-ring focus-visible:ring-[3px]
+    focus-visible:ring-ring/50
     disabled:pointer-events-none disabled:opacity-50
     [&_svg]:pointer-events-none [&_svg]:shrink-0
   `,
@@ -21,12 +23,12 @@ const buttonVariants = cva(
       },
       appearance: {
         filled: '',
-        outline: 'border-2 bg-transparent',
+        outline: 'bg-transparent',
       },
       size: {
-        lg: 'h-15 min-w-87.5 px-[110.5px] py-3.75 typo-body-sb-1',
-        md: 'h-11.25 min-w-37.5 px-15.25 py-[10.5px] typo-body-m-3',
-        sm: 'h-7.5 min-w-25 px-6 py-[4.5px] typo-caption-r-1',
+        lg: 'h-15 min-w-87.5 typo-body-sb-1',
+        md: 'h-11.25 min-w-37.5 px-7.5 py-2.5 typo-body-m-3',
+        sm: 'h-7.5 min-w-25 typo-caption-r-1',
       },
     },
     compoundVariants: [
@@ -131,6 +133,7 @@ function Button({
   appearance,
   size,
   asChild = false,
+  disabled,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : 'button';
@@ -138,7 +141,12 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ theme, appearance, size, className }))}
+      aria-disabled={disabled}
+      disabled={disabled}
+      className={cn(
+        buttonVariants({ theme, appearance, size }),
+        className,
+      )}
       {...props}
     />
   );
