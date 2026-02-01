@@ -132,7 +132,7 @@ function PlaceCard({ place, onClick }: PlaceCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        'w-full bg-white px-[18.5px] py-4 text-left',
+        'w-full cursor-pointer bg-white px-[18.5px] py-4 text-left',
         'hover:bg-orange-150',
       )}
     >
