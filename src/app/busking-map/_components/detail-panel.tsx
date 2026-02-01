@@ -1,4 +1,5 @@
 import type { BuskingPlace } from '@/types/busking-map';
+import { LineDivider } from './line-divider';
 
 interface DetailPanelProps {
   place: BuskingPlace | null;
@@ -65,6 +66,13 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
               신청 하러 가기
             </button>
           </div>
+
+          <LineDivider
+            width="305px"
+            thickness={1}
+            colorClassName="bg-gray-200"
+            className="mt-7.5 mb-8.25"
+          />
 
           <div className="mt-6 grid grid-cols-2 gap-4">
             <div className="h-45 w-32.5 rounded-sm bg-black/10" />

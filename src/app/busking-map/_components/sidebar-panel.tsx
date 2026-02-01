@@ -1,5 +1,6 @@
 import type { BuskingPlace } from '@/types/busking-map';
 import { cn } from '@/utils';
+import { LineDivider } from './line-divider';
 
 interface SidebarPanelProps {
   places: BuskingPlace[];
@@ -49,7 +50,7 @@ export function SidebarPanel({
                   onClick={() => onListItemClick(place.id)}
                 />
                 {index !== places.length - 1 && (
-                  <div className="mx-auto h-px w-[84%] bg-gray-200" />
+                  <LineDivider width="84%" thickness={1} colorClassName="bg-gray-200" />
                 )}
               </li>
             );
