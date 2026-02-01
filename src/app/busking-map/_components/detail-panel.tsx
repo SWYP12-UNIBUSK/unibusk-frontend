@@ -12,7 +12,7 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
 
   return (
     <section className={`
-      flex h-full w-full flex-col rounded-2xl bg-white shadow-md
+      flex h-full w-full flex-col rounded-2xl bg-white shadow-sidebar
     `}
     >
       <div className={`

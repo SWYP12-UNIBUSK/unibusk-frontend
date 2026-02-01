@@ -18,6 +18,7 @@ export function SidebarPanel({
     return (
       <section className={`
         flex h-full w-full flex-col overflow-hidden rounded-xl bg-white
+        shadow-sidebar
       `}
       >
         <FocusedHeader
@@ -34,6 +35,7 @@ export function SidebarPanel({
   return (
     <section className={`
       flex h-full w-full flex-col overflow-hidden rounded-xl bg-white
+      shadow-sidebar
     `}
     >
       <ListHeader title="공연 장소" />
