@@ -6,8 +6,8 @@ import { AvatarIcon } from '../icon';
 const avatarButtonVariants = cva('', {
   variants: {
     variant: {
-      primary: 'bg-primary text-white',
-      secondary: 'bg-gray-300 text-white',
+      primary: 'bg-primary',
+      secondary: 'bg-gray-300',
     },
   },
   defaultVariants: {
@@ -30,7 +30,7 @@ interface AvatarButtonProps
 export function AvatarButton({
   className,
   variant,
-  size = 50,
+  size = 70,
   style,
   icon,
   disabled,
@@ -40,18 +40,20 @@ export function AvatarButton({
 }: AvatarButtonProps) {
   const containerSize = size + 20;
   const avatarRadius = size / 2;
-  const containerRadius = avatarRadius + 20;
+  const containerRadius = 20;
 
   return (
     <button
       type={type}
       className={cn(
         `
-          group relative m-0 flex items-center justify-center overflow-visible
-          border-none bg-transparent p-0 leading-none transition-all
-          duration-100 ease-in-out outline-none
+          group relative m-0 flex cursor-pointer items-center justify-center
+          overflow-visible border-none bg-transparent p-0 leading-none
+          transition-all duration-100 ease-in-out outline-none
+          focus-visible:ring-2 focus-visible:ring-primary
+          focus-visible:ring-offset-2
+          disabled:pointer-events-none disabled:opacity-50
         `,
-        disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         className,
       )}
       style={{
@@ -60,6 +62,7 @@ export function AvatarButton({
         borderRadius: containerRadius,
         ...style,
       }}
+      aria-disabled={disabled}
       disabled={disabled}
       aria-label={ariaLabel}
       {...props}
@@ -73,6 +76,7 @@ export function AvatarButton({
           `,
           !disabled && 'group-hover:rounded-lg group-hover:bg-gray-200',
         )}
+        aria-hidden="true"
       />
 
       {/* Avatar Circle */}
@@ -86,16 +90,22 @@ export function AvatarButton({
           height: size,
           borderRadius: avatarRadius,
         }}
+        aria-hidden="true"
       >
         <div className="flex size-full items-center justify-center">
-          {icon || (
-            <AvatarIcon
-              className={cn(
-                'fill-current transition-colors duration-300',
-                !disabled && 'group-hover:text-gray-600',
+          {icon
+            ? (
+                <span aria-hidden={true}>{icon}</span>
+              )
+            : (
+                <AvatarIcon
+                  aria-hidden={true}
+                  className={cn(
+                    'fill-current transition-colors duration-300',
+                    !disabled && 'group-hover:text-gray-600',
+                  )}
+                />
               )}
-            />
-          )}
         </div>
       </div>
     </button>
