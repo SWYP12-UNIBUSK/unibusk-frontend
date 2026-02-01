@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { PANEL_GAP, PANEL_WIDTH } from '@/constants/busking-map';
 import { cn } from '@/utils';
 import { SidebarToggleButton } from './sidebar-toggle-button';
 
@@ -8,9 +9,6 @@ interface SidebarLayoutProps {
   onToggleButtonClick: () => void;
   children: ReactNode;
 }
-
-const PANEL_WIDTH = 343;
-const PANEL_GAP = 17;
 
 export function SidebarLayout({ isOpen, isDetailOpen, onToggleButtonClick, children }: SidebarLayoutProps) {
   const containerWidth = isOpen ? (isDetailOpen ? PANEL_WIDTH * 2 + PANEL_GAP : PANEL_WIDTH) : 0;
