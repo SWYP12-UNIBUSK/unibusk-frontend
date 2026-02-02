@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useId } from 'react';
 import { cn } from '@/utils/index';
 
 interface ErrorMessageProps {
@@ -128,7 +129,7 @@ function Input({
         onInput={handleInput}
         {...props}
       />
-      {showCount && maxLength && (
+      {showCount && maxLength && currentCount !== undefined && (
         <span className={`
           absolute top-1/2 right-5 -translate-y-1/2 typo-caption-r-1
           text-gray-550
@@ -161,16 +162,19 @@ function FormInput({
   currentCount,
   ...props
 }: FormInputProps & { ref?: React.Ref<HTMLInputElement> }) {
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
+
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <Label htmlFor={id} required={required} error={error}>
+        <Label htmlFor={inputId} required={required} error={error}>
           {label}
         </Label>
       )}
       <Input
         ref={ref}
-        id={id}
+        id={inputId}
         error={error}
         showCount={showCount}
         maxLength={maxLength}
