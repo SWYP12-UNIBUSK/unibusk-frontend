@@ -65,7 +65,7 @@ export const WithCounter: Story = {
 };
 
 const signupSchema = z.object({
-  teamName: z.string().min(2, '팀 이름은 필수 입력 사항입니다').max(20, '최대 20자까지 입력 가능합니다'),
+  teamName: z.string().min(1, '팀 이름은 필수 입력 사항입니다').max(20, '최대 20자까지 입력 가능합니다'),
   email: z.email('올바른 이메일을 입력해주세요'),
 });
 
@@ -194,6 +194,7 @@ function FocusExample() {
     <div className="max-w-md space-y-6">
       <div className="flex gap-2">
         <button
+          type="button"
           onClick={handleFocusTeamName}
           className={`
             rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white
@@ -204,6 +205,7 @@ function FocusExample() {
           팀 이름 포커스
         </button>
         <button
+          type="button"
           onClick={handleFocusEmail}
           className={`
             rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white

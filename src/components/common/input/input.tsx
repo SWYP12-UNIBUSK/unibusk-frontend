@@ -78,7 +78,9 @@ function Input({
   const handleBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
     if (maxLength) {
       const target = e.currentTarget;
-      if (target.value.length >= maxLength) {
+      const selectionLength = (target.selectionEnd ?? 0) - (target.selectionStart ?? 0);
+
+      if (target.value.length - selectionLength >= maxLength) {
         e.preventDefault();
       }
     }
@@ -106,12 +108,13 @@ function Input({
       <input
         ref={ref}
         type={type}
+        aria-invalid={!!error}
         className={cn(
           'h-15 w-full rounded-full border bg-white p-5',
           'typo-body-m-3 text-black',
           'transition-[border-color,box-shadow] outline-none',
           `placeholder:typo-caption-r-1 placeholder:text-gray-550`,
-          'disabled:pointer-events-none disabled:opacity-50',
+          'disabled:pointer-events-none disabled:bg-gray-300',
           'border-gray-300 bg-gray-100',
           'focus:border-gray-700',
           error && `
