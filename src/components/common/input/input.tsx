@@ -13,7 +13,7 @@ function ErrorMessage({ message, className }: ErrorMessageProps) {
   return (
     <span className={cn(`flex items-center gap-0.5 typo-caption-r-1 text-error`, className)}>
       <Image
-        src="/icon/warning_icon.svg"
+        src="/icon/bang-circle.svg"
         alt="Warning Icon"
         width={17}
         height={17}
