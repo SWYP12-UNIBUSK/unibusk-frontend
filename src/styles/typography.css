@@ -68,7 +68,7 @@
   letter-spacing: -0.011em;
 }
 
-@utility typo-body-m-3 {
+@utility typo-body-sb-3 {
   font-size: var(--text-body-3);
   line-height: 1.5;
   font-weight: 600;
