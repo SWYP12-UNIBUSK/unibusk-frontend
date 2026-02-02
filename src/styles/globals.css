@@ -72,8 +72,8 @@
   --radius-45: 45px;
 
   /* shadow 토큰 */
-  --shadow-modal-sm: 0 0 5px 0 rgba(0, 0, 0, 0.2);
-  --shadow-modal-lg: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  --raw-shadow-5: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+  --raw-shadow-10: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
 @theme inline {
@@ -175,8 +175,8 @@
   --z-index-popup: 1100;
 
   /* shadow 토큰 */
-  --shadow-modal-sm: var(--shadow-modal-sm);
-  --shadow-modal-lg: var(--shadow-modal-lg);
+  --shadow-elevate-1: var(--raw-shadow-5);
+  --shadow-elevate-2: var(--raw-shadow-10);
 }
 
 @media (prefers-color-scheme: dark) {
