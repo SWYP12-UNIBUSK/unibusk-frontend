@@ -94,7 +94,6 @@ function DatePicker({
             aria-disabled={disabled}
             aria-label="날짜 선택"
             aria-invalid={error}
-            aria-describedby={error ? 'date-error' : undefined}
             error={errorMessage}
             className={cn(
               'caret-transparent',
@@ -125,7 +124,6 @@ function DatePicker({
           selected={currentDate}
           onSelect={handleSelect}
           autoFocus
-          disabled={disabled}
           {...calendarProps}
         />
       </PopoverContent>

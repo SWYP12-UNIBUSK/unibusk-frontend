@@ -46,25 +46,21 @@ function CustomCaption({ calendarMonth }: MonthCaptionProps) {
         disabled={!previousMonth}
         onClick={() => previousMonth && goToMonth(previousMonth)}
         className={commonButtonStyle}
-        aria-label={`${previousMonth ? previousMonth.getMonth() + 1 : ''}월로 이동`}
+        aria-label={`${previousMonth ? `${previousMonth.getMonth() - 1}월 이동` : '이전 달 없음'}`}
       >
         <ChevronLeftIcon className="size-5" aria-hidden="true" />
       </button>
 
-      <div
-        className="typo-body-sb-2 font-semibold text-black select-none"
-        role="heading"
-        aria-level={2}
-      >
+      <h2 className="typo-body-sb-2 font-semibold text-black select-none">
         {`${month}월 ${year}`}
-      </div>
+      </h2>
 
       <button
         type="button"
         disabled={!nextMonth}
         onClick={() => nextMonth && goToMonth(nextMonth)}
         className={commonButtonStyle}
-        aria-label={`${nextMonth ? nextMonth.getMonth() + 1 : ''}월로 이동`}
+        aria-label={`${nextMonth ? `${nextMonth.getMonth() + 1}월 이동` : '다음 달 없음'}`}
       >
         <ChevronRightIcon className="size-5" aria-hidden="true" />
       </button>
