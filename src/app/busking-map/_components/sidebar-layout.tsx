@@ -1,5 +1,11 @@
 import type { CSSProperties, ReactNode } from 'react';
-import { PANEL_GAP, PANEL_WIDTH } from '@/constants/busking-map';
+import {
+  BUSKING_PANEL_HEIGHT,
+  BUSKING_PANEL_LEFT_GAP,
+  BUSKING_PANEL_TOP,
+  PANEL_GAP,
+  PANEL_WIDTH,
+} from '@/constants/busking-map';
 import { cn } from '@/utils';
 import { SidebarToggleButton } from './sidebar-toggle-button';
 
@@ -13,23 +19,19 @@ interface SidebarLayoutProps {
 export function SidebarLayout({ isOpen, isDetailOpen, onToggleButtonClick, children }: SidebarLayoutProps) {
   const containerWidth = isOpen ? (isDetailOpen ? PANEL_WIDTH * 2 + PANEL_GAP : PANEL_WIDTH) : 0;
 
-  const layoutStyle: CSSProperties = {
-    top: 'var(--busking-panel-top)',
-    left: isOpen ? 'var(--busking-panel-left-gap)' : '0px',
-
-    width: `${containerWidth}px`,
-    height: 'max(0px, calc(100vh - var(--busking-panel-top) - var(--busking-panel-bottom-gap)))',
+  const layoutStyle = {
+    top: BUSKING_PANEL_TOP,
+    left: isOpen ? BUSKING_PANEL_LEFT_GAP : 0,
+    width: containerWidth,
+    height: BUSKING_PANEL_HEIGHT,
   };
 
   return (
-    <aside className="pointer-events-none fixed z-sidebar" style={layoutStyle}>
-      <div className="pointer-events-auto relative flex h-full items-stretch">
+    <aside className="pointer-events-auto fixed z-sidebar" style={layoutStyle}>
+      <div className="relative flex h-full items-stretch">
         {isOpen
           ? (
-              <div className={`
-                flex h-full w-full items-stretch gap-(--busking-panel-gap)
-              `}
-              >
+              <div className="flex h-full w-full items-stretch" style={{ gap: PANEL_GAP }}>
                 {children}
               </div>
             )

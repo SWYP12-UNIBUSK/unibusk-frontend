@@ -1,5 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
-import { BUSKING_MAP_SIDEBAR_CSS } from '@/constants/busking-map';
+import type { ReactNode } from 'react';
 import { cn } from '@/utils';
 
 interface SidebarOverlayProps {
@@ -11,7 +10,6 @@ export function SidebarOverlay({ children, className }: SidebarOverlayProps) {
   return (
     <div
       className={cn('pointer-events-none fixed inset-0 z-sidebar', className)}
-      style={BUSKING_MAP_SIDEBAR_CSS as CSSProperties}
     >
       {children}
     </div>

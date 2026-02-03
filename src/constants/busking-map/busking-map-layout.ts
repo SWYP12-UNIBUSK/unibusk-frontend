@@ -1,12 +1,11 @@
 export const PANEL_WIDTH = 343;
-export const PANEL_GAP = 17; // 사이드바와 상세 패널 사이의 간격
+export const PANEL_GAP = 17;
 
-export const BUSKING_MAP_SIDEBAR_CSS = {
-  '--busking-header-height': '110px',
-  '--busking-panel-top-gap': '6px',
-  '--busking-panel-top': 'calc(var(--busking-header-height) + var(--busking-panel-top-gap))',
-  '--busking-panel-left-gap': '32px',
-  '--busking-panel-bottom-gap': '64px',
-  '--busking-panel-width': `${PANEL_WIDTH}px`,
-  '--busking-panel-gap': `${PANEL_GAP}px`,
-} as const;
+export const BUSKING_HEADER_HEIGHT = 110;
+export const BUSKING_PANEL_TOP_GAP = 6;
+
+export const BUSKING_PANEL_LEFT_GAP = 32;
+export const BUSKING_PANEL_BOTTOM_GAP = 64;
+
+export const BUSKING_PANEL_TOP = BUSKING_HEADER_HEIGHT + BUSKING_PANEL_TOP_GAP;
+export const BUSKING_PANEL_HEIGHT = `max(0px, calc(100vh - ${BUSKING_PANEL_TOP}px - ${BUSKING_PANEL_BOTTOM_GAP}px))`;
