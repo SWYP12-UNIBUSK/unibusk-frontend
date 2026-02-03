@@ -130,8 +130,14 @@ export const LoadingStory: Story = {
         type="button"
         className="rounded-md bg-gray-500 px-4 py-2 text-white"
         onClick={() => {
-          const promise = new Promise(resolve =>
-            setTimeout(() => resolve({ name: 'Sonner' }), 2000),
+          const promise = new Promise((resolve, reject) =>
+            setTimeout(
+              () =>
+                Math.random() < 0.5
+                  ? resolve({ name: 'Sonner' })
+                  : reject(new Error('load failed')),
+              2000,
+            ),
           );
 
           toast.promise(promise, {
