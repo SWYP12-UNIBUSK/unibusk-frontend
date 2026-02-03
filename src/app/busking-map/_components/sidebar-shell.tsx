@@ -26,6 +26,7 @@ export function SidebarShell({ places }: SidebarShellProps) {
           places={model.sidebar.places}
           focusedPlace={model.sidebar.focusedPlace}
           onListItemClick={model.actions.onListItemClick}
+          onFocusedCloseClick={model.actions.onFocusedCloseClick}
         />
 
         {model.detail.isOpen
