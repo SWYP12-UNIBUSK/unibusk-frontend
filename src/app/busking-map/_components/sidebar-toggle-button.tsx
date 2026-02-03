@@ -22,6 +22,7 @@ export function SidebarToggleButton({
         className,
       )}
       aria-label={isSidebarOpen ? '사이드바 닫기' : '사이드바 열기'}
+      aria-expanded={isSidebarOpen}
     >
       <span className="text-primary">{isSidebarOpen ? '‹' : '›'}</span>
     </button>
