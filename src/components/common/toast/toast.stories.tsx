@@ -17,7 +17,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const DefaultStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
@@ -39,7 +39,7 @@ export const Default: Story = {
   },
 };
 
-export const Success: Story = {
+export const SuccessStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
@@ -60,7 +60,7 @@ export const Success: Story = {
   },
 };
 
-export const Info: Story = {
+export const InfoStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
@@ -81,7 +81,7 @@ export const Info: Story = {
   },
 };
 
-export const Warning: Story = {
+export const WarningStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
@@ -102,7 +102,7 @@ export const Warning: Story = {
   },
 };
 
-export const Error: Story = {
+export const ErrorStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
@@ -123,7 +123,7 @@ export const Error: Story = {
   },
 };
 
-export const Loading: Story = {
+export const LoadingStory: Story = {
   render: () => (
     <div className="flex h-screen items-center justify-center">
       <button
