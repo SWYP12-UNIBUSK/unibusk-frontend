@@ -1,6 +1,6 @@
 import { KakaoMapView } from '@/components/kakao-map';
 import { BUSKING_MAP_PLACES_MOCK } from '@/mocks/busking-map-places';
-import { SidebarShell } from './_components/sidebar-shell';
+import { SidebarShell } from './_components';
 
 export default function BuskingMapPage() {
   return (
