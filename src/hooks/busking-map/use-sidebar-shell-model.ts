@@ -44,7 +44,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       focusedPlace,
     },
     detail: {
-      isOpen: state.isSidebarOpen && state.selectedPlaceId !== null,
+      isOpen: state.isSidebarOpen && selectedPlace !== null,
       place: selectedPlace,
     },
     actions: {
