@@ -94,6 +94,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     set({
       isSidebarOpen: false,
       lastOpenSnapshot: makeSnapshot(current),
+      selectedPlaceId: null,
+      focusedPlaceId: null,
     });
   },
 
