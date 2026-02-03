@@ -1,6 +1,6 @@
 import type { BuskingPlace } from '@/types/busking-map';
+import { LineDivider } from '@/components/common/line-divider';
 import { cn } from '@/utils';
-import { LineDivider } from './line-divider';
 
 interface SidebarPanelProps {
   places: BuskingPlace[];

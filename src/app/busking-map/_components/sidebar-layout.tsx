@@ -1,11 +1,5 @@
-import type { CSSProperties, ReactNode } from 'react';
-import {
-  BUSKING_PANEL_HEIGHT,
-  BUSKING_PANEL_LEFT_GAP,
-  BUSKING_PANEL_TOP,
-  PANEL_GAP,
-  PANEL_WIDTH,
-} from '@/constants/busking-map';
+import type { ReactNode } from 'react';
+import { BUSKING_PANEL_HEIGHT, BUSKING_PANEL_LEFT_GAP, BUSKING_PANEL_TOP, PANEL_GAP, PANEL_WIDTH } from '@/constants/busking-map';
 import { cn } from '@/utils';
 import { SidebarToggleButton } from './sidebar-toggle-button';
 
@@ -27,8 +21,8 @@ export function SidebarLayout({ isOpen, isDetailOpen, onToggleButtonClick, child
   };
 
   return (
-    <aside className="pointer-events-auto fixed z-sidebar" style={layoutStyle}>
-      <div className="relative flex h-full items-stretch">
+    <aside className="pointer-events-none fixed z-sidebar" style={layoutStyle}>
+      <div className="pointer-events-auto relative flex h-full items-stretch">
         {isOpen
           ? (
               <div className="flex h-full w-full items-stretch" style={{ gap: PANEL_GAP }}>

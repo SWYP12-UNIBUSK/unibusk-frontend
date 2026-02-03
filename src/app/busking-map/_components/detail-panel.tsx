@@ -1,5 +1,5 @@
 import type { BuskingPlace } from '@/types/busking-map';
-import { LineDivider } from './line-divider';
+import { LineDivider } from '@/components/common/line-divider';
 
 interface DetailPanelProps {
   place: BuskingPlace | null;

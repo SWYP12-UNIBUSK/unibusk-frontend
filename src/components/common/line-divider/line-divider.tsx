@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { cn } from '@/utils';
 
 type DividerWidth = number | `${number}%` | `${number}px`;
@@ -16,17 +15,12 @@ export function LineDivider({
   colorClassName = 'bg-gray-200',
   className,
 }: LineDividerProps) {
-  const style: CSSProperties = {
-    width: typeof width === 'number' ? `${width}px` : width,
-    height: `${thickness}px`,
-  };
-
   return (
     <div
       aria-hidden="true"
       role="presentation"
       className={cn('mx-auto', colorClassName, className)}
-      style={style}
+      style={{ width, height: thickness }}
     />
   );
 }
