@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/nextjs-vite';
+import { Toaster } from '../src/components/common/toast';
 import '../src/styles/globals.css';
 
 const preview: Preview = {
@@ -17,6 +18,14 @@ const preview: Preview = {
       test: 'todo',
     },
   },
+  decorators: [
+    Story => (
+      <>
+        <Story />
+        <Toaster />
+      </>
+    ),
+  ],
 };
 
 export default preview;
