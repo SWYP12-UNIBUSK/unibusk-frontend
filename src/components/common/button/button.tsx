@@ -122,9 +122,9 @@ interface ButtonProps
   extends React.ComponentProps<'button'>,
   VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  theme: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
-  appearance: 'filled' | 'outline';
-  size: 'lg' | 'md' | 'sm';
+  theme?: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
+  appearance?: 'filled' | 'outline';
+  size?: 'lg' | 'md' | 'sm';
 }
 
 function Button({

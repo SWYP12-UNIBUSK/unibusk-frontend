@@ -35,7 +35,7 @@ export function AvatarButton({
   icon,
   disabled,
   type = 'button',
-  'aria-label': ariaLabel = '유저 아바타',
+  'aria-label': ariaLabel = '사용자 아바타',
   ...props
 }: AvatarButtonProps) {
   const containerSize = size + 20;
