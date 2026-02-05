@@ -2,7 +2,7 @@
 
 import type { PerformanceList } from '@/mocks/performance/performance-list';
 import { useCallback } from 'react';
-import { PerformanceCard } from './performace-card';
+import { PerformanceCard } from './performance-card';
 
 interface UpcomingListProps {
   performances: PerformanceList;
