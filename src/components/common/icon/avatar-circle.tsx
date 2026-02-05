@@ -1,7 +1,7 @@
 import type { SVGProps } from 'react';
 import { useId } from 'react';
 
-export function AvatarIcon({
+export function AvatarCircleIcon({
   className,
   title,
   'aria-label': ariaLabel,

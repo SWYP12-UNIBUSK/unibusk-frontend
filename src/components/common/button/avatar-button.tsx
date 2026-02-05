@@ -1,7 +1,7 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/utils';
-import { AvatarIcon } from '../icon';
+import { AvatarCircleIcon } from '../icon';
 
 const avatarButtonVariants = cva('', {
   variants: {
@@ -98,7 +98,7 @@ export function AvatarButton({
                 <span aria-hidden={true}>{icon}</span>
               )
             : (
-                <AvatarIcon
+                <AvatarCircleIcon
                   aria-hidden={true}
                   className={cn(
                     'fill-current transition-colors duration-300',
