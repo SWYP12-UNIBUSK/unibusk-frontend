@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-
-import ImageUpload from './image-upload';
+import { ImageUpload } from './image-upload';
 
 const meta = {
   title: 'Component/Common/ImageUpload',

@@ -28,7 +28,7 @@ interface ImageUploadProps {
   maxSize?: number;
 }
 
-export default function ImageUpload({
+function ImageUpload({
   onFileChange,
   defaultImageUrl,
   className,
@@ -257,3 +257,5 @@ export default function ImageUpload({
     </div>
   );
 }
+
+export { ImageUpload };
