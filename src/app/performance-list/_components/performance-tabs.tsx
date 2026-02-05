@@ -2,7 +2,6 @@
 
 import type { PerformanceList } from '@/mocks/performance/performance-list';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags';
 import { cn } from '@/utils';
 import { PastList } from './past-list';
@@ -10,17 +9,16 @@ import { PerformanceSearch } from './performance-search';
 import { UpcomingList } from './upcoming-list';
 
 interface PerformanceTabsProps {
-  defaultTab?: string;
   performances?: PerformanceList;
 }
 
 // !todo: Tabs 공통 컴포넌트로 분리 및 개선 예정
-export function PerformanceTabs({ defaultTab = 'upcoming', performances = [] }: PerformanceTabsProps) {
+export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentTab = searchParams.get('tab') || defaultTab;
+  const currentTab = searchParams.get('tab') || 'upcoming';
   const tabTriggerStyle = `
     rounded-none border-b-2 border-transparent px-0 text-gray-300
     typo-title-b-3 py-[21px]
@@ -43,7 +41,6 @@ export function PerformanceTabs({ defaultTab = 'upcoming', performances = [] }: 
   return (
     <section className="min-h-300 pt-37.5">
       <Tabs
-        defaultValue={defaultTab}
         value={currentTab}
         onValueChange={handleTabChange}
       >

@@ -12,6 +12,7 @@ export function PerformanceSearch() {
         className="h-12.5 rounded-full border-gray-700 pr-5.5"
       />
       <button
+        type="button"
         className={`
           absolute top-1/2 right-4 h-5 w-5 -translate-y-1/2 cursor-pointer
           text-gray-800

@@ -1,17 +1,14 @@
+import { Suspense } from 'react';
 import { mockPerformanceList } from '@/mocks/performance/performance-list';
 import { Hero, PerformanceTabs } from './_components';
 
-interface PerformanceListPageProps {
-  searchParams: Promise<{ tab?: string }>;
-}
-
-export default async function PerformanceListPage({ searchParams }: PerformanceListPageProps) {
-  const { tab } = await searchParams;
-
+export default function PerformanceListPage() {
   return (
     <main className="min-h-screen bg-white px-60 pt-55">
       <Hero />
-      <PerformanceTabs defaultTab={tab} performances={mockPerformanceList} />
+      <Suspense fallback={<div>로딩중...</div>}>
+        <PerformanceTabs performances={mockPerformanceList} />
+      </Suspense>
     </main>
   );
 }
