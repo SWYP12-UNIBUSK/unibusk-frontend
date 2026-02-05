@@ -14,10 +14,9 @@ declare global {
       }
 
       class Map {
-        // 지도 인스턴스 생성
         constructor(container: HTMLElement, options: MapOptions);
 
-        // 지도 중심 이동
+        setLevel(level: number): void;
         setCenter(center: LatLng): void;
       }
 
@@ -33,6 +32,9 @@ declare global {
 
         // 마커 위치 이동
         setPosition(position: LatLng): void;
+
+        // 현재 붙어있는 map 조회
+        getMap(): Map | null;
       }
 
       namespace event {
@@ -53,6 +55,12 @@ declare global {
          * 현재 타입은 "마커 클릭"만 필요한 상황을 가정해서 최소 범위로 선언했습니다.
          */
         function addListener(
+          target: Marker,
+          type: 'click',
+          handler: () => void,
+        ): void;
+
+        function removeListener(
           target: Marker,
           type: 'click',
           handler: () => void,
