@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/utils';
 
@@ -89,7 +89,7 @@ function ImageUpload({
         return;
       }
 
-      // 미리보기 URL 생성
+      // 미리보기 URL 생성 (blob URL로 생성됨)
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
       onFileChange(file);
@@ -152,6 +152,15 @@ function ImageUpload({
       fileInputRef.current.value = '';
     }
   };
+
+  // 컴포넌트 언마운트, previewUrl 변경 시 blob URL 메모리 해제
+  useEffect(() => {
+    return () => {
+      if (previewUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
     <div className={cn('relative', className)}>

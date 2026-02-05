@@ -122,7 +122,7 @@ function FormLayoutRenderer(args: any) {
                 onChange(file);
                 args.onFileChange(file);
               }}
-              defaultImageUrl={value || undefined}
+              defaultImageUrl={typeof value === 'string' ? value : undefined}
             />
           )}
         />
