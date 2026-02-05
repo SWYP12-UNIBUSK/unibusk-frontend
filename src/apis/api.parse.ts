@@ -1,4 +1,4 @@
-import type z from 'zod';
+import type * as z from 'zod';
 
 /**
  * API 응답 데이터를 Zod 스키마로 검증하고 타입 안전성을 보장합니다.

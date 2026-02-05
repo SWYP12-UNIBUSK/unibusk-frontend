@@ -1,7 +1,16 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  trailingSlash: true,
+  trailingSlash: false,
+
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
+      },
+    ];
+  },
 
   images: {
     // 최신 형식 우선 (AVIF > WebP > JPEG)

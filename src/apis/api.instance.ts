@@ -1,4 +1,5 @@
 import type { FetchConfig } from './api.types';
+import { redirect } from 'next/navigation';
 import { ENV } from '@/utils';
 
 /**
@@ -38,6 +39,19 @@ class APIClient {
       },
       credentials: 'include',
     });
+
+    if (response.status === 401) {
+      // ✅ 서버/클라이언트 환경 분기
+      if (typeof window === 'undefined') {
+        // 서버: Next.js redirect 사용
+        redirect('/login');
+      }
+      else {
+        // 클라이언트: window.location 사용
+        window.location.href = '/login';
+      }
+      throw new Error('Unauthorized');
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -162,4 +176,17 @@ class APIClient {
   }
 }
 
-export const api = new APIClient(ENV.NEXT_PUBLIC_API_URL || '');
+// todo: 다음 작업으로 server/client 데이터 패칭 api instance 분리 작업 예정
+// todo: api instance 분리 작업을 진행하는 이유:
+// todo: route handler에서 검증 중복 로직 제거 +  서버 컴포넌트에서 불필요한 route handler 호출 방지
+function getApiUrl() {
+  // 클라이언트 컴포넌트에서 데이터 패칭을 진행하는 경우에는 프록시를 사용.
+  // 서버 컴포넌트에서 데이터 패칭을 진행하는 경우 실제 서버 도메인으로 진행하기 위해서 window로 분기
+  if (typeof window === 'undefined') {
+    return ENV.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  }
+
+  return '';
+}
+
+export const api = new APIClient(getApiUrl());
