@@ -1,4 +1,3 @@
-import React from 'react';
 import { mockPerformanceList } from '@/mocks/performance/performance-list';
 import { Hero, PerformanceTabs } from './_components';
 
@@ -10,7 +9,7 @@ export default async function PerformanceListPage({ searchParams }: PerformanceL
   const { tab } = await searchParams;
 
   return (
-    <main className="min-h-screen bg-white px-[240px] pt-[220px]">
+    <main className="min-h-screen bg-white px-60 pt-55">
       <Hero />
       <PerformanceTabs defaultTab={tab} performances={mockPerformanceList} />
     </main>

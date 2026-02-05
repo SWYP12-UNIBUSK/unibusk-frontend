@@ -31,7 +31,7 @@ interface PerformanceCardProps {
    * 카드 클릭 핸들러
    * @param id 클릭된 공연의 ID
    */
-  onClick?: (id: string) => void;
+  onClick?: (id: number) => void;
   /** 추가적인 스타일링을 위한 클래스 이름 */
   className?: string;
 }
@@ -41,7 +41,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
   const { id, date, title, startTime, endTime, location, thumbnailUrl } = performance;
 
   const handleClick = () => {
-    onClick?.(String(id));
+    onClick?.(id);
   };
 
   const showPlaceholder = !thumbnailUrl || imageError;
@@ -98,7 +98,6 @@ export function PerformanceCard({ performance, onClick, className }: Performance
                       h-auto w-full transition-transform duration-500
                       group-hover:scale-105
                     `,
-                    imageError && 'opacity-0', // ← 에러 시 숨김
                   )}
                   onError={() => {
                     setImageError(true);
