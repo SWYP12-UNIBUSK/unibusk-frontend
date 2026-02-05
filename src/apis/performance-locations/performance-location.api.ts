@@ -25,7 +25,7 @@ export function getPerformanceLocations(query: PerformanceLocationsQuery) {
   const validQuery = PerformanceLocationsMapQuerySchema.parse(query);
 
   return api
-    .get('/performance-locations/map', { params: buildBoundsQueryParams(validQuery) })
+    .get('/api/performance-locations/map', { params: buildBoundsQueryParams(validQuery) })
     .then(parseResponse(PerformanceLocationsResponseDtoSchema));
 }
 
@@ -36,6 +36,6 @@ export function getPerformanceLocations(query: PerformanceLocationsQuery) {
  */
 export function getPerformanceLocationDetail(performanceLocationId: number) {
   return api
-    .get(`/performance-locations/${performanceLocationId}`)
+    .get(`/api/performance-locations/${performanceLocationId}`)
     .then(parseResponse(PerformanceLocationDtoSchema));
 }

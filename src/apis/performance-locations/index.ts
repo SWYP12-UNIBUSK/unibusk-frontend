@@ -1,4 +1,4 @@
-export { getPerformanceLocationDetail, getPerformanceLocationsMap } from './performance-location.api';
+export { getPerformanceLocationDetail, getPerformanceLocations } from './performance-location.api';
 export type {
   PerformanceLocationDto,
   PerformanceLocationsQuery as PerformanceLocationsMapQuery,
