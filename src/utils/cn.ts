@@ -11,7 +11,6 @@ const customTwMerge = extendTailwindMerge<'unibusk-typography'>({
   extend: {
     classGroups: {
       'unibusk-typography': [{ typo: [() => true] }],
-
     },
     conflictingClassGroups: {
       'unibusk-typography': ['font-size', 'font-weight', 'leading', 'tracking'],
