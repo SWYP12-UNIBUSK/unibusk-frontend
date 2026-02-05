@@ -1,0 +1,11 @@
+export const PANEL_WIDTH = 343;
+export const PANEL_GAP = 17;
+
+export const BUSKING_HEADER_HEIGHT = 110;
+export const BUSKING_PANEL_TOP_GAP = 6;
+
+export const BUSKING_PANEL_LEFT_GAP = 32;
+export const BUSKING_PANEL_BOTTOM_GAP = 64;
+
+export const BUSKING_PANEL_TOP = BUSKING_HEADER_HEIGHT + BUSKING_PANEL_TOP_GAP;
+export const BUSKING_PANEL_HEIGHT = `max(0px, calc(100vh - ${BUSKING_PANEL_TOP}px - ${BUSKING_PANEL_BOTTOM_GAP}px))`;
