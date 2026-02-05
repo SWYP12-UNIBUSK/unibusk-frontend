@@ -1,5 +1,5 @@
 import type { PerformanceLocationDto } from '@/apis/performance-locations';
-import type { BuskingPlace } from '@/types/busking-place';
+import type { BuskingPlace } from '@/types/busking-map';
 
 export function adaptPerformanceLocationsToBuskingPlaces(locations: PerformanceLocationDto[]): BuskingPlace[] {
   return locations.map(dto => ({

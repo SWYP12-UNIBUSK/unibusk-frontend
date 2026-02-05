@@ -3,6 +3,5 @@ export interface BuskingPlace {
   title: string;
   lat: number;
   lng: number;
-  description?: string;
   thumbnailUrl?: string | null;
 }
