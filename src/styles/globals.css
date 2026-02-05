@@ -177,6 +177,7 @@
   /* shadow 토큰 */
   --shadow-elevate-1: var(--raw-shadow-5);
   --shadow-elevate-2: var(--raw-shadow-10);
+  --shadow-sidebar: 0 0 20px 0 rgb(0 0 0 / 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
