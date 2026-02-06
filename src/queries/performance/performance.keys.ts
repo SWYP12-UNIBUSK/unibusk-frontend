@@ -15,4 +15,6 @@ export const performanceKeys = {
   all: ['performance'] as const,
   lists: () => [...performanceKeys.all, 'list'] as const,
   list: (filter: PerformanceFilterTab) => [...performanceKeys.lists(), filter] as const,
+  searches: () => [...performanceKeys.all, 'search'] as const,
+  search: (filter: PerformanceFilterTab, keyword: string) => [...performanceKeys.searches(), filter, keyword] as const,
 } as const;
