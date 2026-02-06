@@ -1,5 +1,5 @@
 import type { PerformanceFilterTab } from '@/types/performance';
-import { Suspense } from 'react';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getQueryClient } from '@/queries';
 import { performanceListInfiniteQueryOptions } from '@/queries/performance';
 import { isValidPerformanceTab } from '@/types/performance';
@@ -27,11 +27,11 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-white px-60 pt-55">
       <Hero />
-      <Suspense fallback={<div>로딩중...</div>}>
+      <HydrationBoundary state={dehydrate(queryClient)}>
         <PerformanceTabs
           defaultTab={tab}
         />
-      </Suspense>
+      </HydrationBoundary>
     </main>
   );
 }

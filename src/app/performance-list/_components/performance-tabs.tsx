@@ -2,7 +2,7 @@
 
 import type { PerformanceFilterTab } from '@/types/performance';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags';
 import { isValidPerformanceTab } from '@/types/performance';
 import { cn } from '@/utils';
@@ -91,10 +91,14 @@ export function PerformanceTabs({
           <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
 
           <TabsContent value="upcoming">
-            {tabContent}
+            <Suspense fallback={<div className="flex justify-center py-20">로딩 중...</div>}>
+              {tabContent}
+            </Suspense>
           </TabsContent>
           <TabsContent value="past">
-            {tabContent}
+            <Suspense fallback={<div className="flex justify-center py-20">로딩 중...</div>}>
+              {tabContent}
+            </Suspense>
           </TabsContent>
         </div>
       </Tabs>
