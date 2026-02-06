@@ -87,17 +87,17 @@ export function PerformanceTabs({
           <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
 
           <TabsContent value="upcoming">
-            <Suspense fallback={<div className="flex justify-center py-20" role="status">로딩 중...</div>}>
+            <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
               {isSearchMode
                 ? <PerformanceSearchMode keyword={searchKeyword} validTab="upcoming" />
                 : <PerformanceListMode validTab="upcoming" />}
             </Suspense>
           </TabsContent>
           <TabsContent value="past">
-            <Suspense fallback={<div className="flex justify-center py-20" role="status">로딩 중...</div>}>
+            <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
               {isSearchMode
-                ? <PerformanceSearchMode keyword={searchKeyword} validTab="upcoming" />
-                : <PerformanceListMode validTab="upcoming" />}
+                ? <PerformanceSearchMode keyword={searchKeyword} validTab="past" />
+                : <PerformanceListMode validTab="past" />}
             </Suspense>
           </TabsContent>
         </div>
