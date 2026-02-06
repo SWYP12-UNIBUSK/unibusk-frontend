@@ -1,6 +1,6 @@
 export { getPerformanceLocationDetail, getPerformanceLocations } from './performance-location.api';
 export type {
   PerformanceLocationDto,
-  PerformanceLocationsQuery as PerformanceLocationsMapQuery,
-  PerformanceLocationsResponseDto as PerformanceLocationsMapResponseDto,
+  PerformanceLocationsQuery,
+  PerformanceLocationsResponseDto,
 } from './performance-location.schema';

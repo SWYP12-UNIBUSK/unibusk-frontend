@@ -3,7 +3,7 @@ import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
   PerformanceLocationDtoSchema,
-  PerformanceLocationsMapQuerySchema,
+  PerformanceLocationsQuerySchema,
   PerformanceLocationsResponseDtoSchema,
 } from './performance-location.schema';
 
@@ -22,7 +22,7 @@ function buildBoundsQueryParams(query: PerformanceLocationsQuery) {
  * @returns Bounds에 맞는 버스킹 장소 리스트
  */
 export function getPerformanceLocations(query: PerformanceLocationsQuery) {
-  const validQuery = PerformanceLocationsMapQuerySchema.parse(query);
+  const validQuery = PerformanceLocationsQuerySchema.parse(query);
 
   return api
     .get('/api/performance-locations/map', { params: buildBoundsQueryParams(validQuery) })

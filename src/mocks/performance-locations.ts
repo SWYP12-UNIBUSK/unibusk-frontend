@@ -1,6 +1,6 @@
-import type { PerformanceLocationsMapResponseDto } from '@/apis/performance-locations';
+import type { PerformanceLocationsResponseDto } from '@/apis/performance-locations';
 
-export const PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE: PerformanceLocationsMapResponseDto = {
+export const PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE: PerformanceLocationsResponseDto = {
   locations: [
     {
       performanceLocationId: 1,

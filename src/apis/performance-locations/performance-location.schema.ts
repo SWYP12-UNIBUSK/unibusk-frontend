@@ -17,7 +17,7 @@ export const PerformanceLocationsResponseDtoSchema = z.object({
   locations: z.array(PerformanceLocationDtoSchema),
 });
 
-export const PerformanceLocationsMapQuerySchema = z.object({
+export const PerformanceLocationsQuerySchema = z.object({
   north: z.number(),
   south: z.number(),
   east: z.number(),
@@ -26,4 +26,4 @@ export const PerformanceLocationsMapQuerySchema = z.object({
 
 export type PerformanceLocationDto = z.infer<typeof PerformanceLocationDtoSchema>;
 export type PerformanceLocationsResponseDto = z.infer<typeof PerformanceLocationsResponseDtoSchema>;
-export type PerformanceLocationsQuery = z.infer<typeof PerformanceLocationsMapQuerySchema>;
+export type PerformanceLocationsQuery = z.infer<typeof PerformanceLocationsQuerySchema>;
