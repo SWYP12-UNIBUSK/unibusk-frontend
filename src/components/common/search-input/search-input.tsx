@@ -3,7 +3,6 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import Image from 'next/image';
-import * as React from 'react';
 import { SearchIcon } from '@/components/common/icon';
 import { Input } from '@/components/common/input/input';
 import { cn } from '@/utils';
@@ -36,59 +35,69 @@ const inputThemeVariants = cva(`
   },
 });
 
+/**
+ * SearchInput 컴포넌트 Props
+ *
+ * @remarks
+ * 이 컴포넌트는 제어(Controlled) 컴포넌트입니다.
+ * 반드시 `value`와 `onChange` prop을 함께 전달해야 합니다.
+ *
+ * @example
+ * **기본 사용법 (useState)**
+ * ```tsx
+ * const [searchValue, setSearchValue] = useState('');
+ *
+ * <SearchInput
+ *   value={searchValue}
+ *   onChange={(e) => setSearchValue(e.target.value)}
+ *   placeholder="검색어를 입력하세요"
+ * />
+ * ```
+ *
+ * @example
+ * **react-hook-form과 함께 사용**
+ * react-hook-form과 함께 사용할 때는 반드시 `Controller`를 사용해야 합니다.
+ * `register()`를 사용하면 X 버튼이 정상 작동하지 않습니다.
+ * ```tsx
+ * import { Controller, useForm } from 'react-hook-form';
+ *
+ * const { control } = useForm();
+ *
+ * <Controller
+ *   name="searchQuery"
+ *   control={control}
+ *   render={({ field }) => (
+ *     <SearchInput
+ *       value={field.value}
+ *       onChange={field.onChange}
+ *       placeholder="검색어를 입력하세요"
+ *     />
+ *   )}
+ * />
+ * ```
+ */
 interface SearchInputProps
   extends React.ComponentProps<typeof Input>,
-  VariantProps<typeof inputThemeVariants> {}
+  VariantProps<typeof inputThemeVariants> {
+  /** 검색 입력값 (필수) */
+  value: string;
+  /** 입력값 변경 핸들러 (필수) */
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
-function SearchInput({ className, theme, value, disabled, onChange, ...props }: SearchInputProps) {
-  // value prop의 존재 여부로 제어/비제어 모드 판단
-  const isControlled = value !== undefined;
-  // 비제어 모드일 때만 사용할 내부 상태 (초기값은 defaultValue 유무)
-  const [internalHasValue, setInternalHasValue] = React.useState(!!props.defaultValue);
-
-  // 제어 모드이면 value를 따르고, 비제어 모드이면 내부 상태를 따름
-  const hasValue = isControlled ? !!value : internalHasValue;
-
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isControlled) {
-      setInternalHasValue(!!e.target.value);
-    }
-    onChange?.(e);
-  };
-
-  /**
-   * X 버튼 클릭 시 input 값을 지우는 핸들러
-   * 제어/비제어 컴포넌트 모두 지원하기 위해 복잡한 로직 사용
-   */
+function SearchInput({
+  className,
+  theme,
+  value,
+  disabled,
+  onChange,
+  ...props
+}: SearchInputProps) {
   const handleClear = () => {
-    if (inputRef.current) {
-      // 1. Native Setter를 사용하여 input 값을 직접 변경
-      // (단순 inputRef.current.value = ''는 React가 감지하지 못함)
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        'value',
-      )?.set;
-      nativeInputValueSetter?.call(inputRef.current, '');
-
-      // 2. input/change 이벤트를 수동으로 발생시켜 React에게 변경 사항 알림
-      // → 제어 컴포넌트: 부모의 onChange 호출 → 상태 업데이트
-      // → 비제어 컴포넌트: 내부 handleChange 호출 → internalHasValue 업데이트
-      const inputEvent = new Event('input', { bubbles: true });
-      inputRef.current.dispatchEvent(inputEvent);
-
-      const changeEvent = new Event('change', { bubbles: true });
-      inputRef.current.dispatchEvent(changeEvent);
-
-      // 3. 포커스 유지 (UX 개선)
-      inputRef.current.focus();
-    }
-
-    // 4. 비제어 모드일 때만 내부 상태 직접 업데이트 (안전장치)
-    if (!isControlled) {
-      setInternalHasValue(false);
-    }
+    onChange({
+      target: { value: '' },
+      currentTarget: { value: '' },
+    } as React.ChangeEvent<HTMLInputElement>);
   };
 
   return (
@@ -98,16 +107,15 @@ function SearchInput({ className, theme, value, disabled, onChange, ...props }: 
     `, className)}
     >
       <Input
-        ref={inputRef}
         type="search"
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
         className={cn(inputThemeVariants({ theme }))}
         disabled={disabled}
         {...props}
       />
       <div className="absolute right-4 flex items-center gap-[2px]">
-        {hasValue && !disabled && (
+        {!!value && !disabled && (
           <button
             type="button"
             onClick={handleClear}
