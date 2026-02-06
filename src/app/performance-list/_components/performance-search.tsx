@@ -38,6 +38,7 @@ export function PerformanceSearch({ onSearch }: PerformanceSearchProps) {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="지역명이나 장소를 검색해보세요"
+        aria-label="공연 검색"
       />
     </div>
   );

@@ -22,7 +22,10 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-20">
+      <div
+        className="flex flex-col items-center justify-center gap-4 py-20"
+        role="status"
+      >
         <div className={`
           size-8 animate-spin rounded-full border-4 border-gray-200
           border-t-primary
@@ -35,7 +38,10 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-20">
+      <div
+        className="flex flex-col items-center justify-center gap-4 py-20"
+        role="alert"
+      >
         <div className="typo-body-m-3 text-red-500">
           검색 중 오류가 발생했습니다.
         </div>
@@ -63,7 +69,10 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
 
   if (performances.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-20">
+      <div
+        className="flex flex-col items-center justify-center gap-2 py-20"
+        role="status"
+      >
         <div className="typo-body-m-3 text-gray-500">검색 결과가 없습니다.</div>
         <div className="typo-body-m-3 text-gray-400">
           다른 검색어로 시도해보세요.

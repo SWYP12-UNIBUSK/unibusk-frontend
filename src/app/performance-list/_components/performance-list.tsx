@@ -1,7 +1,7 @@
 'use client';
 
 import type { Performances } from '@/types/performance';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { PerformanceCard } from './performance-card';
 
 interface PerformanceListProps {
@@ -63,6 +63,19 @@ export function PerformanceList({
     return () => observer.disconnect();
   }, [hasMore, isLoading, onLoadMore]);
 
+  const performanceCards = useMemo(
+    () =>
+      performances.map(performance => (
+        <PerformanceCard
+          key={performance.performanceId}
+          performance={performance}
+          onClick={handlePerformanceClick}
+          className="w-full"
+        />
+      )),
+    [performances, handlePerformanceClick],
+  );
+
   return (
     <div>
       <div className={`
@@ -72,14 +85,7 @@ export function PerformanceList({
         xl:grid-cols-4
       `}
       >
-        {performances.map(performance => (
-          <PerformanceCard
-            key={performance.performanceId}
-            performance={performance}
-            onClick={handlePerformanceClick}
-            className="w-full"
-          />
-        ))}
+        {performanceCards}
       </div>
       {hasMore && (
         <div

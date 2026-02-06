@@ -12,7 +12,6 @@ export function performanceListInfiniteQueryOptions(filter: PerformanceFilterTab
     },
     initialPageParam: 0,
     getNextPageParam: lastPage => lastPage.hasNext ? lastPage.page + 1 : undefined,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -31,7 +30,6 @@ export function performanceSearchInfiniteQueryOptions(
     },
     initialPageParam: 0,
     getNextPageParam: lastPage => lastPage.hasNext ? lastPage.page + 1 : undefined,
-    staleTime: 5 * 60 * 1000,
     /** 검색어가 있을 때만 쿼리 실행 (성능 최적화) */
     enabled: keyword.trim().length > 0,
   });

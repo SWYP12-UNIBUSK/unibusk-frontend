@@ -3,7 +3,7 @@
 import type { Performance } from '@/types/performance';
 import { ImageIcon, MapPin } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Card, CardContent } from '@/components/common/card';
 import { cn } from '@/utils';
 
@@ -20,7 +20,7 @@ interface PerformanceCardProps {
   className?: string;
 }
 
-export function PerformanceCard({ performance, onClick, className }: PerformanceCardProps) {
+export const PerformanceCard = memo(({ performance, onClick, className }: PerformanceCardProps) => {
   const [imageError, setImageError] = useState(false);
   const { performanceId, title, performanceDate, startTime, endTime, locationName, images } = performance;
 
@@ -50,7 +50,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
       <CardContent className="flex h-full flex-col p-2.5">
         {/* Thumbnail */}
         <div className={`
-          relative mb-2.5 aspect-5/8 w-full shrink-0 overflow-hidden rounded-lg
+          relative aspect-5/8 w-full shrink-0 overflow-hidden rounded-lg
           bg-muted
         `}
         >
@@ -98,10 +98,13 @@ export function PerformanceCard({ performance, onClick, className }: Performance
           />
         </div>
 
-        <div className="flex flex-1 flex-col p-2.5">
-          <div className="shrink-0 text-sm text-muted-foreground">
+        <div className={`
+          flex flex-1 flex-col p-2.5 typo-caption-r-1 text-gray-700
+        `}
+        >
+          <div className="shrink-0">
 
-            <p className="font-medium tabular-nums">
+            <p className="tabular-nums">
               {`${performanceDate} (${startTime}~${endTime})`}
             </p>
 
@@ -112,8 +115,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
           </div>
 
           <h3 className={`
-            mt-2.5 line-clamp-1 text-lg leading-tight font-bold text-foreground
-            transition-colors duration-200
+            mt-0.75 typo-body-sb-2 text-black transition-colors duration-200
             group-hover:text-primary
           `}
           >
@@ -123,4 +125,4 @@ export function PerformanceCard({ performance, onClick, className }: Performance
       </CardContent>
     </Card>
   );
-}
+});

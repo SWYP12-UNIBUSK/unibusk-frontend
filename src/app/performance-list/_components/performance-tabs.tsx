@@ -15,16 +15,14 @@ interface PerformanceTabsProps {
   defaultTab?: PerformanceFilterTab;
 }
 
-const TAB_TRIGGER_STYLES = `
-    rounded-none border-b-2 border-transparent px-0 text-gray-300
-    typo-title-b-3 py-[21px]
-    hover:text-gray-400
-    data-[state=active]:border-b-primary
-    data-[state=active]:bg-transparent
-    data-[state=active]:text-primary data-[state=active]:shadow-none
-    dark:data-[state=active]:bg-transparent
-    cursor-pointer
-  `;
+const TAB_TRIGGER_STYLES = cn(
+  'rounded-none border-b-2 border-transparent px-0 py-5.25',
+  'cursor-pointer typo-title-b-3 text-gray-300',
+  'hover:text-gray-400',
+  'data-[state=active]:border-b-primary data-[state=active]:text-primary',
+  'data-[state=active]:bg-transparent data-[state=active]:shadow-none',
+  'dark:data-[state=active]:bg-transparent',
+);
 
 /** 공연 탭 (검색/일반 모드 전환) */
 export function PerformanceTabs({
@@ -53,15 +51,6 @@ export function PerformanceTabs({
   };
 
   const isSearchMode = searchKeyword.length > 0;
-  const renderContent = () => (
-    isSearchMode
-      ? (
-          <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
-        )
-      : (
-          <PerformanceListMode validTab={validTab} />
-        )
-  );
 
   return (
     <section className="min-h-300 pt-37.5">
@@ -98,10 +87,14 @@ export function PerformanceTabs({
           <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
 
           <TabsContent value="upcoming">
-            {renderContent()}
+            {isSearchMode
+              ? <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
+              : <PerformanceListMode validTab={validTab} />}
           </TabsContent>
           <TabsContent value="past">
-            {renderContent()}
+            {isSearchMode
+              ? <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
+              : <PerformanceListMode validTab={validTab} />}
           </TabsContent>
         </div>
       </Tabs>
