@@ -31,7 +31,7 @@ export function KakaoMapView({ center, level = 3, markers, className }: KakaoMap
 
       {error
         ? (
-            <div className="absolute inset-0" role="alert" aria-live="polite">
+            <div className="absolute inset-0" role="alert">
               지도 로딩 실패:
               {' '}
               {error.message}

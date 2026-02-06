@@ -17,6 +17,15 @@ export function useKakaoMap({ isLoaded, center, level }: UseKakaoMapProps) {
   const centerLat = center.lat;
   const centerLng = center.lng;
 
+  const initialCenterRef = useRef<Coordinate>(center);
+  const initialLevelRef = useRef<number>(level);
+
+  // 지도 생성 전까지만 최신 center/level 캡처
+  if (!mapRef.current) {
+    initialCenterRef.current = center;
+    initialLevelRef.current = level;
+  }
+
   // 콜백 ref로 컨테이너 DOM이 실제로 붙는 순간(node)만 잡아 지도 초기화를 1회 수행하기 위해 저장
   const setMapContainerRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -27,15 +36,18 @@ export function useKakaoMap({ isLoaded, center, level }: UseKakaoMapProps) {
         return;
       }
 
+      const initialCenter = initialCenterRef.current;
+      const initialLevel = initialLevelRef.current;
+
       const instance = new window.kakao.maps.Map(node, {
-        center: new window.kakao.maps.LatLng(centerLat, centerLng),
-        level,
+        center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
+        level: initialLevel,
       });
 
       mapRef.current = instance;
       setMap(instance); // 외부(마커 레이어 등)에서 map 값을 사용할 수 있도록 state로 노출
     },
-    [isLoaded, centerLat, centerLng, level],
+    [isLoaded],
   );
 
   // 지도 중앙 좌표 설정
