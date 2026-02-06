@@ -100,7 +100,7 @@ function SearchInput({
 }: SearchInputProps) {
   const innerRef = useRef<HTMLInputElement>(null);
 
-  useImperativeHandle(ref, () => innerRef.current!, []);
+  useImperativeHandle(ref, () => innerRef.current ?? (null as unknown as HTMLInputElement), []);
 
   const handleClear = () => {
     onChange({
