@@ -1,1 +1,1 @@
-export { adaptPerformanceLocationsToBuskingPlaces } from './map-performance-locations-to-busking-places';
+export { adaptPerformanceLocationsToBuskingPlaces } from './performance-location.adapter';
