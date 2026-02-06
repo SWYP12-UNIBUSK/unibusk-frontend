@@ -57,11 +57,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   showCount?: boolean;
   currentCount?: number;
+  /** Input 컴포넌트의 최상위 래퍼 div에 적용될 클래스 */
+  containerClassName?: string;
 }
 
 function Input({
   ref,
   className,
+  containerClassName,
   error,
   type,
   showCount,
@@ -105,7 +108,7 @@ function Input({
   };
 
   return (
-    <div className="relative">
+    <div className={cn('relative', containerClassName)}>
       <input
         ref={ref}
         type={type}
@@ -115,6 +118,9 @@ function Input({
           'typo-body-m-3 text-black',
           'transition-[border-color,box-shadow] outline-none',
           `placeholder:typo-caption-r-1 placeholder:text-gray-550`,
+          // !todo: disabled:pointer-events-none이 포함되어 있다면,
+          // !todo:마우스 이벤트가 차단되어 cursor-not-allowed가 나타나지 않습니다.
+          // !todo: Input 컴포넌트를 개선하는 과정에서 cursor-not-allowed로 수정
           'disabled:pointer-events-none disabled:bg-gray-300',
           'border-gray-300 bg-gray-100',
           'focus:border-gray-700',
