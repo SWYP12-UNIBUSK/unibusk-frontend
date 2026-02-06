@@ -127,7 +127,7 @@ interface SearchFormData {
 }
 
 function ReactHookFormExample() {
-  const { control, handleSubmit, reset, watch } = useForm<SearchFormData>({
+  const { control, handleSubmit, reset, watch, setFocus } = useForm<SearchFormData>({
     defaultValues: {
       searchQuery: '',
     },
@@ -147,7 +147,7 @@ function ReactHookFormExample() {
           htmlFor="searchQuery"
           className="text-sm font-medium text-gray-700"
         >
-          공연 검색 (복잡한 버전: DOM 직접 조작)
+          공연 검색 (react-hook-form Controller 연동)
         </label>
         <Controller
           name="searchQuery"
@@ -157,6 +157,7 @@ function ReactHookFormExample() {
               id="searchQuery"
               value={field.value}
               onChange={field.onChange}
+              ref={field.ref}
               placeholder="공연명을 입력하세요"
               theme="gray"
               aria-label="공연 검색"
@@ -183,6 +184,16 @@ function ReactHookFormExample() {
           `}
         >
           초기화
+        </button>
+        <button
+          type="button"
+          onClick={() => setFocus('searchQuery')}
+          className={`
+            rounded-lg bg-green-600 px-4 py-2 text-white
+            hover:bg-green-700
+          `}
+        >
+          검색창 포커스
         </button>
       </div>
       <div className="text-sm text-gray-500">

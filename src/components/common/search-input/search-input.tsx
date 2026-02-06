@@ -106,6 +106,7 @@ function SearchInput({
     onChange({
       target: { value: '' },
       currentTarget: { value: '' },
+      type: 'change',
     } as React.ChangeEvent<HTMLInputElement>);
 
     // UX 개선: 클리어 후 input에 포커스
@@ -113,12 +114,9 @@ function SearchInput({
   };
 
   return (
-    <div className={cn(`
-      relative flex w-full items-center
-      [&>div:first-child]:w-full
-    `, className)}
-    >
+    <div className={cn(`relative flex w-full items-center`, className)}>
       <Input
+        containerClassName="w-full"
         ref={innerRef}
         type="search"
         value={value}

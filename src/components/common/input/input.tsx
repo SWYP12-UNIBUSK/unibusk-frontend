@@ -57,11 +57,14 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   showCount?: boolean;
   currentCount?: number;
+  /** Input 컴포넌트의 최상위 래퍼 div에 적용될 클래스 */
+  containerClassName?: string;
 }
 
 function Input({
   ref,
   className,
+  containerClassName,
   error,
   type,
   showCount,
@@ -105,7 +108,7 @@ function Input({
   };
 
   return (
-    <div className="relative">
+    <div className={cn('relative', containerClassName)}>
       <input
         ref={ref}
         type={type}
