@@ -6,7 +6,7 @@ import { Hero, PerformanceTabs } from './_components';
 
 interface PageProps {
   /** URL 쿼리 파라미터 (tab: 'upcoming' | 'past') */
-  searchParams: { tab?: PerformanceFilterTab };
+  searchParams: Promise<{ tab?: PerformanceFilterTab }>;
 }
 
 /**
