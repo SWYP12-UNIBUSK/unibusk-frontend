@@ -1,7 +1,8 @@
 'use client';
 
 import type { SVGProps } from 'react';
-import * as React from 'react';
+import { useId } from 'react';
+import { cn } from '@/utils';
 
 function SearchIcon({
   className,
@@ -10,7 +11,7 @@ function SearchIcon({
   'aria-labelledby': ariaLabelledBy,
   ...props
 }: SVGProps<SVGSVGElement> & { title?: string }) {
-  const titleId = React.useId();
+  const titleId = useId();
   const hasLabel = Boolean(title || ariaLabel || ariaLabelledBy);
 
   return (
@@ -24,10 +25,7 @@ function SearchIcon({
       aria-hidden={hasLabel ? undefined : true}
       aria-label={ariaLabel}
       aria-labelledby={title ? titleId : ariaLabelledBy}
-      className={`
-        block
-        ${className ?? ''}
-      `}
+      className={cn(`block`, className)}
       {...props}
     >
       {title && <title id={titleId}>{title}</title>}

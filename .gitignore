@@ -48,3 +48,9 @@ storybook-static
 
 # cloudflare worker
 .open-next
+
+# Local AI Guideline
+GEMINI.md
+CLAUDE.md
+CHATGPT.md
+SKILL.md
