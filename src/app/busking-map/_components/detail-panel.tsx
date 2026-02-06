@@ -50,8 +50,6 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
 
         <div className="mt-4 rounded-2xl bg-white">
           <h3 className="text-base font-semibold text-black">{place.title}</h3>
-          <p className="mt-2 text-sm text-black/60">{place.description ?? '상세 정보'}</p>
-
           <div className="mt-6 flex gap-3">
             <button
               type="button"

@@ -1,7 +1,7 @@
 'use client';
 
 import type { BuskingPlace } from '@/types/busking-map';
-import { useSidebarShellModel } from '@/hooks/busking-map/use-sidebar-shell-model';
+import { useSidebarShellModel } from '@/hooks/busking-map';
 
 import { DetailPanel } from './detail-panel';
 import { SidebarLayout } from './sidebar-layout';
