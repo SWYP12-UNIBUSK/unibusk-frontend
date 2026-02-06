@@ -9,7 +9,7 @@ export function Hero() {
     `}
     >
       <Image
-        src="/images/loading-unibusk-horizontal.png"
+        src="/images/performance-list-Illustration.png"
         alt="공연 둘러보기 HERO 일러스트"
         fill
         className="w-full object-cover"
