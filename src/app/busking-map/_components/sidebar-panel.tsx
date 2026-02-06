@@ -154,9 +154,6 @@ function FocusedBody({ place }: FocusedBodyProps) {
 
       <div className="mt-4">
         <p className="text-base font-semibold text-black">{place.title}</p>
-        <p className="mt-2 text-sm text-black/50">
-          {place.description ?? '상세 정보(placeholder)'}
-        </p>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button

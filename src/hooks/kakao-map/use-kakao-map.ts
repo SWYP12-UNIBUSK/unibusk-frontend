@@ -1,7 +1,7 @@
 'use client';
 
 import type { Coordinate } from '@/types/kakao/kakao-map';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseKakaoMapProps {
   isLoaded: boolean;
@@ -10,35 +10,55 @@ interface UseKakaoMapProps {
 }
 
 export function useKakaoMap({ isLoaded, center, level }: UseKakaoMapProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
 
   const centerLat = center.lat;
   const centerLng = center.lng;
 
-  // 지도 한 번만 생성함을 보장하기 위한 Effect
-  useEffect(() => {
-    // !isLoaded: SDK 로드 전, !mapContainerRef.current: DOM 준비 전, mapRef.current: 이미 지도 instance 존재
-    if (!isLoaded || !containerRef.current || mapRef.current) {
-      return;
-    }
+  const initialCenterRef = useRef<Coordinate>(center);
+  const initialLevelRef = useRef<number>(level);
 
-    const map = new window.kakao.maps.Map(containerRef.current, {
-      center: new window.kakao.maps.LatLng(centerLat, centerLng),
-      level,
-    });
+  // 지도 생성 전까지만 최신 center/level 캡처
+  if (!mapRef.current) {
+    initialCenterRef.current = center;
+    initialLevelRef.current = level;
+  }
 
-    mapRef.current = map;
-  }, [isLoaded, level, centerLat, centerLng]);
+  // 콜백 ref로 컨테이너 DOM이 실제로 붙는 순간(node)만 잡아 지도 초기화를 1회 수행하기 위해 저장
+  const setMapContainerRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      mapContainerRef.current = node;
+
+      // SDK 미로드(isLoaded), 컨테이너 DOM 미준비(node), 이미 생성됨(mapRef), Kakao Maps 미주입(window.kakao.maps)
+      if (!isLoaded || !node || mapRef.current || !window.kakao?.maps) {
+        return;
+      }
+
+      const initialCenter = initialCenterRef.current;
+      const initialLevel = initialLevelRef.current;
+
+      const instance = new window.kakao.maps.Map(node, {
+        center: new window.kakao.maps.LatLng(initialCenter.lat, initialCenter.lng),
+        level: initialLevel,
+      });
+
+      mapRef.current = instance;
+      setMap(instance); // 외부(마커 레이어 등)에서 map 값을 사용할 수 있도록 state로 노출
+    },
+    [isLoaded],
+  );
 
   // 지도 중앙 좌표 설정
   useEffect(() => {
-    if (!mapRef.current) {
+    if (!map) {
       return;
     }
 
-    mapRef.current.setCenter(new window.kakao.maps.LatLng(centerLat, centerLng));
-  }, [centerLat, centerLng]);
+    map.setCenter(new window.kakao.maps.LatLng(centerLat, centerLng));
+    map.setLevel(level);
+  }, [map, centerLat, centerLng, level]);
 
-  return { containerRef, mapRef };
+  return { mapContainerRef: setMapContainerRef, map };
 }
