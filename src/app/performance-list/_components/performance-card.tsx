@@ -9,9 +9,7 @@ import { cn } from '@/utils';
 
 // !todo: Card 공통 컴포넌트로 분리 및 개선 예정
 interface PerformanceCardProps {
-  /**
-   * 공연 정보 객체
-   */
+  /** 공연 정보 객체 */
   performance: Performance;
   /**
    * 카드 클릭 핸들러
@@ -92,7 +90,6 @@ export function PerformanceCard({ performance, onClick, className }: Performance
                 />
               )}
 
-          {/* Gradient overlay on hover */}
           <div className={`
             absolute inset-0 bg-linear-to-t from-black/20 via-transparent
             to-transparent opacity-0 transition-opacity duration-300
@@ -101,22 +98,19 @@ export function PerformanceCard({ performance, onClick, className }: Performance
           />
         </div>
 
-        {/* Info Section */}
         <div className="flex flex-1 flex-col p-2.5">
           <div className="shrink-0 text-sm text-muted-foreground">
-            {/* Date and Time */}
+
             <p className="font-medium tabular-nums">
               {`${performanceDate} (${startTime}~${endTime})`}
             </p>
 
-            {/* Location */}
             <div className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 shrink-0" strokeWidth={2} />
               <span className="line-clamp-1">{locationName}</span>
             </div>
           </div>
 
-          {/* Title */}
           <h3 className={`
             mt-2.5 line-clamp-1 text-lg leading-tight font-bold text-foreground
             transition-colors duration-200

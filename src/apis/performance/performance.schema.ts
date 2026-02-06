@@ -1,8 +1,6 @@
 import * as z from 'zod';
 
-/**
- * ISO 형식의 시간을 HH:mm 형식으로 변환하는 스키마
- */
+/** ISO 시간 → HH:mm 변환 */
 const timeTransformSchema = z.string().transform((date, ctx) => {
   const parts = date.split('T');
   if (parts.length! < 2) {
@@ -55,8 +53,5 @@ export const PerformanceListResponseDtoSchema = z.object({
   hasNext: z.boolean(),
 });
 
-/**
- * 공연 리스트 조회 API 응답 타입
- * PerformanceListResponseDtoSchema에서 자동으로 추론됩니다.
- */
+/** 공연 목록 조회 API 응답 타입 */
 export type PerformanceListResponseDto = z.infer<typeof PerformanceListResponseDtoSchema>;

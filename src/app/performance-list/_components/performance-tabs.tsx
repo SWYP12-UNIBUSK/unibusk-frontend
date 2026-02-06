@@ -11,8 +11,10 @@ import { PerformanceSearch } from './performance-search';
 import { PerformanceSearchMode } from './performance-search-mode';
 
 interface PerformanceTabsProps {
+  /** 기본 선택 탭 */
   defaultTab?: PerformanceFilterTab;
 }
+
 const TAB_TRIGGER_STYLES = `
     rounded-none border-b-2 border-transparent px-0 text-gray-300
     typo-title-b-3 py-[21px]
@@ -24,11 +26,7 @@ const TAB_TRIGGER_STYLES = `
     cursor-pointer
   `;
 
-/**
- * 공연 탭 컴포넌트
- * - 검색 모드: PerformanceSearchMode
- * - 일반 모드: PerformanceListMode
- */
+/** 공연 탭 (검색/일반 모드 전환) */
 export function PerformanceTabs({
   defaultTab = 'upcoming',
 }: PerformanceTabsProps) {

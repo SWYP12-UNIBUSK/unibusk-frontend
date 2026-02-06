@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SearchInput } from '@/components/common/search-input';
 
 interface PerformanceSearchProps {
+  /** 검색 실행 핸들러 */
   onSearch: (value: string) => void;
 }
 

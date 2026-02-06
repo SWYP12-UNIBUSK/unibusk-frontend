@@ -1,6 +1,4 @@
-/**
- * 공연 리스트 정보를 나타내는 도메인 모델
- */
+/** 공연 정보 */
 export interface Performance {
   /** 공연 고유 ID */
   performanceId: number;
@@ -18,16 +16,10 @@ export interface Performance {
   images: string[];
 }
 
-/**
- * 공연 목록 타입 (Performance 배열)
- */
+/** 공연 목록 타입 */
 export type Performances = Performance[];
 
-/**
- * 공연 필터 탭 타입
- * - 'upcoming': 다가오는 공연
- * - 'past': 지난 공연
- */
+/** 공연 필터 탭 타입 */
 export type PerformanceFilterTab = 'upcoming' | 'past';
 
 /**
@@ -35,13 +27,6 @@ export type PerformanceFilterTab = 'upcoming' | 'past';
  *
  * @param tab - 검증할 값 (문자열 또는 null)
  * @returns tab이 'upcoming' 또는 'past'이면 true, 그 외에는 false
- *
- * @example
- * const tab = searchParams.get('tab');
- * if (isValidPerformanceTab(tab)) {
- *   // tab은 'upcoming' | 'past' 타입으로 좁혀짐
- *   console.log(tab);
- * }
  */
 export function isValidPerformanceTab(tab: string | null): tab is PerformanceFilterTab {
   return tab === 'upcoming' || tab === 'past';

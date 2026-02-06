@@ -6,7 +6,9 @@ import { performanceSearchInfiniteQueryOptions } from '@/queries/performance';
 import { PerformanceList } from './performance-list';
 
 interface PerformanceSearchModeProps {
+  /** 검색 키워드 */
   keyword: string;
+  /** 공연 필터 타입 */
   validTab: PerformanceFilterTab;
 }
 
