@@ -53,7 +53,7 @@ export function PerformanceTabs({
   const isSearchMode = searchKeyword.length > 0;
 
   return (
-    <section className="min-h-300 pt-37.5">
+    <section className="min-h-300 pt-13.25">
       <Tabs
         value={validTab}
         onValueChange={handleTabChange}

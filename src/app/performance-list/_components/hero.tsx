@@ -4,8 +4,7 @@ import { Button } from '@/components/common/button';
 export function Hero() {
   return (
     <section className={`
-      relative flex h-88.75 w-full flex-col justify-end overflow-hidden
-      rounded-lg py-8
+      relative flex h-122.75 w-full justify-start overflow-hidden rounded-lg
     `}
     >
       <Image
@@ -16,7 +15,14 @@ export function Hero() {
         priority
       />
 
-      <div className="relative z-10 flex justify-center">
+      <div className={`
+        relative z-10 mt-auto flex flex-col space-y-14.75 pb-40.5 pl-27.25
+      `}
+      >
+        <h2 className="typo-title-sb-2 text-black">
+          <span className="block">나의 공연 정보를</span>
+          <span className="block">등록하고 홍보해 보세요</span>
+        </h2>
         <Button theme="orange" size="lg" appearance="filled">공연 등록하기</Button>
       </div>
     </section>
