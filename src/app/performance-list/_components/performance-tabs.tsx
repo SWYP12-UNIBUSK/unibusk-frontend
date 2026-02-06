@@ -1,25 +1,26 @@
 'use client';
 
-import type { PerformanceList } from '@/mocks/performance/performance-list';
+import type { PerformanceFilterTab } from '@/types/performance';
+import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags';
+import { performanceListInfiniteQueryOptions } from '@/queries/performance';
+import { isValidPerformanceTab } from '@/types/performance';
 import { cn } from '@/utils';
-import { PastList } from './past-list';
+import { PerformanceList } from './performance-list';
 import { PerformanceSearch } from './performance-search';
-import { UpcomingList } from './upcoming-list';
 
 interface PerformanceTabsProps {
-  performances?: PerformanceList;
+  /** 기본 선택 탭 (기본값: 'upcoming') */
+  defaultTab?: PerformanceFilterTab;
 }
 
-// !todo: Tabs 공통 컴포넌트로 분리 및 개선 예정
-export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const currentTab = searchParams.get('tab') || 'upcoming';
-  const tabTriggerStyle = `
+/**
+ * 탭 트리거 스타일 상수
+ *
+ * 컴포넌트 외부에 정의하여 매 렌더링마다 재생성되지 않도록 최적화
+ */
+const TAB_TRIGGER_STYLES = `
     rounded-none border-b-2 border-transparent px-0 text-gray-300
     typo-title-b-3 py-[21px]
     hover:text-gray-400
@@ -29,6 +30,28 @@ export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
     dark:data-[state=active]:bg-transparent
     cursor-pointer
   `;
+
+/**
+ * 공연 탭 컴포넌트 (Client Component)
+ *
+ * '다가오는 공연'과 '지난 공연' 탭을 제공하며,
+ * 탭 전환 시 URL 쿼리 파라미터를 업데이트하고 해당 데이터를 무한 스크롤로 불러옵니다.
+ *
+ * !todo: Tabs 공통 컴포넌트로 분리 및 개선 예정
+ */
+export function PerformanceTabs({
+  defaultTab = 'upcoming',
+}: PerformanceTabsProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentTab = searchParams.get('tab') || defaultTab;
+  const validTab = isValidPerformanceTab(currentTab) ? currentTab : defaultTab;
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useSuspenseInfiniteQuery(performanceListInfiniteQueryOptions(validTab));
+
+  const performances = data.pages.flatMap(page => page.content);
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -54,13 +77,13 @@ export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
           >
             <TabsTrigger
               value="upcoming"
-              className={tabTriggerStyle}
+              className={TAB_TRIGGER_STYLES}
             >
               다가오는 공연
             </TabsTrigger>
             <TabsTrigger
               value="past"
-              className={tabTriggerStyle}
+              className={TAB_TRIGGER_STYLES}
             >
               지난 공연
             </TabsTrigger>
@@ -73,10 +96,20 @@ export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
           <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
 
           <TabsContent value="upcoming">
-            <UpcomingList performances={performances} />
+            <PerformanceList
+              performances={performances}
+              onLoadMore={fetchNextPage}
+              hasMore={hasNextPage}
+              isLoading={isFetchingNextPage}
+            />
           </TabsContent>
           <TabsContent value="past">
-            <PastList />
+            <PerformanceList
+              performances={performances}
+              onLoadMore={fetchNextPage}
+              hasMore={hasNextPage}
+              isLoading={isFetchingNextPage}
+            />
           </TabsContent>
         </div>
       </Tabs>

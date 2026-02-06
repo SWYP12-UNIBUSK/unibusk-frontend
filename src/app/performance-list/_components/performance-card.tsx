@@ -1,5 +1,6 @@
 'use client';
 
+import type { Performance } from '@/types/performance';
 import { ImageIcon, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -11,22 +12,7 @@ interface PerformanceCardProps {
   /**
    * 공연 정보 객체
    */
-  performance: {
-    /** 공연 Id */
-    id: number;
-    /** 공연 제목 */
-    title: string;
-    /** 공연 날짜 (YYYY.MM.DD) */
-    date: string;
-    /** 공연 시작 시간 (HH:mm) */
-    startTime: string;
-    /** 공연 종료 시간 (HH:mm) */
-    endTime: string;
-    /** 공연 장소 */
-    location: string;
-    /** 공연 포스터 썸네일 이미지 URL */
-    thumbnailUrl?: string;
-  };
+  performance: Performance;
   /**
    * 카드 클릭 핸들러
    * @param id 클릭된 공연의 ID
@@ -38,13 +24,13 @@ interface PerformanceCardProps {
 
 export function PerformanceCard({ performance, onClick, className }: PerformanceCardProps) {
   const [imageError, setImageError] = useState(false);
-  const { id, date, title, startTime, endTime, location, thumbnailUrl } = performance;
+  const { performanceId, title, performanceDate, startTime, endTime, locationName, images } = performance;
 
   const handleClick = () => {
-    onClick?.(id);
+    onClick?.(performanceId);
   };
 
-  const showPlaceholder = !thumbnailUrl || imageError;
+  const showPlaceholder = !images[0] || imageError;
 
   return (
     <Card
@@ -89,7 +75,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
               )
             : (
                 <Image
-                  src={thumbnailUrl}
+                  src={images[0]}
                   alt={`${title} 포스터`}
                   fill
 
@@ -120,13 +106,13 @@ export function PerformanceCard({ performance, onClick, className }: Performance
           <div className="shrink-0 text-sm text-muted-foreground">
             {/* Date and Time */}
             <p className="font-medium tabular-nums">
-              {`${date} (${startTime} ~ ${endTime})`}
+              {`${performanceDate} (${startTime}~${endTime})`}
             </p>
 
             {/* Location */}
             <div className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 shrink-0" strokeWidth={2} />
-              <span className="line-clamp-1">{location}</span>
+              <span className="line-clamp-1">{locationName}</span>
             </div>
           </div>
 
