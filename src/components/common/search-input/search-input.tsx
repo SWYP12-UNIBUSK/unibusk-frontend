@@ -3,6 +3,7 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import Image from 'next/image';
+import { useImperativeHandle, useRef } from 'react';
 import { SearchIcon } from '@/components/common/icon';
 import { Input } from '@/components/common/input/input';
 import { cn } from '@/utils';
@@ -83,6 +84,9 @@ interface SearchInputProps
   value: string;
   /** 입력값 변경 핸들러 (필수) */
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  /** 부모 컴포넌트에서 ref를 전달할 때 사용 */
+  ref?: React.Ref<HTMLInputElement>;
 }
 
 function SearchInput({
@@ -91,13 +95,21 @@ function SearchInput({
   value,
   disabled,
   onChange,
+  ref,
   ...props
 }: SearchInputProps) {
+  const innerRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => innerRef.current!, []);
+
   const handleClear = () => {
     onChange({
       target: { value: '' },
       currentTarget: { value: '' },
     } as React.ChangeEvent<HTMLInputElement>);
+
+    // UX 개선: 클리어 후 input에 포커스
+    innerRef.current?.focus();
   };
 
   return (
@@ -107,6 +119,7 @@ function SearchInput({
     `, className)}
     >
       <Input
+        ref={innerRef}
         type="search"
         value={value}
         onChange={onChange}
