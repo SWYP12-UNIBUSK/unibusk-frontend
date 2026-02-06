@@ -52,10 +52,14 @@ export function PerformanceTabs({
 
   const isSearchMode = searchKeyword.length > 0;
 
+  const tabContent = isSearchMode
+    ? <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
+    : <PerformanceListMode validTab={validTab} />;
+
   return (
     <section className="min-h-300 pt-37.5">
       <Tabs
-        value={currentTab}
+        value={validTab}
         onValueChange={handleTabChange}
       >
         <div className={`
@@ -80,21 +84,17 @@ export function PerformanceTabs({
             </TabsTrigger>
           </TabsList>
 
-          <PerformanceSearch onSearch={handleSearch} />
+          <PerformanceSearch onSearch={handleSearch} key={validTab} />
         </div>
 
         <div className="w-full justify-between">
           <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
 
           <TabsContent value="upcoming">
-            {isSearchMode
-              ? <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
-              : <PerformanceListMode validTab={validTab} />}
+            {tabContent}
           </TabsContent>
           <TabsContent value="past">
-            {isSearchMode
-              ? <PerformanceSearchMode keyword={searchKeyword} validTab={validTab} />
-              : <PerformanceListMode validTab={validTab} />}
+            {tabContent}
           </TabsContent>
         </div>
       </Tabs>

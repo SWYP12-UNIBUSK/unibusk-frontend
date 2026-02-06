@@ -1,6 +1,6 @@
 import type { PerformanceFilterTab } from '@/types/performance';
 import { infiniteQueryOptions } from '@tanstack/react-query';
-import { getPerformanceList, getSearchPerformanceList } from '@/apis/performance/performance.api';
+import { getPerformanceList, getSearchPerformanceList } from '@/apis/performance';
 import { performanceKeys } from './performance.keys';
 
 /** 공연 목록 무한 스크롤 쿼리 옵션 */

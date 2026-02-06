@@ -14,7 +14,10 @@ export function getPerformanceList(
   page: number = 0,
   config?: FetchConfig,
 ) {
-  return api.get(`/api/performances/${type}?page=${page}`, config).then(parseResponse(PerformanceListResponseDtoSchema));
+  return api.get(`/api/performances/${type}`, {
+    ...config,
+    params: { page: page.toString() },
+  }).then(parseResponse(PerformanceListResponseDtoSchema));
 }
 
 /**

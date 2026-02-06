@@ -22,9 +22,8 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
 
   if (isLoading) {
     return (
-      <div
+      <output
         className="flex flex-col items-center justify-center gap-4 py-20"
-        role="status"
       >
         <div className={`
           size-8 animate-spin rounded-full border-4 border-gray-200
@@ -32,7 +31,7 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
         `}
         />
         <div className="typo-body-m-3 text-gray-500">검색 중...</div>
-      </div>
+      </output>
     );
   }
 
@@ -49,6 +48,7 @@ export function PerformanceSearchMode({ keyword, validTab }: PerformanceSearchMo
           {error instanceof Error ? error.message : '알 수 없는 오류'}
         </div>
         <button
+          type="button"
           onClick={() => refetch()}
           className={`
             rounded-lg bg-primary px-6 py-2 typo-body-m-3 text-white

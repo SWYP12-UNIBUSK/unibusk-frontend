@@ -17,6 +17,10 @@ export function PerformanceSearch({ onSearch }: PerformanceSearchProps) {
   const [inputValue, setInputValue] = useState('');
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
+
     if (e.key === 'Enter') {
       onSearch(inputValue.trim());
     }

@@ -3,7 +3,7 @@ import * as z from 'zod';
 /** ISO 시간 → HH:mm 변환 */
 const timeTransformSchema = z.string().transform((date, ctx) => {
   const parts = date.split('T');
-  if (parts.length! < 2) {
+  if (parts.length < 2) {
     ctx.addIssue({
       code: 'custom',
       message: 'Invalid date format',

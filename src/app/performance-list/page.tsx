@@ -2,6 +2,7 @@ import type { PerformanceFilterTab } from '@/types/performance';
 import { Suspense } from 'react';
 import { getQueryClient } from '@/queries';
 import { performanceListInfiniteQueryOptions } from '@/queries/performance';
+import { isValidPerformanceTab } from '@/types/performance';
 import { Hero, PerformanceTabs } from './_components';
 
 interface PageProps {
@@ -17,7 +18,8 @@ interface PageProps {
  */
 export default async function PerformanceListPage({ searchParams }: PageProps) {
   const queryClient = getQueryClient();
-  const { tab = 'upcoming' } = await searchParams;
+  const { tab: rawTab } = await searchParams;
+  const tab = isValidPerformanceTab(rawTab ?? null) ? rawTab! : 'upcoming';
 
   // 첫 페이지 데이터를 서버에서 미리 가져오기 (SSR 최적화)
   await queryClient.prefetchInfiniteQuery(performanceListInfiniteQueryOptions(tab));
