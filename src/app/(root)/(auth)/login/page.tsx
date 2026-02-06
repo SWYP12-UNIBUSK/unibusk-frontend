@@ -19,7 +19,7 @@ export default function LoginPage() {
         <h1 className="pb-[80.5px] text-center typo-title-b-3">UNIBUSK 로그인</h1>
 
         <div className="flex w-full items-center justify-center pb-17.5">
-          <Image src="/image/logo_gray.webp" alt="login_logo" width={100} height={90} priority />
+          <Image src="/images/logo_gray.webp" alt="login_logo" width={100} height={90} priority />
         </div>
 
         <div className="flex flex-col space-y-1.25 text-center typo-body-m-1">
