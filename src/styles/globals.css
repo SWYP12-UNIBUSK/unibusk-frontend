@@ -240,3 +240,16 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* 1920px 기준 커스텀 container */
+@utility container-1920 {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 240px; /* px-60 = 240px */
+  padding-right: 240px;
+
+  @media (min-width: 1920px) {
+    max-width: 1920px;
+  }
+}

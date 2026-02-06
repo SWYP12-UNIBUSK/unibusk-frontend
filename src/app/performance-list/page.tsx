@@ -25,7 +25,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   await queryClient.prefetchInfiniteQuery(performanceListInfiniteQueryOptions(tab));
 
   return (
-    <main className="min-h-screen bg-white px-60 pt-55">
+    <main className="container-1920 min-h-screen bg-white pt-55">
       <Hero />
       <HydrationBoundary state={dehydrate(queryClient)}>
         <PerformanceTabs

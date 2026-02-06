@@ -11,7 +11,7 @@ export function Hero() {
         src="/images/performance-list-Illustration.png"
         alt="공연 둘러보기 HERO 일러스트"
         fill
-        className="w-full object-cover"
+        className="object-cover"
         priority
       />
 
