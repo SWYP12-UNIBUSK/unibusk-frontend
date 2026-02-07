@@ -97,6 +97,11 @@ export function useKakaoClusterer(
     const markerClickHandlerById = markerClickHandlerByIdRef.current;
 
     return () => {
+      if (cleanupTimerRef.current !== null) {
+        window.clearTimeout(cleanupTimerRef.current);
+        cleanupTimerRef.current = null;
+      }
+
       const kakaoEvt = window.kakao?.maps?.event;
       if (kakaoEvt) {
         markerClickHandlerById.forEach((handler, markerId) => {
