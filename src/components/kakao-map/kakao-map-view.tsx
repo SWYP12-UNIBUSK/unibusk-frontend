@@ -2,10 +2,10 @@
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 import { useEffect, useRef } from 'react';
+import { CLUSTER_CLICK_GUARD_MS } from '@/constants/kakao-map';
 import { useKakaoClusterer, useKakaoLoader, useKakaoMap, useKakaoMarkers } from '@/hooks/kakao-map';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { cn } from '@/utils';
-
 import { ClusterBadge } from './cluster-badge';
 
 interface KakaoMapViewProps {
@@ -80,7 +80,7 @@ export function KakaoMapView({
 
     const handleMapClick = () => {
       const now = Date.now();
-      if (now - lastClusterClickAtRef.current < 80) {
+      if (now - lastClusterClickAtRef.current < CLUSTER_CLICK_GUARD_MS) {
         return;
       }
 
