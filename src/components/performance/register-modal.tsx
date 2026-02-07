@@ -38,13 +38,12 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: formData,
-    values: formData as PerformanceRegisterRequestDto,
   });
 
   const { trigger, handleSubmit, getValues, reset } = methods;
 
   const nextStep = async () => {
-    const fields = STEP_FIELDS[step] || [];
+    const fields = STEP_FIELDS[step as 1 | 2 | 3 | 4] || [];
     const isValid = await trigger(fields);
     if (isValid) {
       setFormData(getValues());
@@ -76,6 +75,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
         showCloseButton={false}
       >
         <button
+          type="button"
           onClick={onClose}
           className={`
             absolute top-8 right-8 text-gray-400

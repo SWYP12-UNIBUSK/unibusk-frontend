@@ -9,7 +9,7 @@ interface PerformanceRegisterState {
   reset: () => void;
 }
 
-const initialState: PerformanceRegisterState = {
+const initialState = {
   step: 1,
   formData: {
     teamName: '',
@@ -22,9 +22,6 @@ const initialState: PerformanceRegisterState = {
     performanceDetail: '',
     checklist: [],
   },
-  setStep: () => {},
-  setFormData: () => {},
-  reset: () => {},
 };
 
 export const useRegisterStore = create<PerformanceRegisterState>(set => ({

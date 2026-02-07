@@ -13,7 +13,7 @@ export const STEP_HEADER_INFO = {
   4: { title: '체크리스트 확인', description: '공연을 등록하기 전에 확인해요!' },
 } as const;
 
-export const STEP_FIELDS: Record<number, (keyof PerformanceRegisterRequestDto)[]> = {
+export const STEP_FIELDS: Record<1 | 2 | 3 | 4, (keyof PerformanceRegisterRequestDto)[]> = {
   1: ['teamName', 'contactNumber', 'email', 'instagramUrl'],
   2: [
     'performanceName',
@@ -42,6 +42,7 @@ export const SEARCH_EXAMPLES = [
   },
 ] as const;
 
+// ! #116 Issue 작업에서 삭제 예정
 export const SEARCH_RESULT_EXAMPLE = [
   { id: 1, name: '홍익대학교 서울캠퍼스', address: '서울 마포구 상수동 72-1' },
   { id: 2, name: '홍익대학교 서울캠퍼스', address: '서울 마포구 상수동 72-1' },

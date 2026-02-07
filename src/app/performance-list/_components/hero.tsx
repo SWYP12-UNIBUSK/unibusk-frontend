@@ -11,11 +11,11 @@ import { cn, routePaths } from '@/utils';
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { isAuthenticated } = useAuth();
-  const route = useRouter();
+  const router = useRouter();
 
   const handleRegisterClick = () => {
     if (!isAuthenticated) {
-      route.push(routePaths.login());
+      router.push(routePaths.login());
       return;
     }
     setIsModalOpen(true);

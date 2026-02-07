@@ -13,7 +13,7 @@ export function Step03() {
   return (
     <div className="flex gap-3.75">
       <div className="w-57.5 space-y-2">
-        <Label required>공연 포스터</Label>
+        <Label>공연 포스터</Label>
         <Controller
           control={control}
           name="posterImage"
