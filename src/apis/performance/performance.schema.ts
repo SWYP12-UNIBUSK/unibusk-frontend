@@ -29,10 +29,10 @@ export const PerformanceRegisterRequestDtoSchema = z.object({
   // Step 2: 공연 기본 정보
   performanceName: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
   performanceLocation: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
-  performanceDate: z.date({ error: PERFORMANCE_ERROR_MESSAGE }),
+  performanceDate: z.date(PERFORMANCE_ERROR_MESSAGE),
   performanceDescription: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
-  startTime: z.string({ error: PERFORMANCE_ERROR_MESSAGE }).min(1, PERFORMANCE_ERROR_MESSAGE),
-  endTime: z.string({ error: PERFORMANCE_ERROR_MESSAGE }).min(1, PERFORMANCE_ERROR_MESSAGE),
+  startTime: z.string(PERFORMANCE_ERROR_MESSAGE).min(1, PERFORMANCE_ERROR_MESSAGE),
+  endTime: z.string(PERFORMANCE_ERROR_MESSAGE).min(1, PERFORMANCE_ERROR_MESSAGE),
 
   // Step 3: 공연 상세 정보
   posterImage: z.union([
