@@ -15,7 +15,7 @@ export const userQueryOptions = queryOptions({
   queryKey: ['auth', 'user'],
 
   queryFn: async ({ signal }) => {
-    return await getUser({ signal });
+    return await getUser({ signal, skipRedirectOn401: true });
   },
   staleTime: 5 * 60 * 1000,
 });
