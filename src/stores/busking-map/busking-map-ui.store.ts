@@ -156,17 +156,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   exitClusterList: () => {
     const { searchQuery } = get();
 
-    if (searchQuery) {
-      set({
-        listScope: 'search',
-        clusterKey: null,
-        clusterPlaceIds: [],
-      });
-      return;
-    }
-
     set({
-      listScope: 'viewport',
+      listScope: searchQuery ? 'search' : 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
     });
