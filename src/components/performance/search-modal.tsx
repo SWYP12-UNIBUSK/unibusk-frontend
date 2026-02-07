@@ -25,8 +25,19 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSearch = () => {
-    if (keyword.trim())
+    if (keyword.trim()) {
       setHasSearched(true);
+    }
+  };
+
+  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setKeyword(value);
+
+    // 입력값이 비어있으면 초기 상태로 돌아감
+    if (!value.trim()) {
+      setHasSearched(false);
+    }
   };
 
   return (
@@ -68,7 +79,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
         {/* 검색창 */}
         <SearchInput
           value={keyword}
-          onChange={e => setKeyword(e.target.value)}
+          onChange={handleKeywordChange}
           placeholder="예) 신촌 스타광장"
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
           className={cn(`pb-2.5`)}
@@ -97,34 +108,50 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
               )
             : (
                 <div className="">
-                  <p className="pb-1.25 typo-caption-sb-1 text-black">
-                    검색결과 총
-                    <span className="text-primary">
-                      {` ${SEARCH_RESULT_EXAMPLE.length}건`}
-                    </span>
-                  </p>
-                  <div className={`
-                    space-y-1.25 divide-y divide-gray-200 border-b
-                    border-gray-200
-                  `}
-                  >
-                    {SEARCH_RESULT_EXAMPLE.map(loc => (
-                      <div
-                        key={loc.id}
-                        className={`
-                          cursor-pointer space-y-2.5 py-5 transition-colors
-                          hover:bg-orange-50
+                  {SEARCH_RESULT_EXAMPLE.length > 0
+                    ? (
+                        <>
+                          <p className="pb-1.25 typo-caption-sb-1 text-black">
+                            검색결과 총
+                            <span className="text-primary">
+                              {` ${SEARCH_RESULT_EXAMPLE.length}건`}
+                            </span>
+                          </p>
+                          <div className={`
+                            space-y-1.25 divide-y divide-gray-200 border-b
+                            border-gray-200
+                          `}
+                          >
+                            {SEARCH_RESULT_EXAMPLE.map(loc => (
+                              <div
+                                key={loc.id}
+                                className={`
+                                  cursor-pointer space-y-2.5 py-5
+                                  transition-colors
+                                  hover:bg-orange-50
+                                `}
+                                onClick={() => {
+                                  onSelect(loc);
+                                  setIsOpen(false);
+                                }}
+                              >
+                                <p className="typo-caption-sb-1 text-gray-800">{loc.name}</p>
+                                <p className="typo-caption-m-1 text-gray-550">{loc.address}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )
+                    : (
+                        <div className={`
+                          flex h-full items-center justify-center py-20
                         `}
-                        onClick={() => {
-                          onSelect(loc);
-                          setIsOpen(false);
-                        }}
-                      >
-                        <p className="typo-caption-sb-1 text-gray-800">{loc.name}</p>
-                        <p className="typo-caption-m-1 text-gray-550">{loc.address}</p>
-                      </div>
-                    ))}
-                  </div>
+                        >
+                          <p className="typo-body-m-3 text-gray-550">
+                            검색 결과가 없습니다.
+                          </p>
+                        </div>
+                      )}
                 </div>
               )}
         </div>
