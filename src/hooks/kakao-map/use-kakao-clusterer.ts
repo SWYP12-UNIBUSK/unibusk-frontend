@@ -5,6 +5,7 @@ import type { Root } from 'react-dom/client';
 import type { KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+import { CLUSTER_BADGE_SIZE_PX } from '@/constants/busking-map';
 
 interface UseKakaoClustererOptions {
   enabled: boolean;
@@ -79,6 +80,10 @@ export function useKakaoClusterer(
 
       if (!existing) {
         const container = document.createElement('div');
+
+        container.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
+        container.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
+
         const root = createRoot(container);
 
         overlay.setContent(container);
