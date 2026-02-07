@@ -36,6 +36,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       selectPlace: s.selectPlace,
       clearSelectedPlace: s.clearSelectedPlace,
       clearFocusedPlace: s.clearFocusedPlace,
+      exitClusterList: s.exitClusterList,
     })),
   );
 
@@ -65,7 +66,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
     sidebar: {
       isOpen: state.isSidebarOpen,
       mode: state.listScope,
-      places: sidebarPlaces, // 필터링된 리스트
+      places: sidebarPlaces,
       focusedPlace,
     },
     detail: {
@@ -77,6 +78,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       onListItemClick: storeActions.selectPlace,
       onDetailCloseClick: storeActions.clearSelectedPlace,
       onFocusedCloseClick: storeActions.clearFocusedPlace,
+      onExitClusterListClick: storeActions.exitClusterList,
     },
   };
 }

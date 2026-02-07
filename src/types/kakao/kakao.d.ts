@@ -33,17 +33,30 @@ declare global {
 
         // map 설정: 표시 / null: 제거
         setMap(map: Map | null): void;
-
-        // 마커 위치 이동
-        setPosition(position: LatLng): void;
-
         // 현재 붙어있는 map 조회
         getMap(): Map | null;
+        // 마커 위치 이동
+        setPosition(position: LatLng): void;
       }
 
       // 클러스터 마커 콘텐츠 교체용
       class CustomOverlay {
+        constructor(options: CustomOverlayOptions);
+
         setContent(content: string | HTMLElement): void;
+        setMap(map: Map | null): void;
+        // 오버레이 위치 이동
+        setPosition(position: LatLng): void;
+        getContent(): string | HTMLElement;
+      }
+
+      // 클러스터 배지/커스텀 오버레이 표시용
+      interface CustomOverlayOptions {
+        position: LatLng;
+        content: string | HTMLElement;
+        xAnchor?: number;
+        yAnchor?: number;
+        zIndex?: number;
       }
 
       // 클러스터 단위 정보

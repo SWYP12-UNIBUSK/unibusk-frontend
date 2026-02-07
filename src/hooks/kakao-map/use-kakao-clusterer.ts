@@ -15,8 +15,8 @@ interface UseKakaoClustererOptions {
 }
 
 interface OverlayEntry {
-  root: Root;
-  container: HTMLDivElement;
+  badgeReactRoot: Root;
+  badgeLayerEl: HTMLDivElement;
 }
 
 interface RenderClusterBadge {
@@ -86,8 +86,8 @@ export function useKakaoClusterer(
           return;
         }
 
-        overlayEntry.root.unmount();
-        overlayEntry.container.remove();
+        overlayEntry.badgeReactRoot.unmount();
+        overlayEntry.badgeLayerEl.remove();
         overlayRootMap.delete(overlay);
       });
 
@@ -111,7 +111,7 @@ export function useKakaoClusterer(
       }
 
       pendingDisposeMap.set(overlay, overlayEntry);
-      overlayEntry.root.render(null);
+      overlayEntry.badgeReactRoot.render(null);
       scheduleFlushOverlayDisposals();
     };
 
@@ -129,26 +129,35 @@ export function useKakaoClusterer(
       const overlayEntry = overlayRootMap.get(overlay);
 
       if (!overlayEntry) {
-        const overlayContainer = document.createElement('div');
+        const content = overlay.getContent();
+        const overlayContentEl = typeof content === 'string' ? document.createElement('div') : content;
 
-        // 초기 렌더 전에 컨테이너 크기를 선고정해 배지 위치 스냅을 최소화
-        overlayContainer.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
-        overlayContainer.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
+        if (typeof content === 'string') {
+          overlay.setContent(overlayContentEl);
+        }
 
-        // 배지 위에서 지도 드래그가 끊기지 않도록 overlay content는 이벤트를 먹지 않게 처리
-        overlayContainer.style.pointerEvents = 'none';
+        overlayContentEl.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
+        overlayContentEl.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
+        overlayContentEl.style.cursor = 'pointer';
+        overlayContentEl.style.position = 'relative';
 
-        const overlayReactRoot = createRoot(overlayContainer);
+        const badgeMountEl = document.createElement('div');
+        badgeMountEl.style.position = 'absolute';
+        badgeMountEl.style.inset = '0';
+        badgeMountEl.style.width = '100%';
+        badgeMountEl.style.height = '100%';
+        badgeMountEl.style.pointerEvents = 'none';
 
-        overlay.setContent(overlayContainer);
+        overlayContentEl.appendChild(badgeMountEl);
+
+        const overlayReactRoot = createRoot(badgeMountEl);
         overlayReactRoot.render(renderRef.current({ count }));
 
-        overlayRootMap.set(overlay, { root: overlayReactRoot, container: overlayContainer });
+        overlayRootMap.set(overlay, { badgeReactRoot: overlayReactRoot, badgeLayerEl: badgeMountEl });
         return;
       }
 
-      overlayEntry.root.render(renderRef.current({ count }));
-      overlay.setContent(overlayEntry.container);
+      overlayEntry.badgeReactRoot.render(renderRef.current({ count }));
     };
 
     // prune: 이번 clustered 계산에 포함되지 않은 overlay 정리
@@ -217,8 +226,8 @@ export function useKakaoClusterer(
         cleanupTimerRef.current = null;
 
         entriesToDispose.forEach((overlayEntry) => {
-          overlayEntry.root.unmount();
-          overlayEntry.container.remove();
+          overlayEntry.badgeReactRoot.unmount();
+          overlayEntry.badgeLayerEl.remove();
         });
       }, 0);
 
