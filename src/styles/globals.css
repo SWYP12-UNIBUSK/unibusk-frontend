@@ -182,8 +182,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
   }
 }
 
@@ -193,8 +193,8 @@ body {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -239,4 +239,29 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* 1920px 기준 커스텀 container */
+@utility container-1920 {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+
+  /* 반응형을 위한 기본 패딩 (모바일 대응) */
+  padding-left: 1.25rem; /* 20px */
+  padding-right: 1.25rem; /* 20px */
+
+  /* 태블릿 이상에서 패딩 증가 */
+  @media (min-width: 768px) {
+    padding-left: 2.5rem; /* 40px */
+    padding-right: 2.5rem; /* 40px */
+  }
+
+  /*
+    디자인 기준 (1920px 너비에서 240px 좌우 여백)
+    1920 - (240 * 2) = 1440px 콘텐츠 영역
+    Max-width를 1440px로 제한하면 1920px 화면에서
+    margin: auto에 의해 자연스럽게 240px 여백이 생성됩니다.
+  */
+  max-width: 1440px;
 }

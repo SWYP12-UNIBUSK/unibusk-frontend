@@ -1,47 +1,61 @@
 'use client';
 
-import type { PerformanceList } from '@/mocks/performance/performance-list';
+import type { PerformanceFilterTab } from '@/types/performance';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags';
+import { isValidPerformanceTab } from '@/types/performance';
 import { cn } from '@/utils';
-import { PastList } from './past-list';
+import { PerformanceListMode } from './performance-list-mode';
 import { PerformanceSearch } from './performance-search';
-import { UpcomingList } from './upcoming-list';
+import { PerformanceSearchMode } from './performance-search-mode';
 
 interface PerformanceTabsProps {
-  performances?: PerformanceList;
+  /** 기본 선택 탭 */
+  defaultTab?: PerformanceFilterTab;
 }
 
-// !todo: Tabs 공통 컴포넌트로 분리 및 개선 예정
-export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
+const TAB_TRIGGER_STYLES = cn(
+  'rounded-none border-b-2 border-transparent px-0 py-5.25',
+  'cursor-pointer typo-title-b-3 text-gray-300',
+  'hover:text-gray-400',
+  'data-[state=active]:border-b-primary data-[state=active]:text-primary',
+  'data-[state=active]:bg-transparent data-[state=active]:shadow-none',
+  'dark:data-[state=active]:bg-transparent',
+);
+
+/** 공연 탭 (검색/일반 모드 전환) */
+export function PerformanceTabs({
+  defaultTab = 'upcoming',
+}: PerformanceTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentTab = searchParams.get('tab') || 'upcoming';
-  const tabTriggerStyle = `
-    rounded-none border-b-2 border-transparent px-0 text-gray-300
-    typo-title-b-3 py-[21px]
-    hover:text-gray-400
-    data-[state=active]:border-b-primary
-    data-[state=active]:bg-transparent
-    data-[state=active]:text-primary data-[state=active]:shadow-none
-    dark:data-[state=active]:bg-transparent
-    cursor-pointer
-  `;
+  const [searchKeyword, setSearchKeyword] = useState('');
+
+  const currentTab = searchParams.get('tab') || defaultTab;
+  const validTab = isValidPerformanceTab(currentTab) ? currentTab : defaultTab;
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
     params.set('tab', value);
 
-    // { scroll: false } 옵션을 사용하여 탭 변경 시 스크롤 상단 이동 방지
+    setSearchKeyword('');
+
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+  };
+
+  const isSearchMode = searchKeyword.length > 0;
+
   return (
-    <section className="min-h-300 pt-37.5">
+    <section className="min-h-300 pt-13.25">
       <Tabs
-        value={currentTab}
+        value={validTab}
         onValueChange={handleTabChange}
       >
         <div className={`
@@ -54,29 +68,37 @@ export function PerformanceTabs({ performances = [] }: PerformanceTabsProps) {
           >
             <TabsTrigger
               value="upcoming"
-              className={tabTriggerStyle}
+              className={TAB_TRIGGER_STYLES}
             >
               다가오는 공연
             </TabsTrigger>
             <TabsTrigger
               value="past"
-              className={tabTriggerStyle}
+              className={TAB_TRIGGER_STYLES}
             >
               지난 공연
             </TabsTrigger>
           </TabsList>
 
-          <PerformanceSearch />
+          <PerformanceSearch onSearch={handleSearch} key={validTab} />
         </div>
 
         <div className="w-full justify-between">
-          <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
+          <p className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</p>
 
           <TabsContent value="upcoming">
-            <UpcomingList performances={performances} />
+            <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
+              {isSearchMode
+                ? <PerformanceSearchMode keyword={searchKeyword} validTab="upcoming" />
+                : <PerformanceListMode validTab="upcoming" />}
+            </Suspense>
           </TabsContent>
           <TabsContent value="past">
-            <PastList />
+            <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
+              {isSearchMode
+                ? <PerformanceSearchMode keyword={searchKeyword} validTab="past" />
+                : <PerformanceListMode validTab="past" />}
+            </Suspense>
           </TabsContent>
         </div>
       </Tabs>
