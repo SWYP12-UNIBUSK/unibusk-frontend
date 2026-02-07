@@ -14,7 +14,7 @@ export function Step01() {
         <FormInput
           label="팀 이름"
           required
-          placeholder="팀 명 또는 활동명을 적어주세요"
+          placeholder="팀명 또는 활동명을 적어주세요"
           error={errors.teamName?.message}
           {...register('teamName')}
           showCount
