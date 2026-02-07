@@ -35,7 +35,11 @@ export const PerformanceRegisterRequestDtoSchema = z.object({
   endTime: z.string({ error: PERFORMANCE_ERROR_MESSAGE }).min(1, PERFORMANCE_ERROR_MESSAGE),
 
   // Step 3: 공연 상세 정보
-  posterImage: z.union([z.instanceof(File), z.string(), z.null()]).optional(),
+  posterImage: z.union([
+    z.custom<File>(val => typeof File !== 'undefined' && val instanceof File),
+    z.string(),
+    z.null(),
+  ]).optional(),
   performanceDetail: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
 
   // Step 4: 체크리스트

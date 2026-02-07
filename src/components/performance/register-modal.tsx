@@ -37,7 +37,10 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     resolver: zodResolver(PerformanceRegisterRequestDtoSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
-    defaultValues: formData,
+    defaultValues: {
+      ...formData,
+      checklist: formData.checklist ?? [], // Partial 타입 대응: undefined 방지
+    },
   });
 
   const { trigger, handleSubmit, getValues, reset } = methods;
