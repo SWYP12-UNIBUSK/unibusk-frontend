@@ -1,19 +1,24 @@
 import type { BuskingPlace } from '@/types/busking-map';
+import type { ListScope } from '@/types/busking-map/busking-place';
 import { LineDivider } from '@/components/common/line-divider';
 import { cn } from '@/utils';
 
 interface SidebarPanelProps {
+  mode: ListScope;
   places: BuskingPlace[];
   focusedPlace: BuskingPlace | null;
   onListItemClick: (placeId: string) => void;
   onFocusedCloseClick?: () => void;
+  onExitClusterListClick?: () => void;
 }
 
 export function SidebarPanel({
+  mode,
   places,
   focusedPlace,
   onListItemClick,
   onFocusedCloseClick,
+  onExitClusterListClick,
 }: SidebarPanelProps) {
   if (focusedPlace) {
     return (
@@ -33,13 +38,19 @@ export function SidebarPanel({
     );
   }
 
+  const isClusterMode = mode === 'cluster';
+  const headerTitle = isClusterMode ? `주변 장소 (${places.length})` : '공연 장소';
+
   return (
     <section className={`
       flex h-full w-full flex-col overflow-hidden rounded-xl bg-white
       shadow-sidebar
     `}
     >
-      <ListHeader title="공연 장소" />
+      <ListHeader
+        title={headerTitle}
+        onBackClick={isClusterMode ? onExitClusterListClick : undefined}
+      />
       <div className="flex-1 overflow-y-auto pb-11.25">
         <ul className="flex w-full flex-col">
           {places.map((place, index) => {
@@ -55,7 +66,6 @@ export function SidebarPanel({
               </li>
             );
           })}
-
         </ul>
       </div>
     </section>
@@ -64,14 +74,31 @@ export function SidebarPanel({
 
 interface ListHeaderProps {
   title: string;
+  onBackClick?: () => void;
 }
 
-function ListHeader({ title }: ListHeaderProps) {
+function ListHeader({ title, onBackClick }: ListHeaderProps) {
   return (
-    <div className="flex h-17 items-center px-[18.5px] pt-1">
+    <div className="flex h-17 items-center gap-2 px-[18.5px] pt-1">
+      {onBackClick
+        ? (
+            <button
+              type="button"
+              onClick={onBackClick}
+              className={`
+                flex h-10 w-10 items-center justify-center rounded-full
+                hover:bg-black/5
+              `}
+              aria-label="클러스터 목록 종료"
+            >
+              ‹
+            </button>
+          )
+        : null}
+
       <div className={`
-        cursor-pointer rounded-full bg-primary px-2.5 py-1 text-caption-2
-        font-semibold text-white
+        rounded-full bg-primary px-2.5 py-1 text-caption-2 font-semibold
+        text-white
       `}
       >
         {title}
