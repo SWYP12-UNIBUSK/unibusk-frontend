@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { PERFORMANCE_ERROR_MESSAGE } from '@/constants/performance/register';
+import { CHECKLIST_ITEMS, PERFORMANCE_ERROR_MESSAGE } from '@/constants/performance/register';
 
 /** ISO 시간 → HH:mm 변환 */
 const timeTransformSchema = z.string().transform((date, ctx) => {
@@ -40,7 +40,7 @@ export const PerformanceRegisterRequestDtoSchema = z.object({
 
   // Step 4: 체크리스트
   // 모든 항목을 체크해야 하므로 배열로 정의
-  checklist: z.array(z.string()).min(3, '*체크리스트의 모든 항목이 완료되어야 등록할 수 있습니다. 빠진 곳이 없는지 다시 한번 봐주세요.'),
+  checklist: z.array(z.string()).min(CHECKLIST_ITEMS.length, '*체크리스트의 모든 항목이 완료되어야 등록할 수 있습니다. 빠진 곳이 없는지 다시 한번 봐주세요.'),
 });
 
 /**
