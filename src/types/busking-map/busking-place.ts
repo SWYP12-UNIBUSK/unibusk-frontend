@@ -5,3 +5,5 @@ export interface BuskingPlace {
   lng: number;
   thumbnailUrl?: string | null;
 }
+
+export type ListScope = 'viewport' | 'cluster' | 'search';

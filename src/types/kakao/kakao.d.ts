@@ -5,6 +5,10 @@ declare global {
     namespace maps {
       class LatLng {
         constructor(lat: number, lng: number);
+
+        // 클러스터 center 등에서 lat/lng 추출용
+        getLat(): number;
+        getLng(): number;
       }
 
       // 지도 생성 옵션 (center, level)
@@ -37,33 +41,82 @@ declare global {
         getMap(): Map | null;
       }
 
+      // 클러스터 마커 콘텐츠 교체용
+      class CustomOverlay {
+        setContent(content: string | HTMLElement): void;
+      }
+
+      // 클러스터 단위 정보
+      interface Cluster {
+        getSize: () => number;
+        getClusterMarker: () => CustomOverlay;
+        getMarkers: () => Marker[];
+        getCenter: () => LatLng;
+      }
+
+      interface MarkerClustererOptions {
+        map: Map;
+        averageCenter?: boolean;
+        minLevel?: number;
+        disableClickZoom?: boolean;
+        gridSize?: number;
+        minClusterSize?: number;
+        calculator?: number[];
+        styles?: Array<Record<string, string>>;
+      }
+
+      class MarkerClusterer {
+        constructor(options: MarkerClustererOptions);
+
+        addMarkers(markers: Marker[], redraw?: boolean): void;
+        addMarker(marker: Marker, redraw?: boolean): void;
+
+        removeMarkers(markers: Marker[], redraw?: boolean): void;
+        removeMarker(marker: Marker, redraw?: boolean): void;
+
+        clear(): void;
+        redraw(): void;
+      }
+
       namespace event {
         /**
-         * 카카오맵 객체에 이벤트 리스너를 등록합니다.
+         * 카카오맵 객체에 이벤트 리스너를 등록
          *
-         * - target: 이벤트를 붙일 대상 (현재는 Marker만 지원)
-         * - type: 이벤트 타입 (현재는 'click'만 최소 선언)
+         * - target: 이벤트를 붙일 대상
+         * - type: 이벤트 타입
          * - handler: 이벤트 발생 시 실행될 콜백
-         *
-         * 사용 예시:
-         * kakao.maps.event.addListener(marker, 'click', () => {
-         *   // 마커 클릭 시 동작
-         * });
          *
          * 참고:
          * 실제 SDK는 Map에도 'idle', 'dragend' 같은 이벤트를 달 수 있지만,
-         * 현재 타입은 "마커 클릭"만 필요한 상황을 가정해서 최소 범위로 선언했습니다.
+         * 현재 타입은 "마커 클릭/클러스터 이벤트"만 필요한 상황을 가정해서 최소 범위로 선언했습니다.
          */
+        function addListener(target: Marker, type: 'click', handler: () => void): void;
+        function removeListener(target: Marker, type: 'click', handler: () => void): void;
+
+        // 클러스터
         function addListener(
-          target: Marker,
-          type: 'click',
-          handler: () => void,
+          target: MarkerClusterer,
+          type: 'clustered',
+          handler: (clusters: Cluster[]) => void,
         ): void;
 
         function removeListener(
-          target: Marker,
-          type: 'click',
-          handler: () => void,
+          target: MarkerClusterer,
+          type: 'clustered',
+          handler: (clusters: Cluster[]) => void,
+        ): void;
+
+        // 특정 클러스터 클릭
+        function addListener(
+          target: MarkerClusterer,
+          type: 'clusterclick',
+          handler: (cluster: Cluster) => void,
+        ): void;
+
+        function removeListener(
+          target: MarkerClusterer,
+          type: 'clusterclick',
+          handler: (cluster: Cluster) => void,
         ): void;
       }
 
@@ -85,10 +138,7 @@ declare global {
         class Geocoder {
           addressSearch(
             address: string,
-            callback: (
-              result: Array<{ x: string; y: string }>,
-              status: Status,
-            ) => void,
+            callback: (result: Array<{ x: string; y: string }>, status: Status) => void,
           ): void;
         }
       }
