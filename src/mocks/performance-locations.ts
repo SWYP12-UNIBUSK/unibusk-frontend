@@ -1,5 +1,8 @@
 import type { PerformanceLocationsResponseDto } from '@/apis/performance-locations';
 
+const MOCK_IMAGE_URL
+  = 'https://unibusk-bucket.s3.amazonaws.com/performances/7d05e49c-fc60-469f-ae79-dff06a72955b.png';
+
 export const PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE: PerformanceLocationsResponseDto = {
   locations: [
     {
@@ -602,5 +605,8 @@ export const PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE: PerformanceLocationsRespon
       longitude: 126.9057,
       imageUrls: [],
     },
-  ],
+  ].map(location => ({
+    ...location,
+    imageUrls: [MOCK_IMAGE_URL],
+  })),
 };

@@ -78,46 +78,26 @@ declare global {
         redraw(): void;
       }
 
+      /**
+       * 카카오맵 객체에 이벤트 리스너를 등록
+       * - target: 이벤트를 붙일 대상
+       * - type: 이벤트 타입
+       * - handler: 이벤트 발생 시 실행될 콜백
+       */
       namespace event {
-        /**
-         * 카카오맵 객체에 이벤트 리스너를 등록
-         *
-         * - target: 이벤트를 붙일 대상
-         * - type: 이벤트 타입
-         * - handler: 이벤트 발생 시 실행될 콜백
-         *
-         * 참고:
-         * 실제 SDK는 Map에도 'idle', 'dragend' 같은 이벤트를 달 수 있지만,
-         * 현재 타입은 "마커 클릭/클러스터 이벤트"만 필요한 상황을 가정해서 최소 범위로 선언했습니다.
-         */
+        interface MapMouseEvent { latLng: LatLng };
+
+        function addListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
+        function removeListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
+
         function addListener(target: Marker, type: 'click', handler: () => void): void;
         function removeListener(target: Marker, type: 'click', handler: () => void): void;
 
-        // 클러스터
-        function addListener(
-          target: MarkerClusterer,
-          type: 'clustered',
-          handler: (clusters: Cluster[]) => void,
-        ): void;
+        function addListener(target: MarkerClusterer, type: 'clustered', handler: (clusters: Cluster[]) => void): void;
+        function removeListener(target: MarkerClusterer, type: 'clustered', handler: (clusters: Cluster[]) => void): void;
 
-        function removeListener(
-          target: MarkerClusterer,
-          type: 'clustered',
-          handler: (clusters: Cluster[]) => void,
-        ): void;
-
-        // 특정 클러스터 클릭
-        function addListener(
-          target: MarkerClusterer,
-          type: 'clusterclick',
-          handler: (cluster: Cluster) => void,
-        ): void;
-
-        function removeListener(
-          target: MarkerClusterer,
-          type: 'clusterclick',
-          handler: (cluster: Cluster) => void,
-        ): void;
+        function addListener(target: MarkerClusterer, type: 'clusterclick', handler: (cluster: Cluster) => void): void;
+        function removeListener(target: MarkerClusterer, type: 'clusterclick', handler: (cluster: Cluster) => void): void;
       }
 
       // SDK 로드 완료 후 콜백 실행 (autoload=false 환경)
@@ -132,7 +112,7 @@ declare global {
         /**
          * 주소 → 좌표 변환 API
          * - addressSearch는 주소 문자열을 받아 좌표 후보 목록을 반환
-         * - result는 배열이며, 첫 번째 결과(result[0])를 대표 좌표로 쓰는 경우가 많습니다.
+         * - result는 배열이며, 첫 번째 결과(result[0])를 대표 좌표로 쓰는 경우가 많음
          * - x/y는 문자열로 내려오므로 실제 사용 시 number로 변환해서 사용
          */
         class Geocoder {

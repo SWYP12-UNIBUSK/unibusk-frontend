@@ -1,6 +1,7 @@
 'use client';
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
+import { useEffect, useRef } from 'react';
 import { useKakaoClusterer, useKakaoLoader, useKakaoMap, useKakaoMarkers } from '@/hooks/kakao-map';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { cn } from '@/utils';
@@ -12,8 +13,8 @@ interface KakaoMapViewProps {
   level?: number;
   markers?: KakaoMarkerInputs[];
   className?: string;
-  enableClusterer?: boolean; // 클러스터링 필요 여부
-  clusterMinLevel?: number; // 기본 레벨
+  enableClusterer?: boolean;
+  clusterMinLevel?: number;
 }
 
 const EMPTY_MARKERS: KakaoMarkerInputs[] = [];
@@ -43,21 +44,19 @@ export function KakaoMapView({
   const clusterLayerMap = hasError ? null : map;
   const clusterLayerMarkers = hasError ? EMPTY_MARKERS : safeMarkers;
 
-  // 1) clusterer 레이어
+  const lastClusterClickAtRef = useRef(0);
+
   useKakaoClusterer(
     clusterLayerMap,
     clusterLayerMarkers,
     {
       enabled: isClustererEnabled,
       minLevel: clusterMinLevel,
-
-      // 1단 focused 모드
       onMarkerClick: (markerId) => {
         useBuskingMapUiStore.getState().focusPlace(markerId);
       },
-
-      // listScope='cluster' 모드
       onClusterClick: (cluster, markerIds) => {
+        lastClusterClickAtRef.current = Date.now();
         const clusterKey = buildClusterKey(cluster.getCenter());
         useBuskingMapUiStore.getState().openClusterList(clusterKey, markerIds);
       },
@@ -65,11 +64,38 @@ export function KakaoMapView({
     ({ count }) => <ClusterBadge count={count} />,
   );
 
-  // 2) marker 레이어(클러스터러 모드일 때는 비활성)
   const markerLayerMap = hasError ? null : (isClustererEnabled ? null : map);
   const markerLayerMarkers = hasError || isClustererEnabled ? EMPTY_MARKERS : safeMarkers;
 
   useKakaoMarkers(markerLayerMap, markerLayerMarkers);
+
+  useEffect(() => {
+    if (!map || !window.kakao?.maps) {
+      return;
+    }
+
+    const kakaoMaps = window.kakao.maps;
+
+    const handleMapClick = () => {
+      const now = Date.now();
+      if (now - lastClusterClickAtRef.current < 80) {
+        return;
+      }
+
+      const { listScope, exitClusterList } = useBuskingMapUiStore.getState();
+      if (listScope !== 'cluster') {
+        return;
+      }
+
+      exitClusterList();
+    };
+
+    kakaoMaps.event.addListener(map, 'click', handleMapClick);
+
+    return () => {
+      kakaoMaps.event.removeListener(map, 'click', handleMapClick);
+    };
+  }, [map]);
 
   return (
     <div className={cn('relative h-full w-full', className)} aria-busy={!isLoaded}>

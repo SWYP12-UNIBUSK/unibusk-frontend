@@ -19,8 +19,13 @@ interface OverlayEntry {
   container: HTMLDivElement;
 }
 
-type RenderClusterBadge = (args: { count: number }) => ReactElement;
-type ClickHandler = () => void;
+interface RenderClusterBadge {
+  (args: { count: number }): ReactElement;
+}
+
+interface ClickHandler {
+  (): void;
+}
 
 export function useKakaoClusterer(
   map: kakao.maps.Map | null,
@@ -32,7 +37,7 @@ export function useKakaoClusterer(
   const markerByIdRef = useRef<Map<string, kakao.maps.Marker>>(new Map());
 
   // 마커 id별 클릭 핸들러 참조를 저장해 removeListener 수행
-  const clickHandlerByIdRef = useRef<Map<string, ClickHandler>>(new Map());
+  const markerClickHandlerByIdRef = useRef<Map<string, ClickHandler>>(new Map());
 
   // 마커 인스턴스 → id 역매핑(WeakMap: 마커 GC 시 매핑도 함께 정리)
   const markerIdByInstanceRef = useRef<WeakMap<kakao.maps.Marker, string>>(new WeakMap());
@@ -50,14 +55,14 @@ export function useKakaoClusterer(
   const onClusterClickRef = useRef(options.onClusterClick);
   onClusterClickRef.current = options.onClusterClick;
 
-  const enabled = options.enabled;
-  const minLevel = options.minLevel ?? 6;
+  const isClustererEnabled = options.enabled;
+  const clusterMinLevel = options.minLevel ?? 6;
 
   const cleanupTimerRef = useRef<number | null>(null);
 
   // clusterer 생성 + clustered/clusterclick 이벤트 연결 + overlay 배지 렌더링
   useEffect(() => {
-    if (!enabled || !map || !window.kakao?.maps) {
+    if (!isClustererEnabled || !map || !window.kakao?.maps) {
       return;
     }
 
@@ -74,45 +79,45 @@ export function useKakaoClusterer(
     const pendingDisposeMap = new Map<kakao.maps.CustomOverlay, OverlayEntry>();
     let disposeTimer: number | null = null;
 
-    const flushDisposes = () => {
-      pendingDisposeMap.forEach((entry, overlay) => {
+    const flushOverlayDisposals = () => {
+      pendingDisposeMap.forEach((overlayEntry, overlay) => {
         const current = overlayRootMap.get(overlay);
-        if (!current || current !== entry) {
+        if (!current || current !== overlayEntry) {
           return;
         }
 
-        entry.root.unmount();
-        entry.container.remove();
+        overlayEntry.root.unmount();
+        overlayEntry.container.remove();
         overlayRootMap.delete(overlay);
       });
 
       pendingDisposeMap.clear();
     };
 
-    const scheduleFlushDisposes = () => {
+    const scheduleFlushOverlayDisposals = () => {
       if (disposeTimer !== null) {
         return;
       }
 
       disposeTimer = window.setTimeout(() => {
         disposeTimer = null;
-        flushDisposes();
+        flushOverlayDisposals();
       }, 0);
     };
 
-    const queueDispose = (overlay: kakao.maps.CustomOverlay, entry: OverlayEntry) => {
+    const queueOverlayDisposal = (overlay: kakao.maps.CustomOverlay, overlayEntry: OverlayEntry) => {
       if (pendingDisposeMap.has(overlay)) {
         return;
       }
 
-      pendingDisposeMap.set(overlay, entry);
-      entry.root.render(null);
-      scheduleFlushDisposes();
+      pendingDisposeMap.set(overlay, overlayEntry);
+      overlayEntry.root.render(null);
+      scheduleFlushOverlayDisposals();
     };
 
     const clusterer = new kakaoMaps.MarkerClusterer({
       map,
-      minLevel,
+      minLevel: clusterMinLevel,
       averageCenter: true,
       disableClickZoom: true,
     });
@@ -121,44 +126,47 @@ export function useKakaoClusterer(
 
     // overlay가 있으면 갱신, 없으면 생성해서 연결
     const upsertOverlay = (overlay: kakao.maps.CustomOverlay, count: number) => {
-      const existing = overlayRootMap.get(overlay);
+      const overlayEntry = overlayRootMap.get(overlay);
 
-      if (!existing) {
-        const container = document.createElement('div');
+      if (!overlayEntry) {
+        const overlayContainer = document.createElement('div');
 
         // 초기 렌더 전에 컨테이너 크기를 선고정해 배지 위치 스냅을 최소화
-        container.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
-        container.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
+        overlayContainer.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
+        overlayContainer.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
 
-        const root = createRoot(container);
+        // 배지 위에서 지도 드래그가 끊기지 않도록 overlay content는 이벤트를 먹지 않게 처리
+        overlayContainer.style.pointerEvents = 'none';
 
-        overlay.setContent(container);
-        root.render(renderRef.current({ count }));
+        const overlayReactRoot = createRoot(overlayContainer);
 
-        overlayRootMap.set(overlay, { root, container });
+        overlay.setContent(overlayContainer);
+        overlayReactRoot.render(renderRef.current({ count }));
+
+        overlayRootMap.set(overlay, { root: overlayReactRoot, container: overlayContainer });
         return;
       }
 
-      existing.root.render(renderRef.current({ count }));
-      overlay.setContent(existing.container);
+      overlayEntry.root.render(renderRef.current({ count }));
+      overlay.setContent(overlayEntry.container);
     };
 
     // prune: 이번 clustered 계산에 포함되지 않은 overlay 정리
-    const pruneOverlays = (aliveOverlays: Set<kakao.maps.CustomOverlay>) => {
-      overlayRootMap.forEach((entry, overlay) => {
-        if (aliveOverlays.has(overlay)) {
+    const removeStaleOverlays = (activeOverlays: Set<kakao.maps.CustomOverlay>) => {
+      overlayRootMap.forEach((overlayEntry, overlay) => {
+        if (activeOverlays.has(overlay)) {
           return;
         }
-        queueDispose(overlay, entry);
+        queueOverlayDisposal(overlay, overlayEntry);
       });
     };
 
     const handleClustered = (clusters: kakao.maps.Cluster[]) => {
-      const aliveOverlays = new Set<kakao.maps.CustomOverlay>();
+      const activeOverlays = new Set<kakao.maps.CustomOverlay>();
 
       clusters.forEach((cluster) => {
         const overlay = cluster.getClusterMarker();
-        aliveOverlays.add(overlay);
+        activeOverlays.add(overlay);
 
         if (pendingDisposeMap.has(overlay)) {
           pendingDisposeMap.delete(overlay);
@@ -167,7 +175,7 @@ export function useKakaoClusterer(
         upsertOverlay(overlay, cluster.getSize());
       });
 
-      pruneOverlays(aliveOverlays);
+      removeStaleOverlays(activeOverlays);
     };
 
     // cluster 클릭 시 cluster에 포함된 markerIds를 추출해 상위로 전달
@@ -176,7 +184,7 @@ export function useKakaoClusterer(
       const clusterMarkerInstances = cluster.getMarkers();
 
       const markerIds = clusterMarkerInstances
-        .map(m => markerIdByInstance.get(m))
+        .map(markerInstance => markerIdByInstance.get(markerInstance))
         .filter((id): id is string => Boolean(id));
 
       onClusterClickRef.current?.(cluster, markerIds);
@@ -197,9 +205,9 @@ export function useKakaoClusterer(
       // overlay React root 정리(배치 처리)
       const entriesToDispose: OverlayEntry[] = [];
 
-      overlayRootMap.forEach((entry, overlay) => {
+      overlayRootMap.forEach((overlayEntry, overlay) => {
         pendingDisposeMap.delete(overlay);
-        entriesToDispose.push(entry);
+        entriesToDispose.push(overlayEntry);
       });
 
       overlayRootMap.clear();
@@ -208,20 +216,20 @@ export function useKakaoClusterer(
       cleanupTimerRef.current = window.setTimeout(() => {
         cleanupTimerRef.current = null;
 
-        entriesToDispose.forEach((entry) => {
-          entry.root.unmount();
-          entry.container.remove();
+        entriesToDispose.forEach((overlayEntry) => {
+          overlayEntry.root.unmount();
+          overlayEntry.container.remove();
         });
       }, 0);
 
       clusterer.clear();
       clustererRef.current = null;
     };
-  }, [enabled, map, minLevel]);
+  }, [clusterMinLevel, isClustererEnabled, map]);
 
   // markers diff 동기화(add/remove/update 최소화) 후 redraw 1회
   useEffect(() => {
-    if (!enabled || !map || !window.kakao?.maps) {
+    if (!isClustererEnabled || !map || !window.kakao?.maps) {
       return;
     }
 
@@ -233,34 +241,34 @@ export function useKakaoClusterer(
     }
 
     const markerById = markerByIdRef.current;
-    const clickHandlerById = clickHandlerByIdRef.current;
+    const markerClickHandlerById = markerClickHandlerByIdRef.current;
     const markerIdByInstance = markerIdByInstanceRef.current;
 
-    const nextIds = new Set(markers.map(m => m.id));
+    const nextMarkerIds = new Set(markers.map(m => m.id));
 
     // 1) 제거: 다음 목록에 없는 마커는 리스너 해제 → clusterer 제거 → 지도 detach
     const markersToRemove: kakao.maps.Marker[] = [];
 
-    markerById.forEach((marker, id) => {
-      if (nextIds.has(id)) {
+    markerById.forEach((markerInstance, markerId) => {
+      if (nextMarkerIds.has(markerId)) {
         return;
       }
 
-      const handler = clickHandlerById.get(id);
-      if (handler) {
-        kakaoMaps.event.removeListener(marker, 'click', handler);
-        clickHandlerById.delete(id);
+      const onMarkerClick = markerClickHandlerById.get(markerId);
+      if (onMarkerClick) {
+        kakaoMaps.event.removeListener(markerInstance, 'click', onMarkerClick);
+        markerClickHandlerById.delete(markerId);
       }
 
-      markersToRemove.push(marker);
-      markerIdByInstance.delete(marker);
-      markerById.delete(id);
+      markersToRemove.push(markerInstance);
+      markerIdByInstance.delete(markerInstance);
+      markerById.delete(markerId);
     });
 
     if (markersToRemove.length > 0) {
       clusterer.removeMarkers(markersToRemove, false);
-      markersToRemove.forEach((m) => {
-        m.setMap(null);
+      markersToRemove.forEach((markerInstance) => {
+        markerInstance.setMap(null);
       });
     }
 
@@ -269,25 +277,28 @@ export function useKakaoClusterer(
 
     markers.forEach((input) => {
       const position = new kakaoMaps.LatLng(input.position.lat, input.position.lng);
-      const existing = markerById.get(input.id);
+      const markerInstance = markerById.get(input.id);
 
-      if (existing) {
-        existing.setPosition(position);
+      if (markerInstance) {
+        markerInstance.setPosition(position);
+
+        // dev 환경에서 WeakMap 매핑이 비어있을 수 있어, 항상 역매핑을 보장
+        markerIdByInstance.set(markerInstance, input.id);
         return;
       }
 
-      const marker = new kakaoMaps.Marker({ position });
-      markerById.set(input.id, marker);
-      markerIdByInstance.set(marker, input.id);
+      const nextMarker = new kakaoMaps.Marker({ position });
+      markerById.set(input.id, nextMarker);
+      markerIdByInstance.set(nextMarker, input.id);
 
-      const handler = () => {
+      const onMarkerClick = () => {
         onMarkerClickRef.current?.(input.id);
       };
 
-      clickHandlerById.set(input.id, handler);
-      kakaoMaps.event.addListener(marker, 'click', handler);
+      markerClickHandlerById.set(input.id, onMarkerClick);
+      kakaoMaps.event.addListener(nextMarker, 'click', onMarkerClick);
 
-      markersToAdd.push(marker);
+      markersToAdd.push(nextMarker);
     });
 
     if (markersToAdd.length > 0) {
@@ -298,5 +309,5 @@ export function useKakaoClusterer(
     clusterer.redraw();
 
     // cleanup은 전체 destroy가 아니라 diff 전략을 유지해 깜빡임/비용
-  }, [enabled, map, markers]);
+  }, [isClustererEnabled, map, markers]);
 }
