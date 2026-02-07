@@ -70,13 +70,13 @@ export function PerformanceTabs({
               value="upcoming"
               className={TAB_TRIGGER_STYLES}
             >
-              다가오는 공연
+              <h1>다가오는 공연</h1>
             </TabsTrigger>
             <TabsTrigger
               value="past"
               className={TAB_TRIGGER_STYLES}
             >
-              지난 공연
+              <h1>지난 공연</h1>
             </TabsTrigger>
           </TabsList>
 
@@ -84,7 +84,7 @@ export function PerformanceTabs({
         </div>
 
         <div className="w-full justify-between">
-          <h1 className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</h1>
+          <p className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</p>
 
           <TabsContent value="upcoming">
             <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
