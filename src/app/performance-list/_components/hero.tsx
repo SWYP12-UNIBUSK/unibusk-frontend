@@ -4,11 +4,13 @@ import { cn } from '@/utils';
 
 export function Hero() {
   return (
-    <section className={cn(`
-      relative flex h-[340px] w-full justify-start overflow-hidden rounded-lg
-      md:h-[460px]
-      xl:h-122.75
-    `)}
+    <section
+      className={cn(`
+        relative flex h-[340px] w-full justify-start overflow-hidden rounded-lg
+        md:h-[460px]
+        xl:h-122.75
+      `)}
+      aria-label="공연 등록 안내"
     >
       <Image
         src="/images/performance-list-illustration.webp"

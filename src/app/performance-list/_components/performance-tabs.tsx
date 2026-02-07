@@ -70,13 +70,13 @@ export function PerformanceTabs({
               value="upcoming"
               className={TAB_TRIGGER_STYLES}
             >
-              <h1>다가오는 공연</h1>
+              다가오는 공연
             </TabsTrigger>
             <TabsTrigger
               value="past"
               className={TAB_TRIGGER_STYLES}
             >
-              <h1>지난 공연</h1>
+              지난 공연
             </TabsTrigger>
           </TabsList>
 
