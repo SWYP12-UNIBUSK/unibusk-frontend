@@ -42,6 +42,17 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
 
   const { trigger, handleSubmit, getValues, reset } = methods;
 
+  const prevIsOpenRef = React.useRef(isOpen);
+
+  // 모달이 열릴 때만 Zustand의 formData를 react-hook-form에 동기화
+  React.useEffect(() => {
+    if (!prevIsOpenRef.current && isOpen) {
+      // 모달이 닫혀있다가 열릴 때만 실행
+      reset(formData);
+    }
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen, formData, reset]);
+
   const nextStep = async () => {
     const fields = STEP_FIELDS[step as 1 | 2 | 3 | 4] || [];
     const isValid = await trigger(fields);
@@ -54,11 +65,14 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
   const onSubmit = (data: PerformanceRegisterRequestDto) => {
     // eslint-disable-next-line no-console
     console.log('Form Submitted:', data);
-    setFormData(data);
 
-    reset();
-    resetStore();
-    onClose();
+    // TODO: 실제 API 호출
+    // await registerPerformance(data);
+
+    // 등록 완료 후 초기화
+    resetStore(); // Zustand 스토어 초기화 (localStorage도 함께 초기화됨)
+    reset(); // react-hook-form 초기화
+    onClose(); // 모달 닫기
   };
 
   const prevStep = () => {
@@ -66,8 +80,14 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     setStep(Math.max(step - 1, 1));
   };
 
+  const handleClose = () => {
+    // 모달을 닫을 때 현재 입력값을 저장
+    setFormData(getValues());
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
         className={`
           h-175 w-300 max-w-none rounded-lg border-none p-[80px_122px] shadow-xl
@@ -76,7 +96,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
       >
         <button
           type="button"
-          onClick={onClose}
+          onClick={handleClose}
           className={`
             absolute top-8 right-8 text-gray-400
             hover:text-black
