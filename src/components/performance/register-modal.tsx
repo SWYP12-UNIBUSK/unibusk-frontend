@@ -98,7 +98,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
           type="button"
           onClick={handleClose}
           className={`
-            absolute top-8 right-8 text-gray-400
+            absolute top-8 right-8 cursor-pointer text-gray-400
             hover:text-black
           `}
         >

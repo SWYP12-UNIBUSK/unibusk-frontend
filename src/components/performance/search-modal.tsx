@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/common/dialog';
@@ -42,10 +43,24 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className={`
-        flex h-170 w-125 flex-col gap-0 rounded-lg border-none px-10 pt-12
-      `}
+      <DialogContent
+        className={`
+          flex h-170 w-125 flex-col gap-0 rounded-lg border-none px-10 pt-12
+        `}
+        showCloseButton={false}
       >
+
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          className={`
+            absolute top-8 right-8 cursor-pointer text-gray-400
+            hover:text-black
+          `}
+        >
+          <X size={28} />
+        </button>
+
         <DialogHeader>
           <DialogTitle className={cn(`pb-5 typo-body-b-1 text-black`)}>장소를 검색해주세요</DialogTitle>
         </DialogHeader>

@@ -40,8 +40,8 @@ export function Step04() {
                         }
                       }}
                       className={`
-                        flex h-8 w-8 items-center justify-center rounded-full
-                        outline-none
+                        flex h-8 w-8 cursor-pointer items-center justify-center
+                        rounded-full outline-none
                         focus-visible:ring-2 focus-visible:ring-primary
                       `}
                     >
