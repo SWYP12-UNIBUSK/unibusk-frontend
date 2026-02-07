@@ -70,7 +70,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     // await registerPerformance(data);
 
     // 등록 완료 후 초기화
-    resetStore(); // Zustand 스토어 초기화 (localStorage도 함께 초기화됨)
+    resetStore(); // Zustand 스토어 초기화
     reset(); // react-hook-form 초기화
     onClose(); // 모달 닫기
   };

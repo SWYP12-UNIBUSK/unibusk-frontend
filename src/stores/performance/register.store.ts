@@ -1,6 +1,5 @@
 import type { PerformanceRegisterRequestDto } from '@/apis/performance';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 interface PerformanceRegisterState {
   step: number;
@@ -28,19 +27,12 @@ const initialState = {
   },
 };
 
-export const useRegisterStore = create<PerformanceRegisterState>()(
-  persist(
-    set => ({
-      ...initialState,
-      setStep: step => set({ step }),
-      setFormData: data =>
-        set(state => ({
-          formData: { ...state.formData, ...data },
-        })),
-      reset: () => set(initialState),
-    }),
-    {
-      name: 'performance-register-storage', // localStorage 키 이름
-    },
-  ),
-);
+export const useRegisterStore = create<PerformanceRegisterState>(set => ({
+  ...initialState,
+  setStep: step => set({ step }),
+  setFormData: data =>
+    set(state => ({
+      formData: { ...state.formData, ...data },
+    })),
+  reset: () => set(initialState),
+}));
