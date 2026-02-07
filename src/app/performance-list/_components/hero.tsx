@@ -14,7 +14,7 @@ export function Hero() {
     >
       <Image
         src="/images/performance-list-illustration.webp"
-        alt="공연 둘러보기 HERO 일러스트"
+        alt="공연 등록 가이드 HERO 일러스트"
         fill
         className={cn(`
           rounded-lg object-contain object-right
