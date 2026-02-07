@@ -49,7 +49,7 @@ export function SidebarPanel({
     >
       <ListHeader
         title={headerTitle}
-        onBackClick={isClusterMode ? (onExitClusterListClick ?? (() => {})) : undefined}
+        onBackClick={isClusterMode ? onExitClusterListClick : undefined}
       />
       <div className="flex-1 overflow-y-auto pb-11.25">
         <ul className="flex w-full flex-col">

@@ -62,7 +62,7 @@ export function useKakaoClusterer(
 
   const isClustererEnabled = options.enabled;
   const clusterMinLevel = options.minLevel ?? 6;
-  const isClusterListOpen = options.isClusterListOpen ?? true;
+  const isClusterListOpen = options.isClusterListOpen ?? false;
 
   const cleanupTimerRef = useRef<number | null>(null);
 
@@ -93,14 +93,15 @@ export function useKakaoClusterer(
 
   // 언마운트 시 마커 클릭 리스너와 내부 ref를 정리해 누수/중복 이벤트를 방지
   useEffect(() => {
-    const kakaoEvt = window.kakao?.maps?.event;
     const markerById = markerByIdRef.current;
     const markerClickHandlerById = markerClickHandlerByIdRef.current;
 
     return () => {
+      const kakaoEvt = window.kakao?.maps?.event;
       if (kakaoEvt) {
         markerClickHandlerById.forEach((handler, markerId) => {
           const marker = markerById.get(markerId);
+
           if (marker) {
             kakaoEvt.removeListener(marker, 'click', handler);
           }
@@ -112,6 +113,7 @@ export function useKakaoClusterer(
       markerIdByInstanceRef.current = new WeakMap();
     };
   }, []);
+
   // clusterer 생성 + clustered/clusterclick 이벤트 연결 + overlay 배지 렌더링
   useEffect(() => {
     if (!isClustererEnabled || !map || !window.kakao?.maps) {

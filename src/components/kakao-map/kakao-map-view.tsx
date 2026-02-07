@@ -20,6 +20,7 @@ interface KakaoMapViewProps {
 const EMPTY_MARKERS: KakaoMarkerInputs[] = [];
 const DEFAULT_CLUSTER_MIN_LEVEL = 6;
 
+// 중심 좌표를 소수 5자리(≈ 1.1m)로 고정해 미세한 드리프트로 clusterKey가 흔들리는 걸 방지
 function buildClusterKey(center: kakao.maps.LatLng) {
   const lat = center.getLat().toFixed(5);
   const lng = center.getLng().toFixed(5);
