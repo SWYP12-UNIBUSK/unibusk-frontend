@@ -10,6 +10,7 @@ import { CLUSTER_BADGE_SIZE_PX } from '@/constants/busking-map';
 interface UseKakaoClustererOptions {
   enabled: boolean;
   minLevel?: number;
+  isClusterListOpen?: boolean;
   onMarkerClick?: (markerId: string) => void;
   onClusterClick?: (cluster: kakao.maps.Cluster, markerIds: string[]) => void;
 }
@@ -61,8 +62,34 @@ export function useKakaoClusterer(
 
   const isClustererEnabled = options.enabled;
   const clusterMinLevel = options.minLevel ?? 6;
+  const isClusterListOpen = options.isClusterListOpen ?? true;
 
   const cleanupTimerRef = useRef<number | null>(null);
+
+  // cluster badge isActive 상태 해제 동작
+  useEffect(() => {
+    if (!isClustererEnabled || !map) {
+      return;
+    }
+
+    if (isClusterListOpen) {
+      return;
+    }
+
+    const prevActiveOverlay = activeOverlayRef.current;
+    if (!prevActiveOverlay) {
+      return;
+    }
+
+    activeOverlayRef.current = null;
+
+    const overlayEntry = overlayRootMapRef.current.get(prevActiveOverlay);
+    if (!overlayEntry) {
+      return;
+    }
+
+    overlayEntry.badgeReactRoot.render(renderRef.current({ count: overlayEntry.count, isActive: false }));
+  }, [isClusterListOpen, isClustererEnabled, map]);
 
   // clusterer 생성 + clustered/clusterclick 이벤트 연결 + overlay 배지 렌더링
   useEffect(() => {
@@ -159,6 +186,12 @@ export function useKakaoClusterer(
         overlayContentEl.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
         overlayContentEl.style.cursor = 'pointer';
         overlayContentEl.style.position = 'relative';
+        // 브라우저 기본 focus outline 삭제
+        overlayContentEl.style.outline = 'none';
+        overlayContentEl.style.border = '0';
+        overlayContentEl.style.boxShadow = 'none';
+        overlayContentEl.style.background = 'transparent';
+        overlayContentEl.tabIndex = -1;
 
         const badgeMountEl = document.createElement('div');
         badgeMountEl.style.position = 'absolute';

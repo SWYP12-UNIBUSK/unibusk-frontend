@@ -100,6 +100,9 @@ declare global {
       namespace event {
         interface MapMouseEvent { latLng: LatLng };
 
+        function addListener(target: Map, type: 'dragstart' | 'zoom_changed', handler: () => void): void;
+        function removeListener(target: Map, type: 'dragstart' | 'zoom_changed', handler: () => void): void;
+
         function addListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
         function removeListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
 

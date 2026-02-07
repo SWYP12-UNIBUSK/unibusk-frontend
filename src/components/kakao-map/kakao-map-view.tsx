@@ -36,6 +36,7 @@ export function KakaoMapView({
 }: KakaoMapViewProps) {
   const { isLoaded, error } = useKakaoLoader();
   const { mapContainerRef, map } = useKakaoMap({ isLoaded, center, level });
+  const listScope = useBuskingMapUiStore(state => state.listScope);
 
   const hasError = Boolean(error);
   const safeMarkers = markers ?? EMPTY_MARKERS;
@@ -52,6 +53,7 @@ export function KakaoMapView({
     {
       enabled: isClustererEnabled,
       minLevel: clusterMinLevel,
+      isClusterListOpen: listScope === 'cluster',
       onMarkerClick: (markerId) => {
         useBuskingMapUiStore.getState().focusPlace(markerId);
       },
@@ -94,6 +96,31 @@ export function KakaoMapView({
 
     return () => {
       kakaoMaps.event.removeListener(map, 'click', handleMapClick);
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (!map || !window.kakao?.maps) {
+      return;
+    }
+
+    const kakaoMaps = window.kakao.maps;
+
+    const handleMapMoveOrZoom = () => {
+      const { listScope: currentScope, exitClusterList } = useBuskingMapUiStore.getState();
+      if (currentScope !== 'cluster') {
+        return;
+      }
+
+      exitClusterList();
+    };
+
+    kakaoMaps.event.addListener(map, 'dragstart', handleMapMoveOrZoom);
+    kakaoMaps.event.addListener(map, 'zoom_changed', handleMapMoveOrZoom);
+
+    return () => {
+      kakaoMaps.event.removeListener(map, 'dragstart', handleMapMoveOrZoom);
+      kakaoMaps.event.removeListener(map, 'zoom_changed', handleMapMoveOrZoom);
     };
   }, [map]);
 
