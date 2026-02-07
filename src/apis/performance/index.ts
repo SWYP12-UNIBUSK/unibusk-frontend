@@ -1,2 +1,3 @@
 export { getPerformanceList, getSearchPerformanceList } from './performance.api';
-export type { PerformanceListResponseDto } from './performance.schema';
+export type { PerformanceListResponseDto, PerformanceRegisterRequestDto } from './performance.schema';
+export { PerformanceRegisterRequestDtoSchema } from './performance.schema';

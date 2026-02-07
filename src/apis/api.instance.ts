@@ -41,14 +41,16 @@ class APIClient {
     });
 
     if (response.status === 401) {
-      // ✅ 서버/클라이언트 환경 분기
-      if (typeof window === 'undefined') {
-        // 서버: Next.js redirect 사용
-        redirect('/login');
-      }
-      else {
-        // 클라이언트: window.location 사용
-        window.location.href = '/login';
+      if (!config.skipRedirectOn401) {
+        // ✅ 서버/클라이언트 환경 분기
+        if (typeof window === 'undefined') {
+          // 서버: Next.js redirect 사용
+          redirect('/login');
+        }
+        else {
+          // 클라이언트: window.location 사용
+          window.location.href = '/login';
+        }
       }
       throw new Error('Unauthorized');
     }

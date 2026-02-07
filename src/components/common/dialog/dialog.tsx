@@ -71,7 +71,6 @@ function DialogContent({
             data-[state=closed]:zoom-out-95
             data-[state=open]:animate-in data-[state=open]:fade-in-0
             data-[state=open]:zoom-in-95
-            sm:max-w-lg
           `,
           className,
         )}

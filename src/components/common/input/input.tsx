@@ -42,7 +42,7 @@ function Label({
     <div className="mb-2.5 flex items-center gap-1.25 pl-2.5">
       <label
         ref={ref}
-        className={cn('typo-caption-sb-1 text-black', className)}
+        className={cn('typo-body-sb-2 text-black', className)}
         {...props}
       >
         {required && <span className="pr-0.5 text-error">*</span>}
