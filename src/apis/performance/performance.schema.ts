@@ -39,8 +39,8 @@ export const PerformanceRegisterRequestDtoSchema = z.object({
   performanceDetail: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
 
   // Step 4: 체크리스트
-  // 기존 로직이 RadioGroup 하나만 선택하는 것이어서 string으로 정의
-  checklist: z.string().min(1, '*체크리스트의 모든 항목이 완료되어야 등록할 수 있습니다. 빠진 곳이 없는지 다시 한번 봐주세요.'),
+  // 모든 항목을 체크해야 하므로 배열로 정의
+  checklist: z.array(z.string()).min(3, '*체크리스트의 모든 항목이 완료되어야 등록할 수 있습니다. 빠진 곳이 없는지 다시 한번 봐주세요.'),
 });
 
 /**

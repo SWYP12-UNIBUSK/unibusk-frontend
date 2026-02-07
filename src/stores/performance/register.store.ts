@@ -20,7 +20,7 @@ const initialState: PerformanceRegisterState = {
     performanceLocation: '',
     performanceDescription: '',
     performanceDetail: '',
-    checklist: '',
+    checklist: [],
   },
   setStep: () => {},
   setFormData: () => {},
