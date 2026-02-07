@@ -17,10 +17,11 @@ interface UseKakaoClustererOptions {
 interface OverlayEntry {
   badgeReactRoot: Root;
   badgeLayerEl: HTMLDivElement;
+  count: number;
 }
 
 interface RenderClusterBadge {
-  (args: { count: number }): ReactElement;
+  (args: { count: number; isActive: boolean }): ReactElement;
 }
 
 interface ClickHandler {
@@ -44,6 +45,9 @@ export function useKakaoClusterer(
 
   // CustomOverlay별 React root/container를 추적해 배지를 갱신하고 누수 없이 정리
   const overlayRootMapRef = useRef<Map<kakao.maps.CustomOverlay, OverlayEntry>>(new Map());
+
+  // 마지막으로 클릭된 클러스터 overlay(배지 active 스타일용)
+  const activeOverlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
 
   // 최신 동작 보장
   const renderRef = useRef(renderClusterBadge);
@@ -86,6 +90,10 @@ export function useKakaoClusterer(
           return;
         }
 
+        if (activeOverlayRef.current === overlay) {
+          activeOverlayRef.current = null;
+        }
+
         overlayEntry.badgeReactRoot.unmount();
         overlayEntry.badgeLayerEl.remove();
         overlayRootMap.delete(overlay);
@@ -124,9 +132,20 @@ export function useKakaoClusterer(
 
     clustererRef.current = clusterer;
 
+    const renderOverlay = (overlay: kakao.maps.CustomOverlay) => {
+      const overlayEntry = overlayRootMap.get(overlay);
+      if (!overlayEntry) {
+        return;
+      }
+
+      const isActive = activeOverlayRef.current === overlay;
+      overlayEntry.badgeReactRoot.render(renderRef.current({ count: overlayEntry.count, isActive }));
+    };
+
     // overlay가 있으면 갱신, 없으면 생성해서 연결
     const upsertOverlay = (overlay: kakao.maps.CustomOverlay, count: number) => {
       const overlayEntry = overlayRootMap.get(overlay);
+      const isActive = activeOverlayRef.current === overlay;
 
       if (!overlayEntry) {
         const content = overlay.getContent();
@@ -151,13 +170,19 @@ export function useKakaoClusterer(
         overlayContentEl.appendChild(badgeMountEl);
 
         const overlayReactRoot = createRoot(badgeMountEl);
-        overlayReactRoot.render(renderRef.current({ count }));
+        overlayReactRoot.render(renderRef.current({ count, isActive }));
 
-        overlayRootMap.set(overlay, { badgeReactRoot: overlayReactRoot, badgeLayerEl: badgeMountEl });
+        overlayRootMap.set(overlay, {
+          badgeReactRoot: overlayReactRoot,
+          badgeLayerEl: badgeMountEl,
+          count,
+        });
+
         return;
       }
 
-      overlayEntry.badgeReactRoot.render(renderRef.current({ count }));
+      overlayEntry.count = count;
+      overlayEntry.badgeReactRoot.render(renderRef.current({ count, isActive }));
     };
 
     // prune: 이번 clustered 계산에 포함되지 않은 overlay 정리
@@ -166,6 +191,7 @@ export function useKakaoClusterer(
         if (activeOverlays.has(overlay)) {
           return;
         }
+
         queueOverlayDisposal(overlay, overlayEntry);
       });
     };
@@ -187,8 +213,24 @@ export function useKakaoClusterer(
       removeStaleOverlays(activeOverlays);
     };
 
-    // cluster 클릭 시 cluster에 포함된 markerIds를 추출해 상위로 전달
+    // cluster 클릭 시:
+    // 1) 클릭된 overlay를 active로 만들고(이전 active는 해제), 배지 렌더를 갱신
+    // 2) cluster에 포함된 markerIds를 추출해 상위로 전달
     const handleClusterClick = (cluster: kakao.maps.Cluster) => {
+      const prevActiveOverlay = activeOverlayRef.current;
+      const nextActiveOverlay = cluster.getClusterMarker();
+
+      if (prevActiveOverlay !== nextActiveOverlay) {
+        activeOverlayRef.current = nextActiveOverlay;
+
+        if (prevActiveOverlay) {
+          renderOverlay(prevActiveOverlay);
+        }
+      }
+
+      // 클릭 직후 clustered 렌더가 아직 안 들어왔을 수도 있으니, 우선 upsert로 보장 + active 스타일 반영
+      upsertOverlay(nextActiveOverlay, cluster.getSize());
+
       const markerIdByInstance = markerIdByInstanceRef.current;
       const clusterMarkerInstances = cluster.getMarkers();
 
@@ -224,6 +266,7 @@ export function useKakaoClusterer(
 
       cleanupTimerRef.current = window.setTimeout(() => {
         cleanupTimerRef.current = null;
+        activeOverlayRef.current = null;
 
         entriesToDispose.forEach((overlayEntry) => {
           overlayEntry.badgeReactRoot.unmount();

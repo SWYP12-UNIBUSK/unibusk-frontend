@@ -61,7 +61,7 @@ export function KakaoMapView({
         useBuskingMapUiStore.getState().openClusterList(clusterKey, markerIds);
       },
     },
-    ({ count }) => <ClusterBadge count={count} />,
+    ({ count, isActive = false }) => <ClusterBadge count={count} isActive={isActive} />,
   );
 
   const markerLayerMap = hasError ? null : (isClustererEnabled ? null : map);
