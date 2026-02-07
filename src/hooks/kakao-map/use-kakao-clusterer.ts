@@ -34,11 +34,10 @@ export function useKakaoClusterer(
   // 마커 id별 클릭 핸들러 참조를 저장해 removeListener 수행
   const clickHandlerByIdRef = useRef<Map<string, ClickHandler>>(new Map());
 
-  // 마커 인스턴스 → id 역매핑으로 클러스터의 getMarkers() 결과를 id 목록으로 변환
-  // WeakMap: 마커 인스턴스가 사라지면 매핑도 GC로 함께 정리되도록(약한 참조) 사용
+  // 마커 인스턴스 → id 역매핑(WeakMap: 마커 GC 시 매핑도 함께 정리)
   const markerIdByInstanceRef = useRef<WeakMap<kakao.maps.Marker, string>>(new WeakMap());
 
-  // CustomOverlay별 React root/container를 추적해 배지를 갱신하고 prune/cleanup 동작을 누수 없이 정리
+  // CustomOverlay별 React root/container를 추적해 배지를 갱신하고 누수 없이 정리
   const overlayRootMapRef = useRef<Map<kakao.maps.CustomOverlay, OverlayEntry>>(new Map());
 
   // 최신 동작 보장
@@ -54,17 +53,63 @@ export function useKakaoClusterer(
   const enabled = options.enabled;
   const minLevel = options.minLevel ?? 6;
 
-  /**
-   * 1) clusterer 생명주기 관리
-   *  map 준비 완료일 때만 clusterer와 이벤트를 연결하고, clustered 배지 렌더/갱신 및 cleanup 정리 수행
-   */
+  const cleanupTimerRef = useRef<number | null>(null);
+
+  // clusterer 생성 + clustered/clusterclick 이벤트 연결 + overlay 배지 렌더링
   useEffect(() => {
     if (!enabled || !map || !window.kakao?.maps) {
       return;
     }
 
+    if (cleanupTimerRef.current !== null) {
+      window.clearTimeout(cleanupTimerRef.current);
+      cleanupTimerRef.current = null;
+    }
+
     const kakaoMaps = window.kakao.maps;
+
+    // 로컬 변수 캡처로 cleanup에서 동일 참조를 사용(Ref 변경 경고 방지)
     const overlayRootMap = overlayRootMapRef.current;
+
+    const pendingDisposeMap = new Map<kakao.maps.CustomOverlay, OverlayEntry>();
+    let disposeTimer: number | null = null;
+
+    const flushDisposes = () => {
+      pendingDisposeMap.forEach((entry, overlay) => {
+        const current = overlayRootMap.get(overlay);
+        if (!current || current !== entry) {
+          return;
+        }
+
+        entry.root.unmount();
+        entry.container.remove();
+        overlayRootMap.delete(overlay);
+      });
+
+      pendingDisposeMap.clear();
+    };
+
+    const scheduleFlushDisposes = () => {
+      if (disposeTimer !== null) {
+        return;
+      }
+
+      disposeTimer = window.setTimeout(() => {
+        disposeTimer = null;
+        flushDisposes();
+      }, 0);
+    };
+
+    const queueDispose = (overlay: kakao.maps.CustomOverlay, entry: OverlayEntry) => {
+      if (pendingDisposeMap.has(overlay)) {
+        return;
+      }
+
+      pendingDisposeMap.set(overlay, entry);
+      entry.root.render(null);
+      scheduleFlushDisposes();
+    };
+
     const clusterer = new kakaoMaps.MarkerClusterer({
       map,
       minLevel,
@@ -81,6 +126,7 @@ export function useKakaoClusterer(
       if (!existing) {
         const container = document.createElement('div');
 
+        // 초기 렌더 전에 컨테이너 크기를 선고정해 배지 위치 스냅을 최소화
         container.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
         container.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
 
@@ -97,16 +143,13 @@ export function useKakaoClusterer(
       overlay.setContent(existing.container);
     };
 
-    // 이번 clustered 계산에 포함되지 않은 overlay는 정리(누수 방지)
+    // prune: 이번 clustered 계산에 포함되지 않은 overlay 정리
     const pruneOverlays = (aliveOverlays: Set<kakao.maps.CustomOverlay>) => {
       overlayRootMap.forEach((entry, overlay) => {
         if (aliveOverlays.has(overlay)) {
           return;
         }
-
-        entry.root.unmount();
-        entry.container.remove();
-        overlayRootMap.delete(overlay);
+        queueDispose(overlay, entry);
       });
     };
 
@@ -117,12 +160,17 @@ export function useKakaoClusterer(
         const overlay = cluster.getClusterMarker();
         aliveOverlays.add(overlay);
 
+        if (pendingDisposeMap.has(overlay)) {
+          pendingDisposeMap.delete(overlay);
+        }
+
         upsertOverlay(overlay, cluster.getSize());
       });
 
       pruneOverlays(aliveOverlays);
     };
 
+    // cluster 클릭 시 cluster에 포함된 markerIds를 추출해 상위로 전달
     const handleClusterClick = (cluster: kakao.maps.Cluster) => {
       const markerIdByInstance = markerIdByInstanceRef.current;
       const clusterMarkerInstances = cluster.getMarkers();
@@ -141,23 +189,37 @@ export function useKakaoClusterer(
       kakaoMaps.event.removeListener(clusterer, 'clustered', handleClustered);
       kakaoMaps.event.removeListener(clusterer, 'clusterclick', handleClusterClick);
 
-      // overlay React root 정리
-      overlayRootMap.forEach((entry) => {
-        entry.root.unmount();
-        entry.container.remove();
+      if (disposeTimer !== null) {
+        window.clearTimeout(disposeTimer);
+        disposeTimer = null;
+      }
+
+      // overlay React root 정리(배치 처리)
+      const entriesToDispose: OverlayEntry[] = [];
+
+      overlayRootMap.forEach((entry, overlay) => {
+        pendingDisposeMap.delete(overlay);
+        entriesToDispose.push(entry);
       });
-      overlayRootMap.clear();
 
       overlayRootMap.clear();
+      pendingDisposeMap.clear();
+
+      cleanupTimerRef.current = window.setTimeout(() => {
+        cleanupTimerRef.current = null;
+
+        entriesToDispose.forEach((entry) => {
+          entry.root.unmount();
+          entry.container.remove();
+        });
+      }, 0);
 
       clusterer.clear();
       clustererRef.current = null;
     };
   }, [enabled, map, minLevel]);
 
-  /**
-   * 2) markers를 diff로 동기화해 변경된 것(add/remove/update)만 반영하고, 마지막에 1회 redraw
-   */
+  // markers diff 동기화(add/remove/update 최소화) 후 redraw 1회
   useEffect(() => {
     if (!enabled || !map || !window.kakao?.maps) {
       return;
@@ -176,7 +238,7 @@ export function useKakaoClusterer(
 
     const nextIds = new Set(markers.map(m => m.id));
 
-    // 1. 제거: 다음 목록에 없는 마커는 리스너 해제 → clusterer 제거 → 지도 detach
+    // 1) 제거: 다음 목록에 없는 마커는 리스너 해제 → clusterer 제거 → 지도 detach
     const markersToRemove: kakao.maps.Marker[] = [];
 
     markerById.forEach((marker, id) => {
@@ -202,7 +264,7 @@ export function useKakaoClusterer(
       });
     }
 
-    // 2. 추가 및 갱신
+    // 2) 추가 및 갱신: 있으면 위치 업데이트, 없으면 생성 + 클릭 리스너 등록
     const markersToAdd: kakao.maps.Marker[] = [];
 
     markers.forEach((input) => {
@@ -232,7 +294,9 @@ export function useKakaoClusterer(
       clusterer.addMarkers(markersToAdd, false);
     }
 
-    // 3. 일괄적으로 redraw
+    // 3) 일괄 redraw
     clusterer.redraw();
+
+    // cleanup은 전체 destroy가 아니라 diff 전략을 유지해 깜빡임/비용
   }, [enabled, map, markers]);
 }
