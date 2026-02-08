@@ -1,3 +1,2 @@
-export { getUser } from './user.api';
-export { UserResponseDtoSchema } from './user.schema';
-export type { UserResponseDto } from './user.schema';
+export { getUser, logoutUser } from './user.api';
+export type { LogoutResponseDto, UserResponseDto } from './user.schema';

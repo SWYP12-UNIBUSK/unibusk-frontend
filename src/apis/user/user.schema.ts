@@ -7,3 +7,10 @@ export const UserResponseDtoSchema = z.object({
 });
 
 export type UserResponseDto = z.infer<typeof UserResponseDtoSchema>;
+
+export const LogoutResponseDtoSchema = z.object({
+  code: z.string(),
+  message: z.string(),
+});
+
+export type LogoutResponseDto = z.infer<typeof LogoutResponseDtoSchema>;
