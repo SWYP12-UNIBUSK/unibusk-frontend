@@ -1,33 +1,28 @@
-'use client';
 import { Header } from '@/components/common/header';
+import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
-export default function HomePage() {
+export default function Page() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <main className="w-full">
       <div
-        className="mx-auto flex h-16 w-full max-w-[1440px] items-center px-6"
+        className="mx-auto my-5 flex h-16 w-full max-w-360 items-center px-6"
       >
         <Header />
       </div>
+      <HomeHeroSection
+        mapBgSrc="/images/main-bg.png"
+        heroIllustSrc="/images/main-image.png"
+      />
 
-      <div
-        className={`
-          mx-auto mt-6 flex h-16 w-full max-w-[1440px] items-center px-6
-        `}
-      >
-        <Header
-          layout="SEARCH"
-          onSearch={(searchKeyword) => {
-            console.warn('search:', searchKeyword);
-          }}
-          initialSearchKeyword=""
-          searchPlaceholder="검색어를 입력해 주세요"
-        />
-      </div>
+      <HomeUpcomingBuskingSection
+        title="다가오는 버스킹"
+        tags={['#지금공연중', '#오늘의공연', '#가까운공연예정']}
+        viewAllHref="/performance-list"
+      />
 
-      <main className="mx-auto w-full max-w-[1440px] px-6 py-10">
-        <h1 className="typo-title-sb-2">메인 페이지</h1>
-      </main>
-    </div>
+      <HomePromoSection ctaHref="/performance-list" />
+
+      <HomeFooter />
+    </main>
   );
 }
