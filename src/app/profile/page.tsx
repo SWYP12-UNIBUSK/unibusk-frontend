@@ -1,9 +1,10 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { cookies } from 'next/headers';
 import { getUser } from '@/apis/user';
-import { ProfileContainer } from '@/components/profile';
+import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
+import { Footer, ProfileTab } from './_components';
 
 export default async function ProfilePage() {
   const cookieStore = await cookies();
@@ -20,12 +21,14 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="mb-6 text-2xl font-bold">프로필</h1>
-
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <ProfileContainer />
-      </HydrationBoundary>
+    <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <ProfileTab />
+        </HydrationBoundary>
+      </main>
+      <Footer />
     </div>
   );
 }
