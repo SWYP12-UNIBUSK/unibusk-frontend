@@ -16,7 +16,7 @@ interface DisplayInputProps {
 
 export function ProfileInfo({ email, name }: ProfileInfoProps) {
   return (
-    <section className="flex flex-col items-center gap-16.75">
+    <section className="flex w-full flex-col items-center gap-16.75">
       {/* 아바타 아이콘 */}
       <div className="flex items-center justify-center">
         <div className={`

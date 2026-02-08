@@ -23,7 +23,7 @@ export default async function ProfilePage() {
   return (
     <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <ProfileTab />
         </HydrationBoundary>

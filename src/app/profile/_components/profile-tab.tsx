@@ -22,21 +22,18 @@ export function ProfileTab() {
 }
 
 function BaseProfileTab() {
-  const { data: { memberId, email, name } }
+  const { data: { email, name } }
     = useSuspenseQuery(userQueryOptions);
 
   return (
-    <div className="w-full pt-21.25">
+    <div className="flex w-full flex-1 flex-col pt-21.25">
 
       <Tabs
         defaultValue="my-info"
-        className="flex flex-row items-start gap-6"
+        className="flex min-h-[500px] flex-1 flex-row gap-6"
       >
 
-        <TabsList className={`
-          mb-0 h-full w-55 flex-col justify-start bg-transparent p-0
-        `}
-        >
+        <TabsList className="mb-0 h-full w-55 flex-col bg-transparent p-0">
           <h1 className="mb-25 typo-title-sb-2 text-black">마이페이지</h1>
           <div className="m-auto flex h-30 w-full flex-col gap-5 px-5">
             <ProfileTabTrigger filter="my-info" content="내 정보" />
@@ -45,12 +42,18 @@ function BaseProfileTab() {
 
         </TabsList>
 
-        <div className="flex-1">
-          <TabsContent value="my-info" className="mt-0 outline-none">
-            <ProfileInfo email={email} name={name} memberId={memberId} />
+        <div className="flex flex-1 flex-col">
+          <TabsContent
+            value="my-info"
+            className="mt-0 flex flex-1 outline-none"
+          >
+            <ProfileInfo email={email} name={name} />
           </TabsContent>
 
-          <TabsContent value="my-performances" className="mt-0 outline-none">
+          <TabsContent
+            value="my-performances"
+            className="mt-0 flex flex-1 outline-none"
+          >
             <ProfilePerformances />
           </TabsContent>
         </div>
