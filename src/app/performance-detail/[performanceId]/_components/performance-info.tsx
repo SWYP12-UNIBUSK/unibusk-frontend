@@ -26,11 +26,12 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
         locationName={locationName}
       />
       <Content
+        title={title}
         posterUrl={images[0]}
         summary={summary}
         startTime={startTime}
         endTime={endTime}
-        performers={performers[0]}
+        performers={performers[0] ?? { name: '', email: '', phoneNumber: '' }}
         description={description}
       />
       <PerformanceLocation />
@@ -97,6 +98,7 @@ function Summary({ title, performanceDate, locationName }: SummaryProps) {
 }
 
 interface ContentProps {
+  title: string;
   posterUrl: string;
   summary: string;
   startTime: string;
@@ -109,7 +111,7 @@ interface ContentProps {
   description: string;
 }
 
-function Content({ posterUrl, summary, startTime, endTime, performers, description }: ContentProps) {
+function Content({ posterUrl, summary, startTime, endTime, performers, description, title }: ContentProps) {
   return (
     <div>
       <div className={`
@@ -129,7 +131,7 @@ function Content({ posterUrl, summary, startTime, endTime, performers, descripti
             ? (
                 <Image
                   src={posterUrl}
-                  alt=""
+                  alt={`${title} 공연 포스터`}
                   fill
                   className="object-cover"
                 />

@@ -1,9 +1,9 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { notFound } from 'next/navigation';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
-import { PerformanceInfo } from './_components';
-import { Footer } from './_components/footer';
+import { Footer, PerformanceInfo } from './_components';
 
 export default async function PerformanceDetailPage(
   {
@@ -17,6 +17,10 @@ export default async function PerformanceDetailPage(
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery(performanceDetailQueryOptions(performanceId));
+
+  if (Number.isNaN(performanceId) || performanceId <= 0) {
+    notFound();
+  }
 
   return (
     <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
