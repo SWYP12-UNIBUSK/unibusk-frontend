@@ -1,8 +1,10 @@
+import type { FetchConfig } from '../api.types';
 import type { PerformanceLocationsQuery } from './performance-location.schema';
 import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
   PerformanceLocationDtoSchema,
+  PerformanceLocationSearchResponseDtoSchema,
   PerformanceLocationsQuerySchema,
   PerformanceLocationsResponseDtoSchema,
 } from './performance-location.schema';
@@ -38,4 +40,23 @@ export function getPerformanceLocationDetail(performanceLocationId: number) {
   return api
     .get(`/api/performance-locations/${performanceLocationId}`)
     .then(parseResponse(PerformanceLocationDtoSchema));
+}
+
+/**
+ * 버스킹 장소 검색
+ * @param keyword 검색 키워드
+ * @param page 페이지 번호
+ * @returns 검색된 버스킹 장소 목록
+ */
+export function getPerformanceLocationSearch(
+  keyword: string,
+  page: number = 0,
+  config?: FetchConfig,
+) {
+  return api
+    .get('/api/performance-locations/search', {
+      ...config,
+      params: { keyword, page: page.toString() },
+    })
+    .then(parseResponse(PerformanceLocationSearchResponseDtoSchema));
 }
