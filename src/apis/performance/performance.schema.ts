@@ -98,7 +98,7 @@ export const PerformanceListResponseDtoSchema = z.object({
     /** 공연 장소명 */
     locationName: z.string(),
     /** 공연 이미지 URL 배열 */
-    images: z.array(z.url('Invalid image URL format')).min(1, 'At least one image URL is required'),
+    images: z.array(z.string()).default([]),
   })),
   /** 현재 페이지 번호 (0부터 시작) */
   page: z.int().nonnegative(),
