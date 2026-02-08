@@ -11,6 +11,11 @@ declare global {
         getLng(): number;
       }
 
+      class LatLngBounds {
+        getSouthWest(): LatLng;
+        getNorthEast(): LatLng;
+      }
+
       // 지도 생성 옵션 (center, level)
       interface MapOptions {
         center: LatLng; // 지도 중심 좌표
@@ -22,6 +27,10 @@ declare global {
 
         setLevel(level: number): void;
         setCenter(center: LatLng): void;
+
+        getBounds(): LatLngBounds;
+        getCenter(): LatLng;
+        getLevel(): number;
       }
 
       interface MarkerOptions {
@@ -100,8 +109,8 @@ declare global {
       namespace event {
         interface MapMouseEvent { latLng: LatLng };
 
-        function addListener(target: Map, type: 'dragstart' | 'zoom_changed', handler: () => void): void;
-        function removeListener(target: Map, type: 'dragstart' | 'zoom_changed', handler: () => void): void;
+        function addListener(target: Map, type: 'dragstart' | 'zoom_changed' | 'idle', handler: () => void): void;
+        function removeListener(target: Map, type: 'dragstart' | 'zoom_changed' | 'idle', handler: () => void): void;
 
         function addListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
         function removeListener(target: Map, type: 'click', handler: (mouseEvent: MapMouseEvent) => void): void;
