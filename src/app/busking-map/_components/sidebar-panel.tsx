@@ -40,6 +40,7 @@ export function SidebarPanel({
 
   const isClusterMode = mode === 'cluster';
   const headerTitle = isClusterMode ? `주변 장소 (${places.length})` : '공연 장소';
+  const isEmpty = places.length === 0;
 
   return (
     <section className={`
@@ -51,24 +52,64 @@ export function SidebarPanel({
         title={headerTitle}
         onBackClick={isClusterMode ? onExitClusterListClick : undefined}
       />
-      <div className="flex-1 overflow-y-auto pb-11.25">
-        <ul className="flex w-full flex-col">
-          {places.map((place, index) => {
-            return (
-              <li key={place.id}>
-                <PlaceCard
-                  place={place}
-                  onClick={() => onListItemClick(place.id)}
-                />
-                {index !== places.length - 1 && (
-                  <LineDivider width="84%" thickness={1} colorClassName="bg-gray-200" />
-                )}
-              </li>
-            );
-          })}
-        </ul>
+
+      <div
+        className={cn(
+          'flex-1 pb-11.25',
+          isEmpty ? 'flex items-center justify-center' : 'overflow-y-auto',
+        )}
+      >
+        {isEmpty
+          ? (
+              <EmptyState mode={mode} />
+            )
+          : (
+              <ul className="flex w-full flex-col">
+                {places.map((place, index) => {
+                  return (
+                    <li key={place.id}>
+                      <PlaceCard
+                        place={place}
+                        onClick={() => onListItemClick(place.id)}
+                      />
+                      {index !== places.length - 1 && (
+                        <LineDivider width="84%" thickness={1} colorClassName="bg-gray-200" />
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
       </div>
     </section>
+  );
+}
+
+interface EmptyStateProps {
+  mode: ListScope;
+}
+
+function EmptyState({ mode }: EmptyStateProps) {
+  const title = mode === 'search'
+    ? '검색 결과가 없습니다.'
+    : '표시할 공연 장소가 없습니다.';
+
+  const description
+    = mode === 'search'
+      ? '다른 검색어로 다시 시도해 주세요.'
+      : (
+          <>
+            지도를 이동하거나 확대/축소해서 다른 지역을
+            <br />
+            확인해 보세요.
+          </>
+        );
+
+  return (
+    <div className="flex flex-col items-center gap-1 px-6 text-center">
+      <p className="typo-body-sb-3 text-gray-700">{title}</p>
+      <p className="typo-caption-r-1 text-gray-550">{description}</p>
+    </div>
   );
 }
 
@@ -79,7 +120,10 @@ interface ListHeaderProps {
 
 function ListHeader({ title, onBackClick }: ListHeaderProps) {
   return (
-    <div className="flex h-17 items-center gap-2 px-[18.5px] pt-1">
+    <div className={`
+      flex h-17 cursor-pointer items-center gap-2 px-[18.5px] pt-1
+    `}
+    >
       {onBackClick
         ? (
             <button
