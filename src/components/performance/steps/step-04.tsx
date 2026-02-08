@@ -1,6 +1,6 @@
 'use client';
 
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import Image from 'next/image';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { CHECKLIST_ITEMS } from '@/constants/performance';
 import { cn } from '@/utils';
 
 export function Step04() {
-  const { control, formState: { errors } } = useFormContext<PerformanceRegisterRequestDto>();
+  const { control, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
 
   return (
     <>

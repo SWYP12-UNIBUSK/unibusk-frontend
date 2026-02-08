@@ -1,7 +1,7 @@
 'use client';
 
 import type { Control } from 'react-hook-form';
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { Controller, useFormContext } from 'react-hook-form';
 import { DatePicker } from '@/components/common/date-picker/date-picker';
 import { ErrorMessage, FormInput, Input, Label } from '@/components/common/input';
@@ -11,7 +11,7 @@ import { TIME_OPTIONS } from '@/constants/performance';
 import { cn } from '@/utils';
 
 interface TimeSelectProps {
-  control: Control<PerformanceRegisterRequestDto>;
+  control: Control<PerformanceRegisterForm>;
   name: 'startTime' | 'endTime';
   label: string;
   options: string[];
@@ -19,7 +19,7 @@ interface TimeSelectProps {
 }
 
 export function Step02() {
-  const { control, setValue, register, formState: { errors } } = useFormContext<PerformanceRegisterRequestDto>();
+  const { control, setValue, register, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
 
   return (
     <div className="flex flex-col gap-6">

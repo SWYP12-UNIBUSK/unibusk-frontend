@@ -1,11 +1,11 @@
 'use client';
 
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { PerformanceRegisterRequestDtoSchema } from '@/apis/performance';
+import { PerformanceRegisterFormSchema } from '@/apis/performance';
 import { Button } from '@/components/common/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/common/dialog';
 import { STEP_FIELDS, STEP_HEADER_INFO } from '@/constants/performance';
@@ -33,8 +33,8 @@ interface StepFooterProps extends StepCommonProps {
 export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
   const { step, setStep, formData, setFormData, reset: resetStore } = useRegisterStore();
 
-  const methods = useForm<PerformanceRegisterRequestDto>({
-    resolver: zodResolver(PerformanceRegisterRequestDtoSchema),
+  const methods = useForm<PerformanceRegisterForm>({
+    resolver: zodResolver(PerformanceRegisterFormSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
@@ -65,7 +65,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     }
   };
 
-  const onSubmit = (data: PerformanceRegisterRequestDto) => {
+  const onSubmit = (data: PerformanceRegisterForm) => {
     // eslint-disable-next-line no-console
     console.log('Form Submitted:', data);
 

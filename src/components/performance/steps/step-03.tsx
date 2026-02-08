@@ -1,13 +1,13 @@
 'use client';
 
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ImageUpload } from '@/components/common/image-upload/image-upload';
 import { Label } from '@/components/common/input';
 import { cn } from '@/utils';
 
 export function Step03() {
-  const { control, register, watch, formState: { errors } } = useFormContext<PerformanceRegisterRequestDto>();
+  const { control, register, watch, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
   const performanceDetail = watch('performanceDetail');
 
   return (

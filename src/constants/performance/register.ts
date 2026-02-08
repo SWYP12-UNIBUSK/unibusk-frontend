@@ -1,4 +1,4 @@
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 
 export const CHECKLIST_ITEMS = [
   { id: 'item-1', text: '버스킹 진행될 장소의 허가를 받은 공연인가요?' },
@@ -13,7 +13,7 @@ export const STEP_HEADER_INFO = {
   4: { title: '체크리스트 확인', description: '공연을 등록하기 전에 확인해요!' },
 } as const;
 
-export const STEP_FIELDS: Record<1 | 2 | 3 | 4, (keyof PerformanceRegisterRequestDto)[]> = {
+export const STEP_FIELDS: Record<1 | 2 | 3 | 4, (keyof PerformanceRegisterForm)[]> = {
   1: ['teamName', 'contactNumber', 'email', 'instagramUrl'],
   2: [
     'performanceName',

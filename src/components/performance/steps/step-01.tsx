@@ -1,11 +1,11 @@
 'use client';
 
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { useFormContext } from 'react-hook-form';
 import { FormInput } from '@/components/common/input';
 
 export function Step01() {
-  const { register, watch, formState: { errors } } = useFormContext<PerformanceRegisterRequestDto>();
+  const { register, watch, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
   const teamName = watch('teamName');
 
   return (
