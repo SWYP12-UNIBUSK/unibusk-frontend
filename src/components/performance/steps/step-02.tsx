@@ -44,14 +44,20 @@ export function Step02() {
               <ErrorMessage message={errors.performanceLocation?.message} />
             </div>
             <SearchModal
-              onSelect={loc => setValue('performanceLocation', loc.name, { shouldValidate: true })}
+              onSelect={loc => setValue('performanceLocation', loc, { shouldValidate: true })}
             />
           </div>
-          <Input
-            placeholder="공연 장소를 등록해 주세요"
-            readOnly
-            error={errors.performanceLocation?.message}
-            {...register('performanceLocation')}
+          <Controller
+            control={control}
+            name="performanceLocation"
+            render={({ field }) => (
+              <Input
+                placeholder="공연 장소를 등록해 주세요"
+                readOnly
+                value={field.value?.name || ''}
+                error={errors.performanceLocation?.message as string}
+              />
+            )}
           />
         </div>
       </div>
@@ -129,7 +135,7 @@ function TimeSelect({ control, name, label, options, error }: TimeSelectProps) {
               className={cn('w-27.5 cursor-pointer', error && 'border-error')}
               showIcon={false}
             >
-              <SelectValue placeholder="00:00" />
+              <SelectValue placeholder="선택" />
             </SelectTrigger>
             <SelectContent
               showIcon={false}
