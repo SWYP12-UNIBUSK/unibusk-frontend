@@ -23,12 +23,13 @@ class APIClient {
     }
 
     const hasValidBody = body !== undefined && body !== null && body !== '';
-    const needsJsonContentType = hasValidBody
-      && !(
-        body instanceof FormData
-        || body instanceof Blob
-        || body instanceof URLSearchParams
-      );
+    const needsJsonContentType
+      = hasValidBody
+        && !(
+          body instanceof FormData
+          || body instanceof Blob
+          || body instanceof URLSearchParams
+        );
 
     const response = await fetch(url, {
       ...restConfig,
@@ -42,13 +43,10 @@ class APIClient {
 
     if (response.status === 401) {
       if (!config.skipRedirectOn401) {
-        // ✅ 서버/클라이언트 환경 분기
         if (typeof window === 'undefined') {
-          // 서버: Next.js redirect 사용
           redirect('/login');
         }
         else {
-          // 클라이언트: window.location 사용
           window.location.href = '/login';
         }
       }
@@ -57,12 +55,31 @@ class APIClient {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `HTTP ${response.status}: ${errorText || response.statusText}`,
-      );
+      throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
     }
 
-    return response.json();
+    const contentType = response.headers.get('content-type') ?? '';
+
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+      return undefined as T;
+    }
+
+    const raw = await response.text();
+    const text = raw.trim();
+    if (!text) {
+      return undefined as T;
+    }
+
+    if (contentType.includes('application/json')) {
+      try {
+        return JSON.parse(text) as T;
+      }
+      catch {
+        throw new Error(`Invalid JSON response: ${text.slice(0, 200)}`);
+      }
+    }
+
+    return text as unknown as T;
   }
 
   /**

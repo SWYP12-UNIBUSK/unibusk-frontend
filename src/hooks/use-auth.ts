@@ -40,7 +40,9 @@ export function useAuth() {
     },
     onSuccess: async () => {
       await queryClient.cancelQueries({ queryKey: userQueryOptions.queryKey });
-      queryClient.setQueryData(userQueryOptions.queryKey, undefined);
+      queryClient.removeQueries({ queryKey: userQueryOptions.queryKey });
+
+      window.location.replace('/');
     },
   });
 
