@@ -14,6 +14,7 @@ export default function BuskingMapPage() {
 
   return (
     <main className="relative h-screen w-full bg-gray-100">
+      <h1 className="sr-only">버스킹 장소 지도</h1>
       <KakaoMapView
         className="h-full w-full"
         center={{ lat: 37.5665, lng: 126.978 }}

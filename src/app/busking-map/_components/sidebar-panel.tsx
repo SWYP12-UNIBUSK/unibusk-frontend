@@ -140,13 +140,13 @@ function ListHeader({ title, onBackClick }: ListHeaderProps) {
           )
         : null}
 
-      <div className={`
+      <h2 className={`
         rounded-full bg-primary px-2.5 py-1 text-caption-2 font-semibold
         text-white
       `}
       >
         {title}
-      </div>
+      </h2>
     </div>
   );
 }
