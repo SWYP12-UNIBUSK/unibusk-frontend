@@ -4,7 +4,7 @@ import type { PerformanceCreateRequestDto, PerformanceRegisterForm } from './per
  * 프론트엔드 폼 데이터(PerformanceRegisterForm)를
  * 백엔드 API 요청 데이터(PerformanceCreateRequestDto)로 변환하는 함수
  */
-export function transformFormToApiRequest(formData: PerformanceRegisterForm): PerformanceCreateRequestDto {
+export function transformPerformanceFormToApiRequest(formData: PerformanceRegisterForm): PerformanceCreateRequestDto {
   const combineDateAndTime = (date: Date, timeStr: string) => {
     if (!timeStr)
       return new Date().toISOString();
