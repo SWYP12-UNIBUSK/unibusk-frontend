@@ -1,7 +1,11 @@
 'use client';
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
+<<<<<<< HEAD
 import { useCallback, useMemo, useRef } from 'react';
+=======
+import { useRef } from 'react';
+>>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
 import { CLUSTER_CLICK_GUARD_MS } from '@/constants/kakao-map';
 import {
   useKakaoClusterer,
@@ -85,6 +89,7 @@ export function KakaoMapView({
 
   useKakaoMarkers(markerLayerMap, markerLayerMarkers);
 
+<<<<<<< HEAD
   const handleViewportPlaceIdsChange = useCallback((placeIds: string[]) => {
     useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
   }, []);
@@ -100,12 +105,29 @@ export function KakaoMapView({
     onViewportPlaceIdsChange: handleViewportPlaceIdsChange,
   });
 
+=======
+  useKakaoViewportPlaceIds({
+    map: clusterLayerMap,
+    markers: clusterLayerMarkers,
+    enabled: Boolean(clusterLayerMap && !hasError),
+    onViewportPlaceIdsChange: (placeIds) => {
+      useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
+    },
+  });
+
+>>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
   useKakaoExitClusterListOnMapInteraction({
     map,
     isClusterMode: listScope === 'cluster',
     clusterClickGuardMs: CLUSTER_CLICK_GUARD_MS,
     lastClusterClickAtMsRef: lastClusterClickAtRef,
+<<<<<<< HEAD
     onExitClusterList: handleExitClusterList,
+=======
+    onExitClusterList: () => {
+      useBuskingMapUiStore.getState().exitClusterList();
+    },
+>>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
   });
 
   return (
