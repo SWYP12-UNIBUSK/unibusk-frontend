@@ -7,3 +7,5 @@ export interface BuskingPlace {
 }
 
 export type ListScope = 'viewport' | 'cluster' | 'search';
+
+export interface Bounds { north: number; south: number; east: number; west: number }
