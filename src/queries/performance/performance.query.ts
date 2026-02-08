@@ -1,6 +1,6 @@
 import type { PerformanceFilterTab } from '@/types/performance';
-import { infiniteQueryOptions } from '@tanstack/react-query';
-import { getPerformanceList, getSearchPerformanceList } from '@/apis/performance';
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
+import { getPerformanceDetail, getPerformanceList, getSearchPerformanceList } from '@/apis/performance';
 import { performanceKeys } from './performance.keys';
 
 /** 공연 목록 무한 스크롤 쿼리 옵션 */
@@ -32,5 +32,15 @@ export function performanceSearchInfiniteQueryOptions(
     getNextPageParam: lastPage => lastPage.hasNext ? lastPage.page + 1 : undefined,
     /** 검색어가 있을 때만 쿼리 실행 (성능 최적화) */
     enabled: keyword.trim().length > 0,
+  });
+}
+
+/** 공연 상세 조회 쿼리 옵션 */
+export function performanceDetailQueryOptions(performanceId: number) {
+  return queryOptions({
+    queryKey: performanceKeys.detail(performanceId),
+    queryFn: async ({ signal }) => {
+      return getPerformanceDetail(performanceId, { signal });
+    },
   });
 }
