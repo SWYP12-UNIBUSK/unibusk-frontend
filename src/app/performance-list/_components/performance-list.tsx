@@ -1,7 +1,7 @@
 'use client';
 
 import type { Performances } from '@/types/performance';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { routePaths } from '@/utils';
 import { PerformanceCard } from './performance-card';
@@ -32,13 +32,18 @@ export function PerformanceList({
   /** Intersection Observer 타겟 요소 참조 */
   const observerTarget = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   /**
    * 공연 상세 페이지로 이동
+   * 현재 탭 정보(tab)를 쿼리 파라미터로 함께 전달합니다.
    */
   const handlePerformanceClick = useCallback((performanceId: number) => {
-    router.push(routePaths.performanceDetail(performanceId));
-  }, [router]);
+    const currentTab = searchParams.get('tab') ?? 'upcoming';
+    const targetPath = routePaths.performanceDetail(performanceId);
+
+    router.push(`${targetPath}?tab=${currentTab}`);
+  }, [router, searchParams]);
 
   /**
    * Intersection Observer를 사용한 무한 스크롤 구현
