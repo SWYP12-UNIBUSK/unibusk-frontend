@@ -1,5 +1,6 @@
 import type { ListScope } from '@/types/busking-map/busking-place';
 import { create } from 'zustand';
+import { isSameOrderedIds } from '@/utils/id-equals';
 
 interface SidebarSnapshot {
   listScope: ListScope;
@@ -12,10 +13,12 @@ interface SidebarSnapshot {
 
 interface BuskingMapUiState {
   isSidebarOpen: boolean; // 사이드바 열림 여부
-  lastOpenSnapshot: SidebarSnapshot | null; // 닫기 직전 상태(re-open시 복원용)
+  lastOpenSnapshot: SidebarSnapshot | null; // 닫기 직전 스냅샷(재오픈 시 복원용)
   listScope: ListScope;
   clusterKey: string | null; // 어떤 클러스터인지 식별용
   clusterPlaceIds: string[]; // 클러스터 리스트에 포함된 place id들
+  viewportPlaceIds: string[]; // viewport 모드에서 현재 지도에 보이는 place id들
+
   selectedPlaceId: string | null; // 2단 상세 패널에서 표시할 장소 id
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
   searchQuery: string;
@@ -24,6 +27,10 @@ interface BuskingMapUiState {
   openSidebar: () => void;
   closeSidebar: () => void;
   toggleSidebar: () => void;
+
+  // Viewport list
+  setViewportPlaceIds: (placeIds: string[]) => void;
+  clearViewportPlaceIds: () => void;
 
   // 2단 상세 DetailPanel
   selectPlace: (placeId: string) => void;
@@ -62,6 +69,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
 
   clusterKey: null,
   clusterPlaceIds: [],
+  viewportPlaceIds: [],
+
   selectedPlaceId: null,
   focusedPlaceId: null,
   searchQuery: '',
@@ -112,6 +121,27 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     }
 
     openSidebar();
+  },
+
+  // viewport 내 장소 id 갱신(지도 idle 이벤트에서 호출)
+  setViewportPlaceIds: (placeIds) => {
+    const { viewportPlaceIds } = get();
+
+    if (isSameOrderedIds(viewportPlaceIds, placeIds)) {
+      return;
+    }
+
+    set({ viewportPlaceIds: placeIds });
+  },
+
+  clearViewportPlaceIds: () => {
+    const { viewportPlaceIds } = get();
+
+    if (viewportPlaceIds.length === 0) {
+      return;
+    }
+
+    set({ viewportPlaceIds: [] });
   },
 
   // 2단 상세 패널 open

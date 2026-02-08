@@ -1,9 +1,16 @@
 'use client';
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { CLUSTER_CLICK_GUARD_MS } from '@/constants/kakao-map';
-import { useKakaoClusterer, useKakaoLoader, useKakaoMap, useKakaoMarkers } from '@/hooks/kakao-map';
+import {
+  useKakaoClusterer,
+  useKakaoExitClusterListOnMapInteraction,
+  useKakaoLoader,
+  useKakaoMap,
+  useKakaoMarkers,
+  useKakaoViewportPlaceIds,
+} from '@/hooks/kakao-map';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { cn } from '@/utils';
 import { ClusterBadge } from './cluster-badge';
@@ -72,58 +79,24 @@ export function KakaoMapView({
 
   useKakaoMarkers(markerLayerMap, markerLayerMarkers);
 
-  useEffect(() => {
-    if (!map || !window.kakao?.maps) {
-      return;
-    }
+  useKakaoViewportPlaceIds({
+    map: clusterLayerMap,
+    markers: clusterLayerMarkers,
+    enabled: Boolean(clusterLayerMap && !hasError),
+    onViewportPlaceIdsChange: (placeIds) => {
+      useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
+    },
+  });
 
-    const kakaoMaps = window.kakao.maps;
-
-    const handleMapClick = () => {
-      const now = Date.now();
-      if (now - lastClusterClickAtRef.current < CLUSTER_CLICK_GUARD_MS) {
-        return;
-      }
-
-      const { listScope, exitClusterList } = useBuskingMapUiStore.getState();
-      if (listScope !== 'cluster') {
-        return;
-      }
-
-      exitClusterList();
-    };
-
-    kakaoMaps.event.addListener(map, 'click', handleMapClick);
-
-    return () => {
-      kakaoMaps.event.removeListener(map, 'click', handleMapClick);
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (!map || !window.kakao?.maps) {
-      return;
-    }
-
-    const kakaoMaps = window.kakao.maps;
-
-    const handleMapMoveOrZoom = () => {
-      const { listScope: currentScope, exitClusterList } = useBuskingMapUiStore.getState();
-      if (currentScope !== 'cluster') {
-        return;
-      }
-
-      exitClusterList();
-    };
-
-    kakaoMaps.event.addListener(map, 'dragstart', handleMapMoveOrZoom);
-    kakaoMaps.event.addListener(map, 'zoom_changed', handleMapMoveOrZoom);
-
-    return () => {
-      kakaoMaps.event.removeListener(map, 'dragstart', handleMapMoveOrZoom);
-      kakaoMaps.event.removeListener(map, 'zoom_changed', handleMapMoveOrZoom);
-    };
-  }, [map]);
+  useKakaoExitClusterListOnMapInteraction({
+    map,
+    isClusterMode: listScope === 'cluster',
+    clusterClickGuardMs: CLUSTER_CLICK_GUARD_MS,
+    lastClusterClickAtMsRef: lastClusterClickAtRef,
+    onExitClusterList: () => {
+      useBuskingMapUiStore.getState().exitClusterList();
+    },
+  });
 
   return (
     <div className={cn('relative h-full w-full', className)} aria-busy={!isLoaded}>
