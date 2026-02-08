@@ -7,11 +7,43 @@ import { LineDivider } from '@/components/common/line-divider';
 import { PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE } from '@/mocks/performance-locations';
 import { cn } from '@/utils';
 
+type DetailPanelVariant = 'focused' | 'detail';
 type PerformanceTab = 'upcoming' | 'finished';
+
+interface ApplicationGuideItem {
+  applicationGuideId: number;
+  performanceLocationId: number;
+  content: string;
+}
+
+interface ApplicationGuideMockResponse {
+  applicationGuideResponses: ApplicationGuideItem[];
+}
+
+const APPLICATION_GUIDES_MOCK_RESPONSE: ApplicationGuideMockResponse = {
+  applicationGuideResponses: [
+    {
+      applicationGuideId: 1,
+      performanceLocationId: 1,
+      content: '마포구청 홈페이지에서 버스킹(거리공연) 신청 페이지에 접속해요.',
+    },
+    {
+      applicationGuideId: 2,
+      performanceLocationId: 1,
+      content: '공연 희망 날짜/시간을 선택하고 신청서를 작성해요.',
+    },
+    {
+      applicationGuideId: 3,
+      performanceLocationId: 1,
+      content: '승인 결과를 확인한 뒤, 안내된 시간에 공연을 진행해요.',
+    },
+  ],
+};
 
 interface DetailPanelProps {
   place: BuskingPlace | null;
   onCloseClick: () => void;
+  variant?: DetailPanelVariant;
 }
 
 interface PerformanceItem {
@@ -105,7 +137,7 @@ function PerformanceCard({ dateText }: { dateText: string }) {
 function EmptyPerformances({ tab }: { tab: PerformanceTab }) {
   const message = tab === 'upcoming'
     ? '아직 등록된 공연 일정이 없어요.\n다음 공연을 기다려주세요!'
-    : '아직 등록된 공연 일정이 없어요.\n다음 공연을 기다려주세요!';
+    : '종료된 공연이 아직 없어요.\n다음 공연을 기다려주세요!';
 
   return (
     <div
@@ -118,9 +150,133 @@ function EmptyPerformances({ tab }: { tab: PerformanceTab }) {
   );
 }
 
-export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
+function ApplicationGuidePanel({
+  title,
+  operatorUrl,
+  guides,
+  onBackClick,
+  onCloseClick,
+}: {
+  title: string;
+  operatorUrl: string | null;
+  guides: ApplicationGuideItem[];
+  onBackClick: () => void;
+  onCloseClick: () => void;
+}) {
+  return (
+    <div className="absolute inset-0 z-40 rounded-4xl bg-white">
+      <div className="absolute inset-x-0 top-0 z-20">
+        <div className={`
+          flex h-17 items-center justify-between border-b border-gray-200
+          bg-white px-3
+        `}
+        >
+          <IconCircleButton
+            ariaLabel="뒤로"
+            iconSrc="/icons/chevron-left.svg"
+            iconSize={{ w: 14, h: 24 }}
+            onClick={onBackClick}
+            hoverClassName="hover:bg-black/5"
+          />
+
+          <p className="typo-body-sb-2 text-black">신청 방법 보기</p>
+
+          <IconCircleButton
+            ariaLabel="닫기"
+            iconSrc="/icons/x.svg"
+            iconSize={{ w: 16, h: 16 }}
+            onClick={onCloseClick}
+            hoverClassName="hover:bg-black/5"
+          />
+        </div>
+      </div>
+
+      <div className="absolute inset-x-0 top-17 bottom-0 overflow-y-auto">
+        <div className="px-7.5 pt-10 pb-34">
+          <div className={`
+            mx-auto w-60.75 rounded-full border-2 border-gray-200 bg-gray-100
+            px-7 py-3 text-center
+          `}
+          >
+            <p className="typo-body-sb-2 text-black">
+              {title}
+            </p>
+          </div>
+
+          <div className="relative mt-12">
+            <div className="absolute top-0 left-6 h-full w-px bg-gray-200" />
+
+            <ul className="flex flex-col gap-20.5">
+              {guides.map((guide, index) => {
+                const stepText = String(index + 1).padStart(2, '0');
+
+                return (
+                  <li
+                    key={guide.applicationGuideId}
+                    className="relative flex gap-4"
+                  >
+                    <div
+                      className={cn(
+                        `
+                          relative z-10 flex h-12 w-12 shrink-0 items-center
+                          justify-center rounded-full bg-primary text-center
+                          text-white shadow-sm
+                        `,
+                      )}
+                    >
+                      <span className="typo-caption-m-1 leading-[1.1]">
+                        step
+                        <br />
+                        {stepText}
+                      </span>
+                    </div>
+                    <p className="typo-body-m-3 text-black">{guide.content}</p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className={`
+        absolute inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white
+        px-4.25 pt-6 pb-13.75
+      `}
+      >
+        <div className="flex gap-3">
+          <Button
+            size="md"
+            theme="orange"
+            appearance="filled"
+            asChild
+            disabled={!operatorUrl}
+            className="flex-1"
+          >
+            <a href={operatorUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+              신청 하러 가기
+            </a>
+          </Button>
+
+          <Button
+            size="md"
+            theme="gray"
+            appearance="filled"
+            onClick={onBackClick}
+            className="flex-1"
+          >
+            닫기
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailPanelProps) {
   const [activeTab, changeActiveTab] = useState<PerformanceTab>('upcoming');
   const [isHeaderSolid, setIsHeaderSolid] = useState(false);
+  const [isApplicationGuideOpen, setIsApplicationGuideOpen] = useState(false);
 
   const performanceLocation = useMemo(() => {
     if (!place) {
@@ -159,6 +315,20 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
         shadow-sidebar
       `}
     >
+      {isApplicationGuideOpen
+        ? (
+            <ApplicationGuidePanel
+              title={place.title}
+              operatorUrl={operatorUrl}
+              guides={APPLICATION_GUIDES_MOCK_RESPONSE.applicationGuideResponses}
+              onBackClick={() => {
+                setIsApplicationGuideOpen(false);
+              }}
+              onCloseClick={onCloseClick}
+            />
+          )
+        : null}
+
       <div
         className={cn(
           'relative h-56 w-full overflow-hidden',
@@ -208,7 +378,7 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
           )}
           onScroll={handleScroll}
         >
-          <div className="px-7.5 pb-10">
+          <div className="px-10 pb-10">
             <h3 className="text-center typo-title-b-5 text-black">{place.title}</h3>
 
             <div className="mt-8 flex flex-col gap-1">
@@ -235,17 +405,19 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
             </div>
 
             <div className="mt-13 flex w-full justify-center gap-1.25 px-4.75">
-              <Button size="md" theme="lightGray" appearance="filled" disabled={!operatorUrl}>
+              <Button
+                size="md"
+                theme="lightGray"
+                appearance="filled"
+                disabled={!operatorUrl}
+                onClick={() => {
+                  setIsApplicationGuideOpen(true);
+                }}
+              >
                 신청 방법 보기
               </Button>
 
-              <Button
-                size="md"
-                theme="orange"
-                appearance="filled"
-                asChild
-                disabled={!operatorUrl}
-              >
+              <Button size="md" theme="orange" appearance="filled" asChild disabled={!operatorUrl}>
                 <a href={operatorUrl ?? '#'} target="_blank" rel="noopener noreferrer">
                   신청 하러 가기
                 </a>
@@ -255,13 +427,9 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
             <LineDivider className="mt-7.5 w-full" />
 
             <div className="mt-8.25">
-              <p className="text-center typo-body-sb-2 text-black">
-                이곳에서 진행중인 공연
-              </p>
+              <p className="text-center typo-body-sb-2 text-black">이곳에서 진행중인 공연</p>
 
-              <div
-                className="mt-5 flex w-full items-center justify-center"
-              >
+              <div className="mt-5 flex w-full items-center justify-center">
                 <button
                   type="button"
                   onClick={() => changeActiveTab('upcoming')}
@@ -270,18 +438,15 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
                       relative w-full max-w-25 flex-1 cursor-pointer border-b
                       border-gray-300 py-3 text-center typo-caption-m-1
                     `,
-                    activeTab === 'upcoming'
-                      ? 'text-primary'
-                      : 'text-gray-500',
+                    activeTab === 'upcoming' ? 'text-primary' : 'text-gray-500',
                   )}
                 >
                   예정중
                   {activeTab === 'upcoming'
                     ? (
-                        <span
-                          className={`
-                            absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                          `}
+                        <span className={`
+                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
+                        `}
                         />
                       )
                     : null}
@@ -295,18 +460,15 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
                       relative w-full max-w-25 flex-1 cursor-pointer border-b
                       border-gray-300 py-3 text-center typo-caption-m-1
                     `,
-                    activeTab === 'finished'
-                      ? 'text-primary'
-                      : 'text-gray-500',
+                    activeTab === 'finished' ? 'text-primary' : 'text-gray-500',
                   )}
                 >
                   종료됨
                   {activeTab === 'finished'
                     ? (
-                        <span
-                          className={`
-                            absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                          `}
+                        <span className={`
+                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
+                        `}
                         />
                       )
                     : null}
@@ -326,15 +488,12 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
                   )}
             </div>
 
+            {variant === 'focused' ? <div className="h-12" /> : null}
           </div>
         </div>
       </div>
 
-      <PanelHeader
-        onBackClick={onCloseClick}
-        onCloseClick={onCloseClick}
-        isSolid={isHeaderSolid}
-      />
+      <PanelHeader onBackClick={onCloseClick} onCloseClick={onCloseClick} isSolid={isHeaderSolid} />
     </section>
   );
 }
