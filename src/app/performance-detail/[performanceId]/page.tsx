@@ -1,5 +1,6 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
@@ -27,7 +28,9 @@ export default async function PerformanceDetailPage(
       <Header />
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <PerformanceInfo performanceId={performanceId} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <PerformanceInfo performanceId={performanceId} />
+          </Suspense>
         </HydrationBoundary>
       </main>
       <Footer />

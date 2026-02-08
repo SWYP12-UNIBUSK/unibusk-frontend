@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 import { Button } from '@/components/common/button';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { cn } from '@/utils';
@@ -20,11 +21,13 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
 
   return (
     <section className="pt-37.5">
-      <Summary
-        title={title}
-        performanceDate={performanceDate}
-        locationName={locationName}
-      />
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <Summary
+          title={title}
+          performanceDate={performanceDate}
+          locationName={locationName}
+        />
+      </Suspense>
       <Content
         title={title}
         posterUrl={images[0]}
@@ -38,7 +41,12 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
       <div className="flex justify-center pt-17.5 pb-20.75">
         <Button
           onClick={() => {
-            router.back();
+            if (window.history.length > 1) {
+              router.back();
+            }
+            else {
+              router.push('/performance-list');
+            }
           }}
           theme="lightGray"
           size="lg"
