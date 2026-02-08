@@ -2,10 +2,14 @@
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useCallback, useMemo, useRef } from 'react';
 =======
 import { useRef } from 'react';
 >>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
+=======
+import { useCallback, useMemo, useRef } from 'react';
+>>>>>>> 37d8196 (fix: 뷰포트 리스트 동기화 안정화)
 import { CLUSTER_CLICK_GUARD_MS } from '@/constants/kakao-map';
 import {
   useKakaoClusterer,
@@ -90,6 +94,9 @@ export function KakaoMapView({
   useKakaoMarkers(markerLayerMap, markerLayerMarkers);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 37d8196 (fix: 뷰포트 리스트 동기화 안정화)
   const handleViewportPlaceIdsChange = useCallback((placeIds: string[]) => {
     useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
   }, []);
@@ -98,6 +105,7 @@ export function KakaoMapView({
     useBuskingMapUiStore.getState().exitClusterList();
   }, []);
 
+<<<<<<< HEAD
   useKakaoViewportPlaceIds({
     map: clusterLayerMap,
     markers: clusterLayerMarkers,
@@ -106,13 +114,13 @@ export function KakaoMapView({
   });
 
 =======
+=======
+>>>>>>> 37d8196 (fix: 뷰포트 리스트 동기화 안정화)
   useKakaoViewportPlaceIds({
     map: clusterLayerMap,
     markers: clusterLayerMarkers,
-    enabled: Boolean(clusterLayerMap && !hasError),
-    onViewportPlaceIdsChange: (placeIds) => {
-      useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
-    },
+    enabled: Boolean(clusterLayerMap),
+    onViewportPlaceIdsChange: handleViewportPlaceIdsChange,
   });
 
 >>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
@@ -122,12 +130,16 @@ export function KakaoMapView({
     clusterClickGuardMs: CLUSTER_CLICK_GUARD_MS,
     lastClusterClickAtMsRef: lastClusterClickAtRef,
 <<<<<<< HEAD
+<<<<<<< HEAD
     onExitClusterList: handleExitClusterList,
 =======
     onExitClusterList: () => {
       useBuskingMapUiStore.getState().exitClusterList();
     },
 >>>>>>> 89b65f0 (feat: viewport 리스트 동기화 및 클러스터 모드 이탈 처리)
+=======
+    onExitClusterList: handleExitClusterList,
+>>>>>>> 37d8196 (fix: 뷰포트 리스트 동기화 안정화)
   });
 
   return (
