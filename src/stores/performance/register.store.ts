@@ -1,11 +1,11 @@
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { create } from 'zustand';
 
 interface PerformanceRegisterState {
   step: number;
-  formData: Partial<PerformanceRegisterRequestDto>;
+  formData: Partial<PerformanceRegisterForm>;
   setStep: (step: number) => void;
-  setFormData: (data: Partial<PerformanceRegisterRequestDto>) => void;
+  setFormData: (data: Partial<PerformanceRegisterForm>) => void;
   reset: () => void;
 }
 
@@ -17,7 +17,7 @@ const initialState = {
     email: '',
     instagramUrl: '',
     performanceName: '',
-    performanceLocation: '',
+    performanceLocation: undefined,
     performanceDate: undefined as Date | undefined,
     performanceDescription: '',
     startTime: '',

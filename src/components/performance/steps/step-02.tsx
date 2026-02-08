@@ -1,7 +1,7 @@
 'use client';
 
 import type { Control } from 'react-hook-form';
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { Controller, useFormContext } from 'react-hook-form';
 import { DatePicker } from '@/components/common/date-picker/date-picker';
 import { ErrorMessage, FormInput, Input, Label } from '@/components/common/input';
@@ -11,7 +11,7 @@ import { TIME_OPTIONS } from '@/constants/performance';
 import { cn } from '@/utils';
 
 interface TimeSelectProps {
-  control: Control<PerformanceRegisterRequestDto>;
+  control: Control<PerformanceRegisterForm>;
   name: 'startTime' | 'endTime';
   label: string;
   options: string[];
@@ -19,7 +19,7 @@ interface TimeSelectProps {
 }
 
 export function Step02() {
-  const { control, setValue, register, formState: { errors } } = useFormContext<PerformanceRegisterRequestDto>();
+  const { control, setValue, register, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,14 +44,20 @@ export function Step02() {
               <ErrorMessage message={errors.performanceLocation?.message} />
             </div>
             <SearchModal
-              onSelect={loc => setValue('performanceLocation', loc.name, { shouldValidate: true })}
+              onSelect={loc => setValue('performanceLocation', loc, { shouldValidate: true })}
             />
           </div>
-          <Input
-            placeholder="공연 장소를 등록해 주세요"
-            readOnly
-            error={errors.performanceLocation?.message}
-            {...register('performanceLocation')}
+          <Controller
+            control={control}
+            name="performanceLocation"
+            render={({ field }) => (
+              <Input
+                placeholder="공연 장소를 등록해 주세요"
+                readOnly
+                value={field.value?.name || ''}
+                error={errors.performanceLocation?.message}
+              />
+            )}
           />
         </div>
       </div>
@@ -129,7 +135,7 @@ function TimeSelect({ control, name, label, options, error }: TimeSelectProps) {
               className={cn('w-27.5 cursor-pointer', error && 'border-error')}
               showIcon={false}
             >
-              <SelectValue placeholder="00:00" />
+              <SelectValue placeholder="선택" />
             </SelectTrigger>
             <SelectContent
               showIcon={false}

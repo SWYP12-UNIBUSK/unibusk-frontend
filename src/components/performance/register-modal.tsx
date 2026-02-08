@@ -1,14 +1,15 @@
 'use client';
 
-import type { PerformanceRegisterRequestDto } from '@/apis/performance';
+import type { PerformanceRegisterForm } from '@/apis/performance';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { PerformanceRegisterRequestDtoSchema } from '@/apis/performance';
+import { PerformanceRegisterFormSchema } from '@/apis/performance';
 import { Button } from '@/components/common/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/common/dialog';
 import { STEP_FIELDS, STEP_HEADER_INFO } from '@/constants/performance';
+import { useCreatePerformance } from '@/hooks/performance';
 import { useRegisterStore } from '@/stores/performance';
 import { cn } from '@/utils';
 import { Step01 } from './steps/step-01';
@@ -28,13 +29,15 @@ interface StepCommonProps {
 interface StepFooterProps extends StepCommonProps {
   onPrev: () => void;
   onNext: () => void;
+  isPending: boolean;
 }
 
 export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
   const { step, setStep, formData, setFormData, reset: resetStore } = useRegisterStore();
+  const { mutate: createPerformance, isPending } = useCreatePerformance();
 
-  const methods = useForm<PerformanceRegisterRequestDto>({
-    resolver: zodResolver(PerformanceRegisterRequestDtoSchema),
+  const methods = useForm<PerformanceRegisterForm>({
+    resolver: zodResolver(PerformanceRegisterFormSchema),
     mode: 'onSubmit',
     reValidateMode: 'onSubmit',
     defaultValues: {
@@ -65,17 +68,18 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
     }
   };
 
-  const onSubmit = (data: PerformanceRegisterRequestDto) => {
-    // eslint-disable-next-line no-console
-    console.log('Form Submitted:', data);
-
-    // TODO: 실제 API 호출
-    // await registerPerformance(data);
-
-    // 등록 완료 후 초기화
-    resetStore(); // Zustand 스토어 초기화
-    reset(); // react-hook-form 초기화
-    onClose(); // 모달 닫기
+  const onSubmit = (data: PerformanceRegisterForm) => {
+    createPerformance(data, {
+      onSuccess: () => {
+        // 등록 완료 후 초기화
+        resetStore(); // Zustand 스토어 초기화
+        reset(); // react-hook-form 초기화
+        onClose(); // 모달 닫기
+      },
+      onError: () => {
+        // TODO: toast 등으로 사용자에게 에러 알림
+      },
+    });
   };
 
   const prevStep = () => {
@@ -116,6 +120,7 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
               step={step}
               onPrev={prevStep}
               onNext={step === 4 ? handleSubmit(onSubmit) : nextStep}
+              isPending={isPending}
             />
           </section>
         </FormProvider>
@@ -157,7 +162,7 @@ function StepContent({ step }: StepCommonProps) {
   );
 }
 
-function StepFooter({ step, onPrev, onNext }: StepFooterProps) {
+function StepFooter({ step, onPrev, onNext, isPending }: StepFooterProps) {
   return (
     <DialogFooter className={cn(
       `absolute bottom-13.75 left-0`,
@@ -168,7 +173,7 @@ function StepFooter({ step, onPrev, onNext }: StepFooterProps) {
       {/* 이전 버튼 (Step 1에서는 보이지 않음) */}
       <div>
         {step > 1 && (
-          <Button onClick={onPrev} theme="gray">
+          <Button onClick={onPrev} theme="gray" disabled={isPending}>
             이전
           </Button>
         )}
@@ -187,8 +192,8 @@ function StepFooter({ step, onPrev, onNext }: StepFooterProps) {
       </div>
       {/* 다음/등록 버튼 */}
       <div className="pr-12.75">
-        <Button onClick={onNext}>
-          {step === 4 ? '등록하기' : '다음'}
+        <Button onClick={onNext} disabled={isPending}>
+          {step === 4 ? (isPending ? '등록 중...' : '등록하기') : '다음'}
         </Button>
       </div>
     </DialogFooter>

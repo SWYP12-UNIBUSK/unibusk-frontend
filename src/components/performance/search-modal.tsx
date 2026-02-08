@@ -1,32 +1,37 @@
 'use client';
 
+import type { PerformanceLocationSearchDto } from '@/apis/performance-locations/performance-location.schema';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/common/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/common/dialog';
 import { SearchInput } from '@/components/common/search-input';
-import { SEARCH_EXAMPLES, SEARCH_RESULT_EXAMPLE } from '@/constants/performance';
+import { SEARCH_EXAMPLES } from '@/constants/performance';
+import { performanceLocationSearchInfiniteQueryOptions } from '@/queries/performance-locations';
 import { cn } from '@/utils';
 
-interface LocationItem {
-  id: number;
-  name: string;
-  address: string;
-}
-
 interface LocationSearchModalProps {
-  onSelect: (location: LocationItem) => void;
+  onSelect: (location: PerformanceLocationSearchDto) => void;
   trigger?: React.ReactNode;
 }
 
 export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
   const [keyword, setKeyword] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery(performanceLocationSearchInfiniteQueryOptions(searchQuery));
 
   const handleSearch = () => {
     if (keyword.trim()) {
-      setHasSearched(true);
+      setSearchQuery(keyword);
     }
   };
 
@@ -34,11 +39,34 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
     const value = e.target.value;
     setKeyword(value);
 
-    // 입력값이 비어있으면 초기 상태로 돌아감
+    // 입력값이 비어있으면 초기 상태(검색 전)로 돌아감
     if (!value.trim()) {
-      setHasSearched(false);
+      setSearchQuery('');
     }
   };
+
+  // 무한 스크롤 Observer
+  const observerRef = useRef<HTMLDivElement>(null);
+
+  const locations = data?.pages.flatMap(page => page.performanceLocations) || [];
+  const totalElements = data?.pages[0]?.totalElements || 0;
+  const showResults = !!searchQuery;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    if (observerRef.current)
+      observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, locations.length]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -87,7 +115,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
 
         {/* 콘텐츠 영역 */}
         <div className="flex-1 overflow-y-auto">
-          {!hasSearched
+          {!showResults
             ? (
                 <div className="mt-4 space-y-5">
                   <p className="typo-body-m-3 text-primary">아래와 같은 방법으로 검색해보세요!</p>
@@ -108,37 +136,58 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
               )
             : (
                 <div className="">
-                  {SEARCH_RESULT_EXAMPLE.length > 0
+                  {locations.length > 0
                     ? (
                         <>
                           <p className="pb-1.25 typo-caption-sb-1 text-black">
                             검색결과 총
                             <span className="text-primary">
-                              {` ${SEARCH_RESULT_EXAMPLE.length}건`}
+                              {` ${totalElements}건`}
                             </span>
                           </p>
-                          <div className={`
-                            space-y-1.25 divide-y divide-gray-200 border-b
-                            border-gray-200
-                          `}
-                          >
-                            {SEARCH_RESULT_EXAMPLE.map(loc => (
-                              <div
-                                key={loc.id}
-                                className={`
-                                  cursor-pointer space-y-2.5 py-5
-                                  transition-colors
-                                  hover:bg-orange-50
-                                `}
-                                onClick={() => {
-                                  onSelect(loc);
-                                  setIsOpen(false);
-                                }}
+                          <div className="">
+                            <div className={`
+                              space-y-1.25 divide-y divide-gray-200 border-b
+                              border-gray-200
+                            `}
+                            >
+                              {locations.map(loc => (
+                                <div
+                                  key={loc.id}
+                                  role="button"
+                                  tabIndex={0}
+                                  className={`
+                                    cursor-pointer space-y-2.5 py-5
+                                    transition-colors
+                                    hover:bg-orange-50
+                                  `}
+                                  onClick={() => {
+                                    onSelect(loc);
+                                    setIsOpen(false);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      onSelect(loc);
+                                      setIsOpen(false);
+                                    }
+                                  }}
+                                >
+                                  <p className="typo-caption-sb-1 text-gray-800">{loc.name}</p>
+                                  <p className="typo-caption-m-1 text-gray-550">{loc.address}</p>
+                                </div>
+                              ))}
+                            </div>
+                            {/* 무한 스크롤 트리거 */}
+                            <div ref={observerRef} className="h-4 w-full" />
+                            {isFetchingNextPage && (
+                              <div className={`
+                                py-2 text-center text-xs text-gray-400
+                              `}
                               >
-                                <p className="typo-caption-sb-1 text-gray-800">{loc.name}</p>
-                                <p className="typo-caption-m-1 text-gray-550">{loc.address}</p>
+                                로딩중...
                               </div>
-                            ))}
+                            )}
                           </div>
                         </>
                       )
@@ -148,7 +197,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
                         `}
                         >
                           <p className="typo-body-m-3 text-gray-550">
-                            검색 결과가 없습니다.
+                            {isLoading ? '검색 중...' : '검색 결과가 없습니다.'}
                           </p>
                         </div>
                       )}
