@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/common/toast';
-import { MSWInit, QueryProvider } from '@/providers';
+import { QueryProvider } from '@/providers';
 import '../styles/globals.css';
 
 const pretendard = localFont({
@@ -25,7 +25,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         antialiased
       `}
       >
-        <MSWInit />
         <QueryProvider>{children}</QueryProvider>
         <Toaster />
       </body>
