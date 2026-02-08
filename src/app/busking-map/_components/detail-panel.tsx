@@ -4,6 +4,11 @@ import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import { Button } from '@/components/common/button';
 import { LineDivider } from '@/components/common/line-divider';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '@/components/common/tags/tabs';
 import { usePerformanceLocationApplicationGuides, usePerformanceLocationDetail } from '@/hooks/performnace-locations';
 import { cn } from '@/utils';
 
@@ -249,8 +254,8 @@ function ApplicationGuidePanel({
   );
 }
 
-export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailPanelProps) {
-  const [activeTab, changeActiveTab] = useState<PerformanceTab>('upcoming');
+export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
+  const [activeTab, _] = useState<PerformanceTab>('upcoming');
   const [isHeaderSolid, setIsHeaderSolid] = useState(false);
   const [isApplicationGuideOpen, setIsApplicationGuideOpen] = useState(false);
 
@@ -421,68 +426,62 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
             <LineDivider className="mt-7.5 w-full" />
 
             <div className="mt-8.25">
-              <p className="text-center typo-body-sb-2 text-black">이곳에서 진행중인 공연</p>
-
-              <div className="mt-5 flex w-full items-center justify-center">
-                <button
-                  type="button"
-                  onClick={() => changeActiveTab('upcoming')}
-                  className={cn(
-                    `
-                      relative w-full max-w-25 flex-1 cursor-pointer border-b
-                      border-gray-300 py-3 text-center typo-caption-m-1
-                    `,
-                    activeTab === 'upcoming' ? 'text-primary' : 'text-gray-500',
-                  )}
+              <p className="mb-1.25 text-center typo-body-sb-2 text-black">이곳에서 진행중인 공연</p>
+              <Tabs key={placeId ?? 'empty'} defaultValue="upcoming">
+                <TabsList
+                  className={`
+                    mx-auto flex w-50 border-0 bg-transparent p-0 shadow-none
+                    ring-0 outline-none
+                  `}
                 >
-                  예정중
-                  {activeTab === 'upcoming'
-                    ? (
-                        <span className={`
-                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                        `}
-                        />
-                      )
-                    : null}
-                </button>
+                  <TabsTrigger
+                    value="upcoming"
+                    className={`
+                      h-10.5 w-25 cursor-pointer rounded-none border-0
+                      border-b-2 border-transparent bg-transparent
+                      typo-caption-m-1 text-gray-500 shadow-none ring-0
+                      outline-none
+                      focus-visible:ring-0 focus-visible:outline-none
+                      data-[state=active]:border-b-2
+                      data-[state=active]:border-primary
+                      data-[state=active]:text-primary
+                      data-[state=active]:shadow-none data-[state=active]:ring-0
+                    `}
+                  >
+                    예정중
+                  </TabsTrigger>
 
-                <button
-                  type="button"
-                  onClick={() => changeActiveTab('finished')}
-                  className={cn(
-                    `
-                      relative w-full max-w-25 flex-1 cursor-pointer border-b
-                      border-gray-300 py-3 text-center typo-caption-m-1
-                    `,
-                    activeTab === 'finished' ? 'text-primary' : 'text-gray-500',
-                  )}
-                >
-                  종료됨
-                  {activeTab === 'finished'
-                    ? (
-                        <span className={`
-                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                        `}
-                        />
-                      )
-                    : null}
-                </button>
-              </div>
+                  <TabsTrigger
+                    value="past"
+                    className={`
+                      h-10.5 w-25 cursor-pointer rounded-none border-0
+                      border-b-2 border-transparent bg-transparent
+                      typo-caption-m-1 text-gray-500 shadow-none ring-0
+                      outline-none
+                      focus-visible:ring-0 focus-visible:outline-none
+                      data-[state=active]:border-b-2
+                      data-[state=active]:border-primary
+                      data-[state=active]:text-primary
+                      data-[state=active]:shadow-none data-[state=active]:ring-0
+                    `}
+                  >
+                    종료됨
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
 
               {performances.length === 0
                 ? (
                     <EmptyPerformances tab={activeTab} />
                   )
                 : (
-                    <div className="mt-6 grid grid-cols-2 gap-4">
+                    <div className="mt-5.5 grid grid-cols-2 gap-4">
                       {performances.map(performance => (
                         <PerformanceCard key={performance.id} dateText={performance.dateText} />
                       ))}
                     </div>
                   )}
             </div>
-
-            {variant === 'focused' ? <div className="h-12" /> : null}
           </div>
         </div>
       </div>
