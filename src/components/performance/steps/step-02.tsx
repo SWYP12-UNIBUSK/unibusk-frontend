@@ -55,7 +55,7 @@ export function Step02() {
                 placeholder="공연 장소를 등록해 주세요"
                 readOnly
                 value={field.value?.name || ''}
-                error={errors.performanceLocation?.message as string}
+                error={errors.performanceLocation?.message}
               />
             )}
           />

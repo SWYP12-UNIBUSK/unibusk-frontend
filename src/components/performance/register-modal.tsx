@@ -76,6 +76,9 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
         reset(); // react-hook-form 초기화
         onClose(); // 모달 닫기
       },
+      onError: () => {
+        // TODO: toast 등으로 사용자에게 에러 알림
+      },
     });
   };
 

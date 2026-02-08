@@ -48,6 +48,10 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
   // 무한 스크롤 Observer
   const observerRef = useRef<HTMLDivElement>(null);
 
+  const locations = data?.pages.flatMap(page => page.performanceLocations) || [];
+  const totalElements = data?.pages[0]?.totalElements || 0;
+  const showResults = !!searchQuery;
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -62,11 +66,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
       observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  const locations = data?.pages.flatMap(page => page.performanceLocations) || [];
-  const totalElements = data?.pages[0]?.totalElements || 0;
-  const showResults = !!searchQuery;
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, locations.length]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -154,6 +154,8 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
                               {locations.map(loc => (
                                 <div
                                   key={loc.id}
+                                  role="button"
+                                  tabIndex={0}
                                   className={`
                                     cursor-pointer space-y-2.5 py-5
                                     transition-colors
@@ -162,6 +164,13 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
                                   onClick={() => {
                                     onSelect(loc);
                                     setIsOpen(false);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      e.preventDefault();
+                                      onSelect(loc);
+                                      setIsOpen(false);
+                                    }
                                   }}
                                 >
                                   <p className="typo-caption-sb-1 text-gray-800">{loc.name}</p>
@@ -176,7 +185,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
                                 py-2 text-center text-xs text-gray-400
                               `}
                               >
-                                Loading...
+                                로딩중...
                               </div>
                             )}
                           </div>

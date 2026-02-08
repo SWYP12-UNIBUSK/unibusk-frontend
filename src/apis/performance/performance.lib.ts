@@ -7,11 +7,12 @@ import * as z from 'zod';
  * 백엔드 API 요청 데이터(PerformanceCreateRequestDto)로 변환하는 함수
  */
 export function transformPerformanceFormToApiRequest(formData: PerformanceRegisterForm): PerformanceCreateRequestDto {
-  const combineDateAndTime = (date: Date, timeStr: string) => {
-    if (!timeStr)
-      return new Date().toISOString();
+  const combineDateAndTime = (date: Date, startTime: string) => {
+    if (!startTime) {
+      throw new Error('startTime is required for combineDateAndTime');
+    }
 
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    const [hours, minutes] = startTime.split(':').map(Number);
     const result = new Date(date);
     result.setHours(hours, minutes, 0, 0);
 
