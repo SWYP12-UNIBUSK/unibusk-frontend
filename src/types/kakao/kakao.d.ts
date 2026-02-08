@@ -46,6 +46,8 @@ declare global {
         getMap(): Map | null;
         // 마커 위치 이동
         setPosition(position: LatLng): void;
+        getTitle(): string;
+        setTitle(title: string): void;
       }
 
       // 클러스터 마커 콘텐츠 교체용

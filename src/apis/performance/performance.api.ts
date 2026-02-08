@@ -5,7 +5,6 @@ import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
 
-  PerformanceDetailResponseDtoSchema,
   PerformanceListResponseDtoSchema,
 } from './performance.schema';
 
@@ -72,12 +71,4 @@ export function createPerformance(
       // 'Content-Type': 'multipart/form-data', // 브라우저가 자동으로 Boundary를 포함하여 설정하도록 주석 처리
     },
   });
-}
-
-export function getPerformanceDetail(
-  performanceId: number,
-  config?: FetchConfig,
-) {
-  return api.get(`/api/performances/${performanceId}`, config)
-    .then(parseResponse(PerformanceDetailResponseDtoSchema));
 }

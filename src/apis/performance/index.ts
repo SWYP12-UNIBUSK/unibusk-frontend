@@ -1,6 +1,5 @@
 export {
   createPerformance,
-  getPerformanceDetail,
   getPerformanceList,
   getSearchPerformanceList,
 } from './performance.api';

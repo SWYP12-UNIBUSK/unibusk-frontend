@@ -1,27 +1,16 @@
-import { useMemo } from 'react';
-import { KakaoMapView } from '@/components/kakao-map';
-import { BUSKING_MAP_PLACES_MOCK } from '@/mocks/busking-map-places';
-import { SidebarShell } from './_components';
+import { BuskingMapDataProvider } from '@/providers/busking-map/busking-map-data.context';
+import { BuskingMapMapSection } from './_components/busking-map-map-section';
+import { BuskingMapSidebarSection } from './_components/busking-map-sidebar-section';
 
 export default function BuskingMapPage() {
-  const places = BUSKING_MAP_PLACES_MOCK;
-
-  const markers = useMemo(() =>
-    places.map(place => ({
-      id: place.id,
-      position: { lat: place.lat, lng: place.lng },
-    })), [places]);
-
   return (
     <main className="relative h-screen w-full bg-gray-100">
       <h1 className="sr-only">버스킹 장소 지도</h1>
-      <KakaoMapView
-        className="h-full w-full"
-        center={{ lat: 37.5665, lng: 126.978 }}
-        level={5}
-        markers={markers}
-      />
-      <SidebarShell places={places} />
+
+      <BuskingMapDataProvider>
+        <BuskingMapMapSection />
+        <BuskingMapSidebarSection />
+      </BuskingMapDataProvider>
     </main>
   );
 }

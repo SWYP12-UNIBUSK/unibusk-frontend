@@ -162,3 +162,24 @@ export type PerformanceListResponseDto = z.infer<typeof PerformanceListResponseD
 
 /** 공연 상세 조회 API 응답 타입 */
 export type PerformanceDetailResponseDto = z.infer<typeof PerformanceDetailResponseDtoSchema>;
+
+// 공연 장소별 공연 리스트 아이템(카드 1개)
+export const performanceByLocationItemSchema = z.object({
+  performanceId: z.number(),
+  title: z.string(),
+  performanceDate: z.string(),
+  startTime: z.string(),
+  endTime: z.string(),
+  images: z.array(z.string()),
+});
+
+// cursor 기반 리스트 응답
+export const performanceByLocationCursorSchema = z.object({
+  content: z.array(performanceByLocationItemSchema),
+  nextCursorTime: z.string().nullable(),
+  nextCursorId: z.number().nullable(),
+  hasNext: z.boolean(),
+});
+
+export type PerformanceByLocationItem = z.infer<typeof performanceByLocationItemSchema>;
+export type PerformanceByLocationCursorResponse = z.infer<typeof performanceByLocationCursorSchema>;

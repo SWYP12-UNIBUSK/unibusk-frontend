@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import { Button } from '@/components/common/button';
 import { LineDivider } from '@/components/common/line-divider';
-import { PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE } from '@/mocks/performance-locations';
+import { usePerformanceLocationApplicationGuides, usePerformanceLocationDetail } from '@/hooks/performnace-locations';
 import { cn } from '@/utils';
 
 type DetailPanelVariant = 'focused' | 'detail';
@@ -15,30 +15,6 @@ interface ApplicationGuideItem {
   performanceLocationId: number;
   content: string;
 }
-
-interface ApplicationGuideMockResponse {
-  applicationGuideResponses: ApplicationGuideItem[];
-}
-
-const APPLICATION_GUIDES_MOCK_RESPONSE: ApplicationGuideMockResponse = {
-  applicationGuideResponses: [
-    {
-      applicationGuideId: 1,
-      performanceLocationId: 1,
-      content: '마포구청 홈페이지에서 버스킹(거리공연) 신청 페이지에 접속해요.',
-    },
-    {
-      applicationGuideId: 2,
-      performanceLocationId: 1,
-      content: '공연 희망 날짜/시간을 선택하고 신청서를 작성해요.',
-    },
-    {
-      applicationGuideId: 3,
-      performanceLocationId: 1,
-      content: '승인 결과를 확인한 뒤, 안내된 시간에 공연을 진행해요.',
-    },
-  ],
-};
 
 interface DetailPanelProps {
   place: BuskingPlace | null;
@@ -278,18 +254,23 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
   const [isHeaderSolid, setIsHeaderSolid] = useState(false);
   const [isApplicationGuideOpen, setIsApplicationGuideOpen] = useState(false);
 
-  const performanceLocation = useMemo(() => {
-    if (!place) {
+  const placeId = place?.id ?? null;
+
+  const performanceLocationId = useMemo(() => {
+    if (!placeId) {
       return null;
     }
+    const parsed = Number(placeId);
+    if (!Number.isFinite(parsed)) {
+      return null;
+    }
+    return parsed;
+  }, [placeId]);
 
-    return (
-      PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE.locations.find((location) => {
-        const locationIdText = String(location.performanceLocationId);
-        return locationIdText === place.id || location.name === place.title;
-      }) ?? null
-    );
-  }, [place]);
+  const { data: performanceLocation } = usePerformanceLocationDetail(performanceLocationId);
+
+  const guidesQueryId = isApplicationGuideOpen ? performanceLocationId : null;
+  const { data: applicationGuides } = usePerformanceLocationApplicationGuides(guidesQueryId);
 
   const heroImageUrl = performanceLocation?.imageUrls?.[0] ?? place?.thumbnailUrl ?? null;
 
@@ -298,13 +279,13 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
     setIsHeaderSolid(nextIsSolid);
   }, []);
 
-  const upcomingPerformances: PerformanceItem[] = [];
-  const finishedPerformances: PerformanceItem[] = [];
-  const performances = activeTab === 'upcoming' ? upcomingPerformances : finishedPerformances;
-
   if (!place) {
     return null;
   }
+
+  const upcomingPerformances: PerformanceItem[] = [];
+  const finishedPerformances: PerformanceItem[] = [];
+  const performances = activeTab === 'upcoming' ? upcomingPerformances : finishedPerformances;
 
   const operatorUrl = performanceLocation?.operatorUrl ?? null;
 
@@ -320,7 +301,7 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
             <ApplicationGuidePanel
               title={place.title}
               operatorUrl={operatorUrl}
-              guides={APPLICATION_GUIDES_MOCK_RESPONSE.applicationGuideResponses}
+              guides={(applicationGuides?.applicationGuideResponses ?? []) as ApplicationGuideItem[]}
               onBackClick={() => {
                 setIsApplicationGuideOpen(false);
               }}
@@ -390,7 +371,20 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
               <p className="typo-caption-r-1 text-black">
                 신청 링크:
                 {' '}
-                {performanceLocation?.operatorUrl ?? '-'}
+                {performanceLocation?.operatorUrl
+                  ? (
+                      <a
+                        href={performanceLocation.operatorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="break-all underline"
+                      >
+                        {performanceLocation.operatorUrl}
+                      </a>
+                    )
+                  : (
+                      '-'
+                    )}
               </p>
               <p className="typo-caption-r-1 text-black">
                 운영 기관:
@@ -409,7 +403,7 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
                 size="md"
                 theme="lightGray"
                 appearance="filled"
-                disabled={!operatorUrl}
+                disabled={!operatorUrl || !performanceLocationId}
                 onClick={() => {
                   setIsApplicationGuideOpen(true);
                 }}
