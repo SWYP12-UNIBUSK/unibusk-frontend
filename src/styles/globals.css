@@ -165,6 +165,7 @@
 
   /* 커스텀 z-index*/
   --z-index-header: 100;
+  --z-index-dropdown: 150;
   --z-index-sidebar: 200;
 
   --z-index-modal-backdrop: 995;

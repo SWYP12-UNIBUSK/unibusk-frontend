@@ -10,7 +10,7 @@ interface HeaderShellProps {
 
 export function HeaderShell({ left, middle, right, className }: HeaderShellProps) {
   return (
-    <header className={cn('w-full', className)}>
+    <header className={cn('relative z-header w-full', className)}>
       <div className="mx-auto w-full px-2.5 py-2.5">
         <div
           className={cn(

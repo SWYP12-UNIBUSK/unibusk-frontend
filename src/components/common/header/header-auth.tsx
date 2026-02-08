@@ -5,26 +5,33 @@ import { useState } from 'react';
 import { AvatarButton, Button } from '@/components/common/button';
 import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/utils';
+import { LineDivider } from '../line-divider';
 
 export function HeaderAuth() {
   const { isAuthenticated, isPending, logout, isLogoutPending } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   if (isPending) {
-    return <div className="h-11.25 w-24" aria-hidden={true} />;
+    return (
+      <div className="flex w-24 justify-end" aria-hidden={true}>
+        <div className="h-12.5 w-12.5 animate-pulse rounded-full bg-gray-200" />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
     return (
-      <Button theme="orange" appearance="outline" size="md" asChild>
-        <Link href="/login">로그인</Link>
-      </Button>
+      <div className="flex w-24 justify-end">
+        <Button theme="orange" appearance="outline" size="md" asChild>
+          <Link href="/login">로그인</Link>
+        </Button>
+      </div>
     );
   }
 
   return (
     <div
-      className="relative"
+      className="relative flex w-24 justify-end"
       onBlurCapture={(event) => {
         const nextTarget = event.relatedTarget;
         if (!(nextTarget instanceof Node)) {
@@ -53,8 +60,8 @@ export function HeaderAuth() {
               aria-label="사용자 메뉴"
               className={cn(
                 `
-                  absolute top-[calc(100%+10px)] right-0 w-37.5 overflow-hidden
-                  rounded-sm border border-gray-200 bg-white
+                  absolute top-[calc(100%+10px)] right-0 z-dropdown w-37.5
+                  overflow-hidden rounded-sm border border-gray-200 bg-white
                   shadow-[0_0_10px_rgba(0,0,0,0.15)]
                 `,
               )}
@@ -74,7 +81,7 @@ export function HeaderAuth() {
                 마이페이지
               </Link>
 
-              <div className="h-px bg-gray-200" />
+              <LineDivider colorClassName="bg-gray-200" />
 
               <button
                 type="button"

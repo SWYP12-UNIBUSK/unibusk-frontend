@@ -10,8 +10,8 @@ export default function Page() {
         <Header />
       </div>
       <HomeHeroSection
-        mapBgSrc="/images/main-bg.png"
-        heroIllustSrc="/images/main-image.png"
+        mapBgSrc="/images/main-bg.webp"
+        heroIllustSrc="/images/main-image.webp"
       />
 
       <HomeUpcomingBuskingSection

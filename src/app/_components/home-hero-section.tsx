@@ -23,7 +23,11 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                 공연을 시작할 수 있도록
               </h1>
 
-              <p className="mt-6 typo-title-r-4 leading-[1.6] text-gray-700">
+              <p className={`
+                mt-6 typo-title-r-4 leading-[1.6] whitespace-nowrap
+                text-gray-700
+              `}
+              >
                 버스킹이 가능한 장소와 현장을 지도에서 바로 찾아보세요
               </p>
             </div>
