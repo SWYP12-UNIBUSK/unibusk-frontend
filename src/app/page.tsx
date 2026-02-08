@@ -1,78 +1,33 @@
-import Link from 'next/link';
+'use client';
+import { Header } from '@/components/common/header';
 
 export default function HomePage() {
   return (
-    <main
-      className={`
-        flex h-screen w-screen items-center justify-center bg-background
-        text-foreground
-      `}
-    >
-      <div className={`
-        flex flex-col gap-4
-        sm:flex-row
-      `}
+    <div className="min-h-screen bg-background text-foreground">
+      <div
+        className="mx-auto flex h-16 w-full max-w-[1440px] items-center px-6"
       >
-        <Link
-          href="/color-test"
-          className={`
-            flex h-45 w-[320px] flex-col items-center justify-center gap-2
-            rounded-2xl border border-border bg-card text-card-foreground
-            shadow-sm transition
-            hover:-translate-y-0.5 hover:shadow-md
-            focus:ring-2 focus:ring-ring focus:ring-offset-2
-            focus:ring-offset-background focus:outline-none
-          `}
-        >
-          <span className="text-lg font-semibold">컬러 테스트 페이지 이동</span>
-          <span className="text-sm text-gray-600">토큰 적용 여부 확인</span>
-        </Link>
-
-        <Link
-          href="/typography-test"
-          className={`
-            flex h-45 w-[320px] flex-col items-center justify-center gap-2
-            rounded-2xl border border-border bg-card text-card-foreground
-            shadow-sm transition
-            hover:-translate-y-0.5 hover:shadow-md
-            focus:ring-2 focus:ring-ring focus:ring-offset-2
-            focus:ring-offset-background focus:outline-none
-          `}
-        >
-          <span className="text-lg font-semibold">타이포그라피 테스트 페이지 이동</span>
-          <span className="text-sm text-gray-600">토큰 적용 여부 확인</span>
-        </Link>
-
-        <Link
-          href="/z-index-test"
-          className={`
-            flex h-45 w-[320px] flex-col items-center justify-center gap-2
-            rounded-2xl border border-border bg-card text-card-foreground
-            shadow-sm transition
-            hover:-translate-y-0.5 hover:shadow-md
-            focus:ring-2 focus:ring-ring focus:ring-offset-2
-            focus:ring-offset-background focus:outline-none
-          `}
-        >
-          <span className="text-lg font-semibold">z-index 테스트 페이지 이동</span>
-          <span className="text-sm text-gray-600">레이어 우선순위 확인</span>
-        </Link>
-
-        <Link
-          href="/border-radius"
-          className={`
-            flex h-45 w-[320px] flex-col items-center justify-center gap-2
-            rounded-2xl border border-border bg-card text-card-foreground
-            shadow-sm transition
-            hover:-translate-y-0.5 hover:shadow-md
-            focus:ring-2 focus:ring-ring focus:ring-offset-2
-            focus:ring-offset-background focus:outline-none
-          `}
-        >
-          <span className="text-lg font-semibold">border-radius 테스트 페이지 이동</span>
-          <span className="text-sm text-gray-600">토큰 적용 여부 확인</span>
-        </Link>
+        <Header />
       </div>
-    </main>
+
+      <div
+        className={`
+          mx-auto mt-6 flex h-16 w-full max-w-[1440px] items-center px-6
+        `}
+      >
+        <Header
+          layout="SEARCH"
+          onSearch={(searchKeyword) => {
+            console.warn('search:', searchKeyword);
+          }}
+          initialSearchKeyword=""
+          searchPlaceholder="검색어를 입력해 주세요"
+        />
+      </div>
+
+      <main className="mx-auto w-full max-w-[1440px] px-6 py-10">
+        <h1 className="typo-title-sb-2">메인 페이지</h1>
+      </main>
+    </div>
   );
 }
