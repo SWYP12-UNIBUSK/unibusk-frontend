@@ -23,10 +23,12 @@ export function SidebarShell({ places }: SidebarShellProps) {
         onToggleButtonClick={model.actions.onToggleSidebarButtonClick}
       >
         <SidebarPanel
+          mode={model.sidebar.mode}
           places={model.sidebar.places}
           focusedPlace={model.sidebar.focusedPlace}
           onListItemClick={model.actions.onListItemClick}
           onFocusedCloseClick={model.actions.onFocusedCloseClick}
+          onExitClusterListClick={model.actions.onExitClusterListClick}
         />
 
         {model.detail.isOpen

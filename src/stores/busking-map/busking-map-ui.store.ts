@@ -1,10 +1,11 @@
+import type { ListScope } from '@/types/busking-map/busking-place';
 import { create } from 'zustand';
-
-type ListScope = 'viewport' | 'cluster' | 'search';
+import { isSameOrderedIds } from '@/utils/id-equals';
 
 interface SidebarSnapshot {
   listScope: ListScope;
   clusterKey: string | null;
+  clusterPlaceIds: string[];
   selectedPlaceId: string | null;
   focusedPlaceId: string | null;
   searchQuery: string;
@@ -12,9 +13,12 @@ interface SidebarSnapshot {
 
 interface BuskingMapUiState {
   isSidebarOpen: boolean; // 사이드바 열림 여부
-  lastOpenSnapshot: SidebarSnapshot | null; // 닫기 직전 상태(re-open시 복원용)
+  lastOpenSnapshot: SidebarSnapshot | null; // 닫기 직전 스냅샷(재오픈 시 복원용)
   listScope: ListScope;
   clusterKey: string | null; // 어떤 클러스터인지 식별용
+  clusterPlaceIds: string[]; // 클러스터 리스트에 포함된 place id들
+  viewportPlaceIds: string[]; // viewport 모드에서 현재 지도에 보이는 place id들
+
   selectedPlaceId: string | null; // 2단 상세 패널에서 표시할 장소 id
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
   searchQuery: string;
@@ -23,6 +27,10 @@ interface BuskingMapUiState {
   openSidebar: () => void;
   closeSidebar: () => void;
   toggleSidebar: () => void;
+
+  // Viewport list
+  setViewportPlaceIds: (placeIds: string[]) => void;
+  clearViewportPlaceIds: () => void;
 
   // 2단 상세 DetailPanel
   selectPlace: (placeId: string) => void;
@@ -33,7 +41,7 @@ interface BuskingMapUiState {
   clearFocusedPlace: () => void;
 
   // Cluster list
-  openClusterList: (clusterKey: string) => void;
+  openClusterList: (clusterKey: string, clusterPlaceIds: string[]) => void;
   exitClusterList: () => void;
 
   // Search
@@ -46,6 +54,7 @@ function makeSnapshot(state: BuskingMapUiState): SidebarSnapshot {
   return {
     listScope: state.listScope,
     clusterKey: state.clusterKey,
+    clusterPlaceIds: state.clusterPlaceIds.slice(),
     selectedPlaceId: state.selectedPlaceId,
     focusedPlaceId: state.focusedPlaceId,
     searchQuery: state.searchQuery,
@@ -59,6 +68,9 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   listScope: 'viewport',
 
   clusterKey: null,
+  clusterPlaceIds: [],
+  viewportPlaceIds: [],
+
   selectedPlaceId: null,
   focusedPlaceId: null,
   searchQuery: '',
@@ -76,6 +88,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       isSidebarOpen: true,
       listScope: lastOpenSnapshot.listScope,
       clusterKey: lastOpenSnapshot.clusterKey,
+      clusterPlaceIds: lastOpenSnapshot.clusterPlaceIds,
       selectedPlaceId: lastOpenSnapshot.selectedPlaceId,
       focusedPlaceId: lastOpenSnapshot.focusedPlaceId,
       searchQuery: lastOpenSnapshot.searchQuery,
@@ -110,6 +123,27 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     openSidebar();
   },
 
+  // viewport 내 장소 id 갱신(지도 idle 이벤트에서 호출)
+  setViewportPlaceIds: (placeIds) => {
+    const { viewportPlaceIds } = get();
+
+    if (isSameOrderedIds(viewportPlaceIds, placeIds)) {
+      return;
+    }
+
+    set({ viewportPlaceIds: placeIds });
+  },
+
+  clearViewportPlaceIds: () => {
+    const { viewportPlaceIds } = get();
+
+    if (viewportPlaceIds.length === 0) {
+      return;
+    }
+
+    set({ viewportPlaceIds: [] });
+  },
+
   // 2단 상세 패널 open
   selectPlace: (placeId) => {
     set({
@@ -138,11 +172,12 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     set({ focusedPlaceId: null });
   },
 
-  openClusterList: (clusterKey) => {
+  openClusterList: (clusterKey, clusterPlaceIds) => {
     set(state => ({
       isSidebarOpen: true,
       listScope: 'cluster',
       clusterKey,
+      clusterPlaceIds,
       selectedPlaceId: state.selectedPlaceId, // 2단 상세 유지
       focusedPlaceId: null, // 1단 요약 해제
     }));
@@ -151,12 +186,11 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   exitClusterList: () => {
     const { searchQuery } = get();
 
-    if (searchQuery) {
-      set({ listScope: 'search', clusterKey: null });
-      return;
-    }
-
-    set({ listScope: 'viewport', clusterKey: null });
+    set({
+      listScope: searchQuery ? 'search' : 'viewport',
+      clusterKey: null,
+      clusterPlaceIds: [],
+    });
   },
 
   // 검색어 설정: query 없으면 viewport로 복귀, 있으면 search 모드로 전환(선택/요약/클러스터 초기화)
@@ -166,6 +200,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
         searchQuery: '',
         listScope: 'viewport',
         clusterKey: null,
+        clusterPlaceIds: [],
       });
       return;
     }
@@ -175,6 +210,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       searchQuery: query,
       listScope: 'search',
       clusterKey: null,
+      clusterPlaceIds: [],
       selectedPlaceId: state.selectedPlaceId, // 2단 상세 유지
       focusedPlaceId: null, // 1단 요약 해제
     }));
@@ -186,6 +222,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       searchQuery: '',
       listScope: 'viewport',
       clusterKey: null,
+      clusterPlaceIds: [],
     });
   },
 }));

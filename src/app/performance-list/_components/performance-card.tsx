@@ -1,32 +1,16 @@
 'use client';
 
+import type { Performance } from '@/types/performance';
 import { ImageIcon, MapPin } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Card, CardContent } from '@/components/common/card';
 import { cn } from '@/utils';
 
 // !todo: Card 공통 컴포넌트로 분리 및 개선 예정
 interface PerformanceCardProps {
-  /**
-   * 공연 정보 객체
-   */
-  performance: {
-    /** 공연 Id */
-    id: number;
-    /** 공연 제목 */
-    title: string;
-    /** 공연 날짜 (YYYY.MM.DD) */
-    date: string;
-    /** 공연 시작 시간 (HH:mm) */
-    startTime: string;
-    /** 공연 종료 시간 (HH:mm) */
-    endTime: string;
-    /** 공연 장소 */
-    location: string;
-    /** 공연 포스터 썸네일 이미지 URL */
-    thumbnailUrl?: string;
-  };
+  /** 공연 정보 객체 */
+  performance: Performance;
   /**
    * 카드 클릭 핸들러
    * @param id 클릭된 공연의 ID
@@ -36,15 +20,15 @@ interface PerformanceCardProps {
   className?: string;
 }
 
-export function PerformanceCard({ performance, onClick, className }: PerformanceCardProps) {
+export const PerformanceCard = memo(({ performance, onClick, className }: PerformanceCardProps) => {
   const [imageError, setImageError] = useState(false);
-  const { id, date, title, startTime, endTime, location, thumbnailUrl } = performance;
+  const { performanceId, title, performanceDate, startTime, endTime, locationName, images } = performance;
 
   const handleClick = () => {
-    onClick?.(id);
+    onClick?.(performanceId);
   };
 
-  const showPlaceholder = !thumbnailUrl || imageError;
+  const showPlaceholder = !images[0] || imageError;
 
   return (
     <Card
@@ -66,7 +50,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
       <CardContent className="flex h-full flex-col p-2.5">
         {/* Thumbnail */}
         <div className={`
-          relative mb-2.5 aspect-5/8 w-full shrink-0 overflow-hidden rounded-lg
+          relative aspect-5/8 w-full shrink-0 overflow-hidden rounded-lg
           bg-muted
         `}
         >
@@ -89,7 +73,7 @@ export function PerformanceCard({ performance, onClick, className }: Performance
               )
             : (
                 <Image
-                  src={thumbnailUrl}
+                  src={images[0]}
                   alt={`${title} 포스터`}
                   fill
 
@@ -106,7 +90,6 @@ export function PerformanceCard({ performance, onClick, className }: Performance
                 />
               )}
 
-          {/* Gradient overlay on hover */}
           <div className={`
             absolute inset-0 bg-linear-to-t from-black/20 via-transparent
             to-transparent opacity-0 transition-opacity duration-300
@@ -115,25 +98,24 @@ export function PerformanceCard({ performance, onClick, className }: Performance
           />
         </div>
 
-        {/* Info Section */}
-        <div className="flex flex-1 flex-col p-2.5">
-          <div className="shrink-0 text-sm text-muted-foreground">
-            {/* Date and Time */}
-            <p className="font-medium tabular-nums">
-              {`${date} (${startTime} ~ ${endTime})`}
+        <div className={`
+          flex flex-1 flex-col p-2.5 typo-caption-r-1 text-gray-700
+        `}
+        >
+          <div className="shrink-0">
+
+            <p className="tabular-nums">
+              {`${performanceDate} (${startTime}~${endTime})`}
             </p>
 
-            {/* Location */}
             <div className="flex items-center gap-1.5">
               <MapPin className="h-4 w-4 shrink-0" strokeWidth={2} />
-              <span className="line-clamp-1">{location}</span>
+              <span className="line-clamp-1">{locationName}</span>
             </div>
           </div>
 
-          {/* Title */}
           <h3 className={`
-            mt-2.5 line-clamp-1 text-lg leading-tight font-bold text-foreground
-            transition-colors duration-200
+            mt-0.75 typo-body-sb-2 text-black transition-colors duration-200
             group-hover:text-primary
           `}
           >
@@ -143,4 +125,4 @@ export function PerformanceCard({ performance, onClick, className }: Performance
       </CardContent>
     </Card>
   );
-}
+});
