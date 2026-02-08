@@ -17,13 +17,15 @@ export function useKakaoViewportPlaceIds({
   onViewportPlaceIdsChange,
 }: UseKakaoViewportPlaceIdsProps) {
   const lastViewportPlaceIdsRef = useRef<string[]>([]);
+  const onChangeRef = useRef(onViewportPlaceIdsChange);
+  onChangeRef.current = onViewportPlaceIdsChange;
 
   useEffect(() => {
     if (!enabled || !map || !window.kakao?.maps) {
       const prevIds = lastViewportPlaceIdsRef.current;
       if (prevIds.length > 0) {
         lastViewportPlaceIdsRef.current = [];
-        onViewportPlaceIdsChange([]);
+        onChangeRef.current([]);
       }
       return;
     }
@@ -63,7 +65,7 @@ export function useKakaoViewportPlaceIds({
       }
 
       lastViewportPlaceIdsRef.current = nextIds;
-      onViewportPlaceIdsChange(nextIds);
+      onChangeRef.current(nextIds);
     };
 
     syncViewportPlaceIds();
@@ -72,5 +74,5 @@ export function useKakaoViewportPlaceIds({
     return () => {
       kakaoMaps.event.removeListener(map, 'idle', syncViewportPlaceIds);
     };
-  }, [enabled, map, markers, onViewportPlaceIdsChange]);
+  }, [enabled, map, markers]);
 }

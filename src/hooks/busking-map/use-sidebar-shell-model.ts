@@ -61,7 +61,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
     }
 
     // viewport 모드에서 현재 지도에 보이는 place만 노출
-    if (state.viewportPlaceIds.length > 0) {
+    if (state.listScope === 'viewport') {
       return state.viewportPlaceIds
         .map(id => placeIndex.get(id))
         .filter((p): p is BuskingPlace => Boolean(p));

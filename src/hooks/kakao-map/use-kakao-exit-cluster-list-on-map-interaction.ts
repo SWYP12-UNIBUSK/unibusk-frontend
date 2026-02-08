@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface UseKakaoExitClusterListOnMapInteractionProps {
   map: kakao.maps.Map | null;
@@ -16,6 +16,9 @@ export function useKakaoExitClusterListOnMapInteraction({
   lastClusterClickAtMsRef,
   onExitClusterList,
 }: UseKakaoExitClusterListOnMapInteractionProps) {
+  const onExitRef = useRef(onExitClusterList);
+  onExitRef.current = onExitClusterList;
+
   useEffect(() => {
     if (!map || !window.kakao?.maps) {
       return;
@@ -28,7 +31,7 @@ export function useKakaoExitClusterListOnMapInteraction({
         return;
       }
 
-      onExitClusterList();
+      onExitRef.current();
     };
 
     const handleMapClick = () => {
@@ -57,5 +60,5 @@ export function useKakaoExitClusterListOnMapInteraction({
       kakaoMaps.event.removeListener(map, 'dragstart', handleDragStart);
       kakaoMaps.event.removeListener(map, 'zoom_changed', handleZoomChanged);
     };
-  }, [clusterClickGuardMs, isClusterMode, lastClusterClickAtMsRef, map, onExitClusterList]);
+  }, [clusterClickGuardMs, isClusterMode, lastClusterClickAtMsRef, map]);
 }
