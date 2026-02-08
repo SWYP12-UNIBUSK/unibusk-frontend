@@ -1,9 +1,16 @@
 'use client';
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
-import { useEffect, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { CLUSTER_CLICK_GUARD_MS } from '@/constants/kakao-map';
-import { useKakaoClusterer, useKakaoLoader, useKakaoMap, useKakaoMarkers } from '@/hooks/kakao-map';
+import {
+  useKakaoClusterer,
+  useKakaoExitClusterListOnMapInteraction,
+  useKakaoLoader,
+  useKakaoMap,
+  useKakaoMarkers,
+  useKakaoViewportPlaceIds,
+} from '@/hooks/kakao-map';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { cn } from '@/utils';
 import { ClusterBadge } from './cluster-badge';
@@ -44,7 +51,13 @@ export function KakaoMapView({
   const isClustererEnabled = Boolean(enableClusterer && isLoaded && !hasError);
 
   const clusterLayerMap = hasError ? null : map;
-  const clusterLayerMarkers = hasError ? EMPTY_MARKERS : safeMarkers;
+  const clusterLayerMarkers = useMemo<KakaoMarkerInputs[]>(() => {
+    if (!clusterLayerMap || hasError) {
+      return EMPTY_MARKERS;
+    }
+
+    return safeMarkers;
+  }, [clusterLayerMap, hasError, safeMarkers]);
 
   const lastClusterClickAtRef = useRef(0);
 
@@ -72,58 +85,28 @@ export function KakaoMapView({
 
   useKakaoMarkers(markerLayerMap, markerLayerMarkers);
 
-  useEffect(() => {
-    if (!map || !window.kakao?.maps) {
-      return;
-    }
+  const handleViewportPlaceIdsChange = useCallback((placeIds: string[]) => {
+    useBuskingMapUiStore.getState().setViewportPlaceIds(placeIds);
+  }, []);
 
-    const kakaoMaps = window.kakao.maps;
+  const handleExitClusterList = useCallback(() => {
+    useBuskingMapUiStore.getState().exitClusterList();
+  }, []);
 
-    const handleMapClick = () => {
-      const now = Date.now();
-      if (now - lastClusterClickAtRef.current < CLUSTER_CLICK_GUARD_MS) {
-        return;
-      }
+  useKakaoViewportPlaceIds({
+    map: clusterLayerMap,
+    markers: clusterLayerMarkers,
+    enabled: Boolean(clusterLayerMap),
+    onViewportPlaceIdsChange: handleViewportPlaceIdsChange,
+  });
 
-      const { listScope, exitClusterList } = useBuskingMapUiStore.getState();
-      if (listScope !== 'cluster') {
-        return;
-      }
-
-      exitClusterList();
-    };
-
-    kakaoMaps.event.addListener(map, 'click', handleMapClick);
-
-    return () => {
-      kakaoMaps.event.removeListener(map, 'click', handleMapClick);
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (!map || !window.kakao?.maps) {
-      return;
-    }
-
-    const kakaoMaps = window.kakao.maps;
-
-    const handleMapMoveOrZoom = () => {
-      const { listScope: currentScope, exitClusterList } = useBuskingMapUiStore.getState();
-      if (currentScope !== 'cluster') {
-        return;
-      }
-
-      exitClusterList();
-    };
-
-    kakaoMaps.event.addListener(map, 'dragstart', handleMapMoveOrZoom);
-    kakaoMaps.event.addListener(map, 'zoom_changed', handleMapMoveOrZoom);
-
-    return () => {
-      kakaoMaps.event.removeListener(map, 'dragstart', handleMapMoveOrZoom);
-      kakaoMaps.event.removeListener(map, 'zoom_changed', handleMapMoveOrZoom);
-    };
-  }, [map]);
+  useKakaoExitClusterListOnMapInteraction({
+    map,
+    isClusterMode: listScope === 'cluster',
+    clusterClickGuardMs: CLUSTER_CLICK_GUARD_MS,
+    lastClusterClickAtMsRef: lastClusterClickAtRef,
+    onExitClusterList: handleExitClusterList,
+  });
 
   return (
     <div className={cn('relative h-full w-full', className)} aria-busy={!isLoaded}>

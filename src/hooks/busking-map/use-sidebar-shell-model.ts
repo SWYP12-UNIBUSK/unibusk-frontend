@@ -24,6 +24,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       isSidebarOpen: s.isSidebarOpen,
       listScope: s.listScope,
       clusterPlaceIds: s.clusterPlaceIds,
+      viewportPlaceIds: s.viewportPlaceIds,
       searchQuery: s.searchQuery,
       selectedPlaceId: s.selectedPlaceId,
       focusedPlaceId: s.focusedPlaceId,
@@ -59,8 +60,22 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       return filterPlacesBySearch(places, state.searchQuery);
     }
 
+    // viewport 모드에서 현재 지도에 보이는 place만 노출
+    if (state.listScope === 'viewport') {
+      return state.viewportPlaceIds
+        .map(id => placeIndex.get(id))
+        .filter((p): p is BuskingPlace => Boolean(p));
+    }
+
     return places;
-  }, [places, placeIndex, state.clusterPlaceIds, state.listScope, state.searchQuery]);
+  }, [
+    places,
+    placeIndex,
+    state.clusterPlaceIds,
+    state.listScope,
+    state.searchQuery,
+    state.viewportPlaceIds,
+  ]);
 
   return {
     sidebar: {
