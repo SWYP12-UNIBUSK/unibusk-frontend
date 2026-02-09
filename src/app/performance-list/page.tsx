@@ -29,7 +29,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   return (
     <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
       <Header />
-      <main className="container-1920 min-h-screen bg-white pt-[57px]">
+      <main className="min-h-screen bg-white pt-[57px]">
 
         <Hero />
         <HydrationBoundary state={dehydrate(queryClient)}>
