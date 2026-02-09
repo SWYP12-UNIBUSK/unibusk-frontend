@@ -18,4 +18,12 @@ export const performanceKeys = {
   searches: () => [...performanceKeys.all, 'search'] as const,
   search: (filter: PerformanceFilterTab, keyword: string) => [...performanceKeys.searches(), filter, keyword] as const,
   detail: (performanceId: number) => [...performanceKeys.all, 'detail', performanceId] as const,
+
+  // 장소별 공연 목록
+  performances: () => [...performanceKeys.all, 'performances'] as const,
+  upcomingPerformances: (performanceLocationId: number) =>
+    [...performanceKeys.performances(), 'upcoming', performanceLocationId] as const,
+  pastPerformances: (performanceLocationId: number) =>
+    [...performanceKeys.performances(), 'past', performanceLocationId] as const,
+
 } as const;

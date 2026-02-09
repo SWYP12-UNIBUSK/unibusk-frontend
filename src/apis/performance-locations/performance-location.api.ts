@@ -3,7 +3,9 @@ import type { PerformanceLocationsQuery } from './performance-location.schema';
 import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
+  PerformanceLocationApplicationGuidesResponseDtoSchema,
   PerformanceLocationDtoSchema,
+  PerformanceLocationSearchListResponseDtoSchema,
   PerformanceLocationSearchResponseDtoSchema,
   PerformanceLocationsQuerySchema,
   PerformanceLocationsResponseDtoSchema,
@@ -59,4 +61,29 @@ export function getPerformanceLocationSearch(
       params: { keyword, page: page.toString() },
     })
     .then(parseResponse(PerformanceLocationSearchResponseDtoSchema));
+}
+
+/**
+ * 버스킹 장소 신청 가이드 조회
+ * @param performanceLocationId 버스킹 장소 ID
+ * @returns 버스킹 장소 신청 가이드 정보
+ */
+export function getPerformanceLocationApplicationGuides(performanceLocationId: number) {
+  return api
+    .get(`/api/performance-locations/${performanceLocationId}/application-guides`)
+    .then(parseResponse(PerformanceLocationApplicationGuidesResponseDtoSchema));
+}
+
+/**
+ * 버스킹 장소 검색 리스트 조회
+ * @param keyword 검색 키워드
+ * @returns 검색된 버스킹 장소 목록
+ */
+export function getPerformanceLocationSearchList(keyword: string, config?: FetchConfig) {
+  return api
+    .get('/api/performance-locations/search/list', {
+      ...config,
+      params: { keyword },
+    })
+    .then(parseResponse(PerformanceLocationSearchListResponseDtoSchema));
 }

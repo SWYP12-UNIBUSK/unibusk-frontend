@@ -5,6 +5,7 @@ import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
 
+  performanceByLocationCursorSchema,
   PerformanceDetailResponseDtoSchema,
   PerformanceListResponseDtoSchema,
 } from './performance.schema';
@@ -80,4 +81,38 @@ export function getPerformanceDetail(
 ) {
   return api.get(`/api/performances/${performanceId}`, config)
     .then(parseResponse(PerformanceDetailResponseDtoSchema));
+}
+
+/**
+ * 공연 장소별 다가오는 공연(예정중) 조회[버스킹맵 사용]
+ * @param performanceLocationId 공연 장소 ID
+ * @param size 조회 개수(기본 10)
+ * @returns 예정중 공연 목록
+ */
+export function getUpcomingPerformancesByLocation(
+  performanceLocationId: number,
+  size = 10,
+) {
+  return api
+    .get(`/api/performances/locations/${performanceLocationId}/upcoming`, {
+      params: { size: String(size) },
+    })
+    .then(parseResponse(performanceByLocationCursorSchema));
+}
+
+/**
+ * 공연 장소별 지난 공연(종료됨) 조회
+ * @param performanceLocationId 공연 장소 ID
+ * @param size 조회 개수(기본 10)
+ * @returns 종료됨 공연 목록
+ */
+export function getPastPerformancesByLocation(
+  performanceLocationId: number,
+  size = 10,
+) {
+  return api
+    .get(`/api/performances/locations/${performanceLocationId}/past`, {
+      params: { size: String(size) },
+    })
+    .then(parseResponse(performanceByLocationCursorSchema));
 }

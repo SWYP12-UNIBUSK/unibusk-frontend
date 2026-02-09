@@ -1,44 +1,27 @@
 import type { UIEvent } from 'react';
 import type { BuskingPlace } from '@/types/busking-map';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
 import { Button } from '@/components/common/button';
 import { LineDivider } from '@/components/common/line-divider';
-import { PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE } from '@/mocks/performance-locations';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from '@/components/common/tags/tabs';
+import { usePerformanceLocationApplicationGuides, usePerformanceLocationDetail } from '@/hooks/performance-locations';
+import { useLocationPerformances } from '@/hooks/performance/use-location-performances';
 import { cn } from '@/utils';
 
 type DetailPanelVariant = 'focused' | 'detail';
-type PerformanceTab = 'upcoming' | 'finished';
+type PerformanceTab = 'upcoming' | 'past';
 
 interface ApplicationGuideItem {
   applicationGuideId: number;
   performanceLocationId: number;
   content: string;
 }
-
-interface ApplicationGuideMockResponse {
-  applicationGuideResponses: ApplicationGuideItem[];
-}
-
-const APPLICATION_GUIDES_MOCK_RESPONSE: ApplicationGuideMockResponse = {
-  applicationGuideResponses: [
-    {
-      applicationGuideId: 1,
-      performanceLocationId: 1,
-      content: '마포구청 홈페이지에서 버스킹(거리공연) 신청 페이지에 접속해요.',
-    },
-    {
-      applicationGuideId: 2,
-      performanceLocationId: 1,
-      content: '공연 희망 날짜/시간을 선택하고 신청서를 작성해요.',
-    },
-    {
-      applicationGuideId: 3,
-      performanceLocationId: 1,
-      content: '승인 결과를 확인한 뒤, 안내된 시간에 공연을 진행해요.',
-    },
-  ],
-};
 
 interface DetailPanelProps {
   place: BuskingPlace | null;
@@ -49,6 +32,35 @@ interface DetailPanelProps {
 interface PerformanceItem {
   id: string;
   dateText: string;
+  imageUrl: string | null;
+  title: string;
+}
+
+interface LocationPerformanceItem {
+  performanceId: number;
+  title: string;
+  performanceDate: string;
+  startTime: string;
+  endTime: string;
+  images: string[];
+}
+
+interface LocationPerformancesResponse {
+  content: LocationPerformanceItem[];
+  nextCursorTime: string | null;
+  nextCursorId: number | null;
+  hasNext: boolean;
+}
+
+function formatPerformanceDateText(item: LocationPerformanceItem) {
+  const rawDate = item.performanceDate;
+  const dateText = rawDate.includes('-') ? rawDate.replaceAll('-', '.') : rawDate;
+
+  const start = item.startTime.length >= 16 ? item.startTime.slice(11, 16) : '';
+  const end = item.endTime.length >= 16 ? item.endTime.slice(11, 16) : '';
+  const timeText = start && end ? `(${start}~${end})` : '(시간 정보 없음)';
+
+  return `${dateText}\n${timeText}`;
 }
 
 function IconCircleButton({
@@ -121,15 +133,48 @@ function PanelHeader({
   );
 }
 
-function PerformanceCard({ dateText }: { dateText: string }) {
+function PerformanceCard({ performanceId, dateText, imageUrl, title }: { performanceId: number; dateText: string; imageUrl: string | null; title: string }) {
   return (
-    <div className="flex flex-col gap-2">
-      <div
-        className={`
-          aspect-[1/1.15] w-full overflow-hidden rounded-2xl bg-gray-200
+    <div className="flex flex-col">
+
+      <Link
+        href={`/performance-detail/${performanceId}`}
+        aria-label="공연 상세로 이동"
+        className="block"
+      >
+        <div className={`
+          relative aspect-130/180 w-full cursor-pointer overflow-hidden
+          rounded-sm bg-gray-200
         `}
-      />
-      <p className="typo-caption-r-2 whitespace-pre-line text-gray-600">{dateText}</p>
+        >
+          {imageUrl
+            ? (
+                <Image
+                  src={imageUrl}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 420px) 130px, 180px"
+                />
+              )
+            : null}
+        </div>
+      </Link>
+
+      <div className="px-0.5">
+        <p className={`
+          mt-1 mb-px typo-caption-r-2 whitespace-pre-line text-gray-600
+        `}
+        >
+          {dateText}
+        </p>
+        <span className={`
+          typo-caption-r-2 wrap-break-word whitespace-normal text-black
+        `}
+        >
+          {title}
+        </span>
+      </div>
     </div>
   );
 }
@@ -146,6 +191,111 @@ function EmptyPerformances({ tab }: { tab: PerformanceTab }) {
       `}
     >
       <p className="typo-caption-r-1 whitespace-pre-line text-gray-500">{message}</p>
+    </div>
+  );
+}
+
+function LocationPerformancesSection({ performanceLocationId }: { performanceLocationId: number | null }) {
+  const [activeTab, setActiveTab] = useState<PerformanceTab>('upcoming');
+
+  const {
+    upcoming,
+    past,
+    isPending,
+  } = useLocationPerformances({ performanceLocationId, size: 10 });
+
+  const upcomingItems = (upcoming as LocationPerformancesResponse | null)?.content ?? [];
+  const pastItems = (past as LocationPerformancesResponse | null)?.content ?? [];
+  const items = activeTab === 'upcoming' ? upcomingItems : pastItems;
+
+  const performances: PerformanceItem[] = useMemo(() => {
+    return items.map((item) => {
+      return {
+        id: String(item.performanceId),
+        dateText: formatPerformanceDateText(item),
+        imageUrl: item.images?.[0] ?? null,
+        title: item.title ?? '',
+      };
+    });
+  }, [items]);
+
+  return (
+    <div className="mt-8.25">
+      <p className="mb-1.25 text-center typo-body-sb-2 text-black">이곳에서 진행되는 공연</p>
+
+      <div className="px-7.25">
+        <Tabs defaultValue="upcoming" onValueChange={value => setActiveTab(value as PerformanceTab)}>
+          <TabsList
+            className={
+              `
+                mx-auto flex w-50 border-0 bg-transparent p-0 shadow-none ring-0
+                outline-none
+              `
+            }
+          >
+            <TabsTrigger
+              value="upcoming"
+              className={
+                `
+                  h-10.5 w-25 cursor-pointer rounded-none border-0 border-b-2
+                  border-transparent bg-transparent typo-caption-m-1
+                  text-gray-500 shadow-none ring-0 outline-none
+                  focus-visible:ring-0 focus-visible:outline-none
+                  data-[state=active]:border-b-2
+                  data-[state=active]:border-primary
+                  data-[state=active]:text-primary
+                  data-[state=active]:shadow-none data-[state=active]:ring-0
+                `
+              }
+            >
+              예정중
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="past"
+              className={
+                `
+                  h-10.5 w-25 cursor-pointer rounded-none border-0 border-b-2
+                  border-transparent bg-transparent typo-caption-m-1
+                  text-gray-500 shadow-none ring-0 outline-none
+                  focus-visible:ring-0 focus-visible:outline-none
+                  data-[state=active]:border-b-2
+                  data-[state=active]:border-primary
+                  data-[state=active]:text-primary
+                  data-[state=active]:shadow-none data-[state=active]:ring-0
+                `
+              }
+            >
+              종료됨
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {isPending && performances.length === 0
+          ? (
+              <div className="pointer-events-none mt-5.5 grid grid-cols-2 gap-4">
+                <PerformanceCard performanceId={0} dateText="" imageUrl={null} title="" />
+                <PerformanceCard performanceId={0} dateText="" imageUrl={null} title="" />
+              </div>
+            )
+          : (performances.length === 0
+              ? (
+                  <EmptyPerformances tab={activeTab} />
+                )
+              : (
+                  <div className="mt-5.5 grid grid-cols-2 gap-4">
+                    {performances.map(performance => (
+                      <PerformanceCard
+                        key={performance.id}
+                        performanceId={Number(performance.id)}
+                        dateText={performance.dateText}
+                        imageUrl={performance.imageUrl}
+                        title={performance.title}
+                      />
+                    ))}
+                  </div>
+                ))}
+      </div>
     </div>
   );
 }
@@ -273,23 +423,27 @@ function ApplicationGuidePanel({
   );
 }
 
-export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailPanelProps) {
-  const [activeTab, changeActiveTab] = useState<PerformanceTab>('upcoming');
+export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
   const [isHeaderSolid, setIsHeaderSolid] = useState(false);
   const [isApplicationGuideOpen, setIsApplicationGuideOpen] = useState(false);
 
-  const performanceLocation = useMemo(() => {
-    if (!place) {
+  const placeId = place?.id ?? null;
+
+  const performanceLocationId = useMemo(() => {
+    if (!placeId) {
       return null;
     }
+    const parsed = Number(placeId);
+    if (!Number.isFinite(parsed)) {
+      return null;
+    }
+    return parsed;
+  }, [placeId]);
 
-    return (
-      PERFORMANCE_LOCATIONS_MAP_MOCK_RESPONSE.locations.find((location) => {
-        const locationIdText = String(location.performanceLocationId);
-        return locationIdText === place.id || location.name === place.title;
-      }) ?? null
-    );
-  }, [place]);
+  const { data: performanceLocation } = usePerformanceLocationDetail(performanceLocationId);
+
+  const guidesQueryId = isApplicationGuideOpen ? performanceLocationId : null;
+  const { data: applicationGuides } = usePerformanceLocationApplicationGuides(guidesQueryId);
 
   const heroImageUrl = performanceLocation?.imageUrls?.[0] ?? place?.thumbnailUrl ?? null;
 
@@ -297,10 +451,6 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
     const nextIsSolid = event.currentTarget.scrollTop > 8;
     setIsHeaderSolid(nextIsSolid);
   }, []);
-
-  const upcomingPerformances: PerformanceItem[] = [];
-  const finishedPerformances: PerformanceItem[] = [];
-  const performances = activeTab === 'upcoming' ? upcomingPerformances : finishedPerformances;
 
   if (!place) {
     return null;
@@ -320,7 +470,7 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
             <ApplicationGuidePanel
               title={place.title}
               operatorUrl={operatorUrl}
-              guides={APPLICATION_GUIDES_MOCK_RESPONSE.applicationGuideResponses}
+              guides={(applicationGuides?.applicationGuideResponses ?? []) as ApplicationGuideItem[]}
               onBackClick={() => {
                 setIsApplicationGuideOpen(false);
               }}
@@ -378,7 +528,7 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
           )}
           onScroll={handleScroll}
         >
-          <div className="px-10 pb-10">
+          <section className="px-7.75">
             <h3 className="text-center typo-title-b-5 text-black">{place.title}</h3>
 
             <div className="mt-8 flex flex-col gap-1">
@@ -390,7 +540,20 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
               <p className="typo-caption-r-1 text-black">
                 신청 링크:
                 {' '}
-                {performanceLocation?.operatorUrl ?? '-'}
+                {performanceLocation?.operatorUrl
+                  ? (
+                      <a
+                        href={performanceLocation.operatorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="break-all underline"
+                      >
+                        {performanceLocation.operatorUrl}
+                      </a>
+                    )
+                  : (
+                      '-'
+                    )}
               </p>
               <p className="typo-caption-r-1 text-black">
                 운영 기관:
@@ -403,93 +566,35 @@ export function DetailPanel({ place, onCloseClick, variant = 'detail' }: DetailP
                 {performanceLocation?.operatorPhoneNumber ?? '-'}
               </p>
             </div>
+          </section>
 
-            <div className="mt-13 flex w-full justify-center gap-1.25 px-4.75">
-              <Button
-                size="md"
-                theme="lightGray"
-                appearance="filled"
-                disabled={!operatorUrl}
-                onClick={() => {
-                  setIsApplicationGuideOpen(true);
-                }}
-              >
-                신청 방법 보기
-              </Button>
+          <div className="mt-13 flex w-full justify-center gap-1.25 px-4.75">
+            <Button
+              size="md"
+              theme="lightGray"
+              appearance="filled"
+              disabled={!operatorUrl || !performanceLocationId}
+              onClick={() => {
+                setIsApplicationGuideOpen(true);
+              }}
+            >
+              신청 방법 보기
+            </Button>
 
-              <Button size="md" theme="orange" appearance="filled" asChild disabled={!operatorUrl}>
-                <a href={operatorUrl ?? '#'} target="_blank" rel="noopener noreferrer">
-                  신청 하러 가기
-                </a>
-              </Button>
-            </div>
-
-            <LineDivider className="mt-7.5 w-full" />
-
-            <div className="mt-8.25">
-              <p className="text-center typo-body-sb-2 text-black">이곳에서 진행중인 공연</p>
-
-              <div className="mt-5 flex w-full items-center justify-center">
-                <button
-                  type="button"
-                  onClick={() => changeActiveTab('upcoming')}
-                  className={cn(
-                    `
-                      relative w-full max-w-25 flex-1 cursor-pointer border-b
-                      border-gray-300 py-3 text-center typo-caption-m-1
-                    `,
-                    activeTab === 'upcoming' ? 'text-primary' : 'text-gray-500',
-                  )}
-                >
-                  예정중
-                  {activeTab === 'upcoming'
-                    ? (
-                        <span className={`
-                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                        `}
-                        />
-                      )
-                    : null}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => changeActiveTab('finished')}
-                  className={cn(
-                    `
-                      relative w-full max-w-25 flex-1 cursor-pointer border-b
-                      border-gray-300 py-3 text-center typo-caption-m-1
-                    `,
-                    activeTab === 'finished' ? 'text-primary' : 'text-gray-500',
-                  )}
-                >
-                  종료됨
-                  {activeTab === 'finished'
-                    ? (
-                        <span className={`
-                          absolute bottom-0 left-0 h-0.5 w-full bg-primary
-                        `}
-                        />
-                      )
-                    : null}
-                </button>
-              </div>
-
-              {performances.length === 0
-                ? (
-                    <EmptyPerformances tab={activeTab} />
-                  )
-                : (
-                    <div className="mt-6 grid grid-cols-2 gap-4">
-                      {performances.map(performance => (
-                        <PerformanceCard key={performance.id} dateText={performance.dateText} />
-                      ))}
-                    </div>
-                  )}
-            </div>
-
-            {variant === 'focused' ? <div className="h-12" /> : null}
+            <Button size="md" theme="orange" appearance="filled" asChild disabled={!operatorUrl}>
+              <a href={operatorUrl ?? '#'} target="_blank" rel="noopener noreferrer">
+                신청 하러 가기
+              </a>
+            </Button>
           </div>
+
+          <LineDivider className="mt-7.5 w-full" />
+
+          <LocationPerformancesSection
+            key={placeId ?? 'empty'}
+            performanceLocationId={performanceLocationId}
+          />
+
         </div>
       </div>
 

@@ -23,6 +23,9 @@ interface BuskingMapUiState {
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
   searchQuery: string;
 
+  map: kakao.maps.Map | null; // 카카오 지도 인스턴스(뷰포트 bounds/이벤트 처리용)
+  setMap: (map: kakao.maps.Map | null) => void;
+
   // Sidebar open&close
   openSidebar: () => void;
   closeSidebar: () => void;
@@ -75,6 +78,11 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   focusedPlaceId: null,
   searchQuery: '',
 
+  map: null,
+  setMap: (map) => {
+    set({ map });
+  },
+
   // sidebar open: 스냅샷 없으면 일반적인 open / 있으면 닫기 직전 상태 복원 후 스냅샷 상태 null로 변경
   openSidebar: () => {
     const { lastOpenSnapshot } = get();
@@ -96,7 +104,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     });
   },
 
-  // 닫기 직전 상태를 스냅샷으로 저장
+  // sidebar close: 닫기 직전 상태 스냅샷 저장 + selected/focused 초기화
   closeSidebar: () => {
     const current = get();
 
@@ -123,7 +131,6 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     openSidebar();
   },
 
-  // viewport 내 장소 id 갱신(지도 idle 이벤트에서 호출)
   setViewportPlaceIds: (placeIds) => {
     const { viewportPlaceIds } = get();
 
@@ -144,21 +151,20 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     set({ viewportPlaceIds: [] });
   },
 
-  // 2단 상세 패널 open
+  // 2단 상세: selected만 활성화(focused는 해제)
   selectPlace: (placeId) => {
     set({
       isSidebarOpen: true,
       selectedPlaceId: placeId,
-      focusedPlaceId: null, // 1단 사이드바 상세보기 guard 용도
+      focusedPlaceId: null,
     });
   },
 
-  // 2단 상세 패널 close
   clearSelectedPlace: () => {
     set({ selectedPlaceId: null });
   },
 
-  // 1단 사이드바 상세보기
+  // 1단 상세: focused만 활성화(selected는 해제)
   focusPlace: (placeId) => {
     set({
       isSidebarOpen: true,
@@ -167,22 +173,23 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     });
   },
 
-  // 1단 사이드바 상세보기 해제
   clearFocusedPlace: () => {
     set({ focusedPlaceId: null });
   },
 
+  // 클러스터 모드 진입: listScope=cluster + clusterKey/ids 저장 + focused 해제(선택은 유지)
   openClusterList: (clusterKey, clusterPlaceIds) => {
     set(state => ({
       isSidebarOpen: true,
       listScope: 'cluster',
       clusterKey,
       clusterPlaceIds,
-      selectedPlaceId: state.selectedPlaceId, // 2단 상세 유지
-      focusedPlaceId: null, // 1단 요약 해제
+      selectedPlaceId: state.selectedPlaceId,
+      focusedPlaceId: null,
     }));
   },
 
+  // 클러스터 모드 종료: searchQuery 유무에 따라 viewport/search 복귀
   exitClusterList: () => {
     const { searchQuery } = get();
 
@@ -193,7 +200,6 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     });
   },
 
-  // 검색어 설정: query 없으면 viewport로 복귀, 있으면 search 모드로 전환(선택/요약/클러스터 초기화)
   setSearchQuery: (query) => {
     if (!query) {
       set({
@@ -211,12 +217,11 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       listScope: 'search',
       clusterKey: null,
       clusterPlaceIds: [],
-      selectedPlaceId: state.selectedPlaceId, // 2단 상세 유지
-      focusedPlaceId: null, // 1단 요약 해제
+      selectedPlaceId: state.selectedPlaceId,
+      focusedPlaceId: null,
     }));
   },
 
-  // 검색어 초기화
   clearSearchQuery: () => {
     set({
       searchQuery: '',
