@@ -4,8 +4,8 @@ export const KAKAO_MAP_LIBRARIES = ['services', 'clusterer'] as const; // 추가
 
 export const CLUSTER_CLICK_GUARD_MS = 150;
 
-export const DEFAULT_LEVEL = 5;
-export const DEFAULT_CLUSTER_MIN_LEVEL = 6;
+export const DEFAULT_LEVEL = 6;
+export const DEFAULT_CLUSTER_MIN_LEVEL = 5;
 export const DEFAULT_CENTER = { lat: 37.55515, lng: 126.9369 };
 
 /**
