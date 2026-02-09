@@ -187,7 +187,8 @@ function EmptyPerformances({ tab }: { tab: PerformanceTab }) {
   return (
     <div
       className={`
-        flex w-full items-center justify-center px-6 py-7.75 pb-34 text-center
+        flex min-h-40 w-full items-center justify-center px-6 pt-7.75 pb-50
+        text-center
       `}
     >
       <p className="typo-caption-r-1 whitespace-pre-line text-gray-500">{message}</p>
@@ -283,7 +284,7 @@ function LocationPerformancesSection({ performanceLocationId }: { performanceLoc
                   <EmptyPerformances tab={activeTab} />
                 )
               : (
-                  <div className="mt-5.5 grid grid-cols-2 gap-4">
+                  <div className="mt-5.5 grid grid-cols-2 gap-4 pb-13">
                     {performances.map(performance => (
                       <PerformanceCard
                         key={performance.id}
