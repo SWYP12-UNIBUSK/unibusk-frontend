@@ -8,6 +8,7 @@ import {
   performanceByLocationCursorSchema,
   PerformanceDetailResponseDtoSchema,
   PerformanceListResponseDtoSchema,
+  PerformanceUpcomingPreviewResponseDtoSchema,
 } from './performance.schema';
 
 /**
@@ -115,4 +116,14 @@ export function getPastPerformancesByLocation(
       params: { size: String(size) },
     })
     .then(parseResponse(performanceByLocationCursorSchema));
+}
+
+/**
+ * [home] 다가오는 공연 미리보기 조회
+ * @returns 다가오는 공연 미리보기 목록(최대 8개)
+ */
+export function getUpcomingPerformancePreview(config?: FetchConfig) {
+  return api
+    .get('/api/performances/upcoming/preview', { ...config })
+    .then(parseResponse(PerformanceUpcomingPreviewResponseDtoSchema));
 }

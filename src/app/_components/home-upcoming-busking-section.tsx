@@ -17,15 +17,15 @@ export function HomeUpcomingBuskingSection({
     <section className="w-full bg-white py-20">
       <HomeContainer>
         <div className="text-center">
-          <h2 className="typo-title-sb-2 leading-[1.3] font-bold text-gray-900">{title}</h2>
-          <p className="mt-4 typo-title-r-4 text-gray-500">{tags.join(' ')}</p>
+          <h2 className="typo-title-sb-2 text-black">{title}</h2>
+          <p className="mt-3.75 typo-title-r-4 text-gray-600">{tags.join(' ')}</p>
         </div>
 
-        <div className="mt-10 flex justify-end">
+        <div className="mt-14.75 flex justify-end">
           <Link
             href={viewAllHref}
             className={`
-              typo-caption-r-1 text-orange-500
+              typo-body-sb-3 text-primary
               hover:opacity-70
             `}
           >

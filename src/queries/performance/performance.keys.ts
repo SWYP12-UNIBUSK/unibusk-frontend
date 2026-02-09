@@ -26,4 +26,6 @@ export const performanceKeys = {
   pastPerformances: (performanceLocationId: number) =>
     [...performanceKeys.performances(), 'past', performanceLocationId] as const,
 
+  upcomingPreview: () => [...performanceKeys.all, 'upcoming', 'preview'] as const,
+
 } as const;
