@@ -273,7 +273,7 @@ function LocationPerformancesSection({ performanceLocationId }: { performanceLoc
 
         {isPending && performances.length === 0
           ? (
-              <div className="mt-5.5 grid grid-cols-2 gap-4">
+              <div className="pointer-events-none mt-5.5 grid grid-cols-2 gap-4">
                 <PerformanceCard performanceId={0} dateText="" imageUrl={null} title="" />
                 <PerformanceCard performanceId={0} dateText="" imageUrl={null} title="" />
               </div>
