@@ -15,13 +15,14 @@ export default async function PerformanceDetailPage(
 ) {
   const { performanceId: rawPerformanceId } = await params;
   const performanceId = Number(rawPerformanceId);
-  const queryClient = getQueryClient();
-
-  await queryClient.prefetchQuery(performanceDetailQueryOptions(performanceId));
 
   if (Number.isNaN(performanceId) || performanceId <= 0) {
     notFound();
   }
+
+  const queryClient = getQueryClient();
+
+  await queryClient.prefetchQuery(performanceDetailQueryOptions(performanceId));
 
   return (
     <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
