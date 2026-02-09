@@ -183,3 +183,26 @@ export const performanceByLocationCursorSchema = z.object({
 
 export type PerformanceByLocationItem = z.infer<typeof performanceByLocationItemSchema>;
 export type PerformanceByLocationCursorResponse = z.infer<typeof performanceByLocationCursorSchema>;
+
+// home: 다가오는 공연 8개
+export const PerformanceUpcomingPreviewItemDtoSchema = z.object({
+  performanceId: z.number(),
+  title: z.string(),
+  performanceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  startTime: transformerISOToHHmmSchema,
+  endTime: transformerISOToHHmmSchema,
+  locationName: z.string(),
+  images: z.array(z.string()).default([]),
+});
+
+export const PerformanceUpcomingPreviewResponseDtoSchema = z.array(
+  PerformanceUpcomingPreviewItemDtoSchema,
+);
+
+export type PerformanceUpcomingPreviewItemDto = z.infer<
+  typeof PerformanceUpcomingPreviewItemDtoSchema
+>;
+
+export type PerformanceUpcomingPreviewResponseDto = z.infer<
+  typeof PerformanceUpcomingPreviewResponseDtoSchema
+>;

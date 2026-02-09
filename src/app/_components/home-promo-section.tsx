@@ -12,14 +12,14 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
     <section className="w-full bg-white py-20">
       <HomeContainer>
         <div className="text-center">
-          <h2 className="typo-title-sb-2 leading-[1.3] font-bold text-gray-900">공연을 홍보해 보세요</h2>
-          <p className="mt-4 typo-title-r-4 text-gray-500">나의 공연 정보를 등록하고 홍보 해 보세요</p>
+          <h2 className="typo-title-sb-2 text-black">공연을 홍보해 보세요</h2>
+          <p className="mt-3.75 typo-title-r-4 text-gray-600">나의 공연 정보를 등록하고 홍보 해 보세요</p>
         </div>
 
         <div
           className={cn(
             'mt-12',
-            'w-full rounded-[28px]',
+            'w-full rounded-xl',
             'bg-[#FFF4F2]',
             'px-12 py-14',
           )}

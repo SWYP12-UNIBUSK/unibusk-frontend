@@ -1,7 +1,7 @@
 'use client';
 
 import useEmblaCarousel from 'embla-carousel-react';
-import React, { Children, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useId, useMemo, useRef, useSyncExternalStore } from 'react';
 import { cn } from '@/utils';
 
 function clamp01(value: number) {
@@ -9,6 +9,20 @@ function clamp01(value: number) {
 }
 
 type ProgressVariant = 'thumb' | 'fill';
+
+interface EmblaSnapshot {
+  progress: number;
+  snapCount: number;
+  canPrev: boolean;
+  canNext: boolean;
+}
+
+const DEFAULT_SNAPSHOT: EmblaSnapshot = {
+  progress: 0,
+  snapCount: 1,
+  canPrev: false,
+  canNext: false,
+};
 
 export interface EmblaCardCarouselProps {
   children: React.ReactNode;
@@ -23,10 +37,23 @@ export interface EmblaCardCarouselProps {
   showProgress?: boolean;
   progressVariant?: ProgressVariant;
 
+  showArrows?: boolean;
   arrowClassName?: string;
   progressTrackClassName?: string;
   progressIndicatorClassName?: string;
-};
+}
+
+function flattenChildren(node: React.ReactNode): React.ReactNode[] {
+  if (node == null || typeof node === 'boolean') {
+    return [];
+  }
+
+  if (Array.isArray(node)) {
+    return node.flatMap(flattenChildren);
+  }
+
+  return [node];
+}
 
 export function EmblaCardCarousel({
   children,
@@ -37,10 +64,12 @@ export function EmblaCardCarousel({
   gapPx = 24,
   showProgress = true,
   progressVariant = 'thumb',
+  showArrows = false,
+  arrowClassName,
   progressTrackClassName,
   progressIndicatorClassName,
 }: EmblaCardCarouselProps) {
-  const slides = useMemo(() => Children.toArray(children), [children]);
+  const slides = useMemo(() => flattenChildren(children), [children]);
   const totalSlides = slides.length;
 
   const [viewportRef, embla] = useEmblaCarousel({
@@ -50,39 +79,71 @@ export function EmblaCardCarousel({
     loop,
   });
 
-  const [progress, setProgress] = useState(0);
-  const [snapCount, setSnapCount] = useState(1);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      if (!embla) {
+        return () => {};
+      }
 
-  const update = useCallback(() => {
+      const handler = () => {
+        onStoreChange();
+      };
+
+      embla.on('select', handler);
+      embla.on('scroll', handler);
+      embla.on('reInit', handler);
+
+      return () => {
+        embla.off('select', handler);
+        embla.off('scroll', handler);
+        embla.off('reInit', handler);
+      };
+    },
+    [embla],
+  );
+
+  const snapshotRef = useRef<EmblaSnapshot>(DEFAULT_SNAPSHOT);
+
+  const getSnapshot = useCallback((): EmblaSnapshot => {
     if (!embla) {
-      return;
+      return DEFAULT_SNAPSHOT;
     }
 
-    setProgress(clamp01(embla.scrollProgress()));
-    setSnapCount(Math.max(1, embla.scrollSnapList().length));
+    const next: EmblaSnapshot = {
+      progress: Number(clamp01(embla.scrollProgress()).toFixed(6)),
+      snapCount: Math.max(1, embla.scrollSnapList().length),
+      canPrev: embla.canScrollPrev(),
+      canNext: embla.canScrollNext(),
+    };
+
+    const prev = snapshotRef.current;
+
+    if (
+      prev.progress === next.progress
+      && prev.snapCount === next.snapCount
+      && prev.canPrev === next.canPrev
+      && prev.canNext === next.canNext
+    ) {
+      return prev;
+    }
+
+    snapshotRef.current = next;
+    return next;
   }, [embla]);
 
-  useEffect(() => {
-    if (!embla) {
-      return;
-    }
-
-    update();
-    embla.on('select', update);
-    embla.on('scroll', update);
-    embla.on('reInit', update);
-
-    return () => {
-      embla.off('select', update);
-      embla.off('scroll', update);
-      embla.off('reInit', update);
-    };
-  }, [embla, update]);
+  const { progress, snapCount, canPrev, canNext } = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    () => DEFAULT_SNAPSHOT,
+  );
 
   const safePerView = Math.max(1, Math.min(perView, 12));
+  const hasScrollable = totalSlides > safePerView;
 
   const thumbWidthPct
-    = progressVariant === 'thumb' ? Math.min(100, 100 / snapCount) : Math.min(100, (safePerView / Math.max(1, totalSlides)) * 100);
+    = progressVariant === 'thumb'
+      ? Math.min(100, 100 / snapCount)
+      : Math.min(100, (safePerView / Math.max(1, totalSlides)) * 100);
 
   const leftPct
     = progressVariant === 'thumb'
@@ -93,7 +154,23 @@ export function EmblaCardCarousel({
 
   const fillPct = progressVariant === 'fill' ? progress * 100 : 0;
 
-  const hasScrollable = totalSlides > safePerView;
+  const handlePrev = useCallback(() => {
+    if (!embla) {
+      return;
+    }
+
+    embla.scrollPrev();
+  }, [embla]);
+
+  const handleNext = useCallback(() => {
+    if (!embla) {
+      return;
+    }
+
+    embla.scrollNext();
+  }, [embla]);
+
+  const fallbackKeyPrefix = useId();
 
   return (
     <section
@@ -107,33 +184,115 @@ export function EmblaCardCarousel({
     >
       <div ref={viewportRef} className="overflow-hidden">
         <div className="-ml-(--carousel-gap) flex touch-pan-y">
-          {slides.map((node, idx) => (
-            <div
-              key={idx}
-              className={cn(
-                'box-border min-w-0 cursor-pointer pl-(--carousel-gap)',
-                'flex-[0_0_calc(100%/var(--carousel-per-view))]',
-              )}
-              aria-roledescription="slide"
-            >
-              {node}
-            </div>
-          ))}
+          {slides.map((node, idx) => {
+            const nodeKey
+              = React.isValidElement(node) && node.key != null
+                ? node.key
+                : `${fallbackKeyPrefix}-${idx}`;
+
+            return (
+              <div
+                key={nodeKey}
+                className={cn(
+                  'box-border min-w-0 cursor-pointer pl-(--carousel-gap)',
+                  'flex-[0_0_calc(100%/var(--carousel-per-view))]',
+                )}
+                aria-roledescription="slide"
+              >
+                {node}
+              </div>
+            );
+          })}
         </div>
       </div>
 
+      {showArrows && hasScrollable && (
+        <>
+          <button
+            type="button"
+            aria-label="이전"
+            onClick={handlePrev}
+            disabled={!canPrev}
+            className={cn(
+              `
+                absolute top-1/2 -left-14 z-10 -translate-y-1/2 cursor-pointer
+                opacity-0 transition-opacity
+              `,
+              `
+                group-hover:opacity-100
+                hover:opacity-100
+                focus-visible:opacity-100
+              `,
+              `
+                flex h-10 w-10 items-center justify-center rounded-full bg-white
+                shadow-[0_6px_22px_rgba(0,0,0,0.12)]
+              `,
+              'disabled:opacity-30',
+              arrowClassName,
+            )}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="block"
+            >
+              <path d="M15 6L9 12L15 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            aria-label="다음"
+            onClick={handleNext}
+            disabled={!canNext}
+            className={cn(
+              `
+                absolute top-1/2 -right-14 z-10 -translate-y-1/2 cursor-pointer
+                opacity-0 transition-opacity
+              `,
+              `
+                group-hover:opacity-100
+                hover:opacity-100
+                focus-visible:opacity-100
+              `,
+              `
+                flex h-10 w-10 items-center justify-center rounded-full bg-white
+                shadow-[0_6px_22px_rgba(0,0,0,0.12)]
+              `,
+              'disabled:opacity-30',
+              arrowClassName,
+            )}
+
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="block"
+            >
+              <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </>
+      )}
+
       {showProgress && hasScrollable && (
-        <div className={cn('relative mt-6 h-0.5 w-full bg-gray-200', progressTrackClassName)}>
+        <div className={cn('relative mt-6 h-0.5 w-full bg-gray-300', progressTrackClassName)}>
           {progressVariant === 'thumb' && (
             <div
-              className={cn('absolute top-0 h-full bg-orange-500', progressIndicatorClassName)}
+              className={cn('absolute top-0 h-full bg-primary', progressIndicatorClassName)}
               style={{ width: `${thumbWidthPct}%`, left: `${leftPct}%` }}
             />
           )}
 
           {progressVariant === 'fill' && (
             <div
-              className={cn('absolute top-0 h-full bg-orange-500', progressIndicatorClassName)}
+              className={cn('absolute top-0 h-full bg-primary', progressIndicatorClassName)}
               style={{ width: `${fillPct}%` }}
             />
           )}
