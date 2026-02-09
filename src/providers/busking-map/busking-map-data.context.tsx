@@ -5,7 +5,7 @@
 import type { ReactNode } from 'react';
 import type { BuskingPlace } from '@/types/busking-map/busking-place';
 import { createContext, use, useMemo } from 'react';
-import { useKakaoMapBounds, usePerformanceLocationsMap } from '@/hooks/performnace-locations';
+import { useKakaoMapBounds, usePerformanceLocationsMap } from '@/hooks/performance-locations';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { adaptPerformanceLocationsToBuskingPlaces } from '@/utils/busking-map';
 

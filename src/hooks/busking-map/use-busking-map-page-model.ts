@@ -4,7 +4,7 @@ import type { Bounds, BuskingPlace } from '@/types/busking-map/busking-place';
 import type { KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 import { useMemo, useState } from 'react';
 import { adaptPerformanceLocationsToBuskingPlaces } from '@/utils/busking-map';
-import { useKakaoMapBounds, usePerformanceLocationsMap } from '../performnace-locations';
+import { useKakaoMapBounds, usePerformanceLocationsMap } from '../performance-locations';
 
 interface UseBuskingMapPageModelResult {
   setMap: (map: kakao.maps.Map) => void;

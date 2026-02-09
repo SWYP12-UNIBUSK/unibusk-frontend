@@ -10,8 +10,8 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/common/tags/tabs';
+import { usePerformanceLocationApplicationGuides, usePerformanceLocationDetail } from '@/hooks/performance-locations';
 import { useLocationPerformances } from '@/hooks/performance/use-location-performances';
-import { usePerformanceLocationApplicationGuides, usePerformanceLocationDetail } from '@/hooks/performnace-locations';
 import { cn } from '@/utils';
 
 type DetailPanelVariant = 'focused' | 'detail';
