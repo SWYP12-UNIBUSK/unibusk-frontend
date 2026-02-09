@@ -1,7 +1,10 @@
 export {
   createPerformance,
+  getPastPerformancesByLocation,
+  getPerformanceDetail,
   getPerformanceList,
   getSearchPerformanceList,
+  getUpcomingPerformancesByLocation,
 } from './performance.api';
 export { transformPerformanceFormToApiRequest } from './performance.lib';
 export type {

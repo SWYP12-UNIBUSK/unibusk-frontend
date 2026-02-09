@@ -17,9 +17,7 @@ export const performanceKeys = {
   list: (filter: PerformanceFilterTab) => [...performanceKeys.lists(), filter] as const,
   searches: () => [...performanceKeys.all, 'search'] as const,
   search: (filter: PerformanceFilterTab, keyword: string) => [...performanceKeys.searches(), filter, keyword] as const,
-<<<<<<< HEAD
   detail: (performanceId: number) => [...performanceKeys.all, 'detail', performanceId] as const,
-=======
 
   // 장소별 공연 목록
   performances: () => [...performanceKeys.all, 'performances'] as const,
@@ -28,5 +26,4 @@ export const performanceKeys = {
   pastPerformances: (performanceLocationId: number) =>
     [...performanceKeys.performances(), 'past', performanceLocationId] as const,
 
->>>>>>> 85c2ee4 (feat: 사이드바 api 연동 및 장소 상세/신청 방법 api 연동)
 } as const;
