@@ -96,9 +96,10 @@ export function RegisterModal({ isOpen, onClose }: RegistrationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent
-        className={`
-          h-175 w-300 max-w-none rounded-lg border-none p-[80px_122px] shadow-xl
-        `}
+        className={cn(`
+          z-modal h-175 w-300 max-w-none rounded-lg border-none p-[80px_122px]
+          shadow-xl
+        `)}
         showCloseButton={false}
       >
         <button

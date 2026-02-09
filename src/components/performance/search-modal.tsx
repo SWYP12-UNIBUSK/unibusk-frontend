@@ -84,7 +84,8 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
       </DialogTrigger>
       <DialogContent
         className={`
-          flex h-170 w-125 flex-col gap-0 rounded-lg border-none px-10 pt-12
+          z-popup flex h-170 w-125 flex-col gap-0 rounded-lg border-none px-10
+          pt-12
         `}
         showCloseButton={false}
       >
