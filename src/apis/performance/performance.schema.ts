@@ -112,6 +112,45 @@ export const PerformanceListResponseDtoSchema = z.object({
   hasNext: z.boolean(),
 });
 
+/**
+ * 공연 상세 조회 API 응답 스키마
+ */
+export const PerformanceDetailResponseDtoSchema = z.object({
+  /** 공연 고유 ID */
+  performanceId: z.number(),
+  /** 공연 제목 */
+  title: z.string(),
+  /** 공연 날짜 (YYYY-MM-DD) */
+  performanceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'YYYY-MM-DD 형식이어야 합니다.'),
+  /** 공연 시작 시간 (ISO 8601 -> HH:mm) */
+  startTime: transformerISOToHHmmSchema,
+  /** 공연 종료 시간 (ISO 8601 -> HH:mm) */
+  endTime: transformerISOToHHmmSchema,
+  /** 공연 요약 정보 */
+  summary: z.string(),
+  /** 공연 상세 설명 */
+  description: z.string(),
+  /** 공연 이미지 URL 목록 */
+  images: z.array(z.string()).default([]),
+  /** 공연자 정보 목록 */
+  performers: z.array(z.object({
+    /** 공연자 이름 */
+    name: z.string(),
+    /** 공연자 이메일 */
+    email: z.string(),
+    /** 공연자 연락처 */
+    phoneNumber: z.string(),
+  })),
+  /** 공연 장소명 */
+  locationName: z.string(),
+  /** 공연 장소 주소 */
+  address: z.string(),
+  /** 공연 장소 위도 */
+  latitude: z.number(),
+  /** 공연 장소 경도 */
+  longitude: z.number(),
+});
+
 /** 공연 등록 폼 타입 (프론트엔드 입력용) */
 export type PerformanceRegisterForm = z.infer<typeof PerformanceRegisterFormSchema>;
 
@@ -120,3 +159,6 @@ export type PerformanceCreateRequestDto = z.infer<typeof PerformanceCreateReques
 
 /** 공연 목록 조회 API 응답 타입 */
 export type PerformanceListResponseDto = z.infer<typeof PerformanceListResponseDtoSchema>;
+
+/** 공연 상세 조회 API 응답 타입 */
+export type PerformanceDetailResponseDto = z.infer<typeof PerformanceDetailResponseDtoSchema>;
