@@ -30,15 +30,15 @@ export const STEP_FIELDS: Record<1 | 2 | 3 | 4, (keyof PerformanceRegisterForm)[
 export const SEARCH_EXAMPLES = [
   {
     title: '장소명',
-    example: '예) 신촌 스타광장',
+    example: '예) 걷고싶은거리 버스킹존',
+  },
+  {
+    title: '지역명(서울 구 단위)',
+    example: '예) 마포구',
   },
   {
     title: '도로명 + 건물번호',
-    example: '예) 연세로 19',
-  },
-  {
-    title: '지역명(동/리) + 지번',
-    example: '예) 창천동 18-53',
+    example: '예) 어울마당로 107',
   },
 ] as const;
 

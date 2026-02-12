@@ -109,7 +109,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
         <SearchInput
           value={keyword}
           onChange={handleKeywordChange}
-          placeholder="예) 신촌 스타광장"
+          placeholder="예) 걷고싶은거리 버스킹존"
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
           className={cn(`pb-2.5`)}
         />
@@ -127,7 +127,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
                         className="typo-caption-m-1 text-black"
                       >
                         <span className="block">
-                          {`·${item.title}`}
+                          {`${item.title}`}
                         </span>
                         <span className="block pl-1 text-gray-550">{item.example}</span>
                       </li>
