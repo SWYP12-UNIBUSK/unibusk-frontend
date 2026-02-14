@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/common/button';
 import { cn } from '@/utils';
-import { HomeContainer } from './home-container';
+import { MainLayout } from '../../components/layout/main-layout';
 import { PromoStepCard } from './promo-step-card';
 
 export const PROMO_STEP_ICONS = {
@@ -17,8 +17,8 @@ interface HomePromoSectionProps {
 
 export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
   return (
-    <section className="w-full bg-white py-19.5">
-      <HomeContainer>
+    <section className="w-full bg-white py-20">
+      <MainLayout>
         <div className="text-center">
           <h2 className="typo-title-sb-2 text-black">공연을 홍보해 보세요</h2>
           <p className="mt-3.75 typo-title-r-4 text-gray-600">나의 공연 정보를 등록하고 홍보해 보세요</p>
@@ -55,7 +55,7 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
             </Button>
           </div>
         </div>
-      </HomeContainer>
+      </MainLayout>
     </section>
   );
 }

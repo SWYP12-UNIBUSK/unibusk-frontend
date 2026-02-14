@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { HomeContainer } from './home-container';
+import { MainLayout } from '../../components/layout/main-layout';
 import { UpcomingBuskingCarousel } from './upcoming-busking-carousel';
 
 interface HomeUpcomingBuskingSectionProps {
@@ -15,7 +15,7 @@ export function HomeUpcomingBuskingSection({
 }: HomeUpcomingBuskingSectionProps) {
   return (
     <section className="w-full bg-white py-20">
-      <HomeContainer>
+      <MainLayout>
         <div className="text-center">
           <h2 className="typo-title-sb-2 text-black">{title}</h2>
           <p className="mt-3.75 typo-title-r-4 text-gray-600">{tags.join(' ')}</p>
@@ -36,7 +36,7 @@ export function HomeUpcomingBuskingSection({
         <div className="mt-8">
           <UpcomingBuskingCarousel />
         </div>
-      </HomeContainer>
+      </MainLayout>
     </section>
   );
 }
