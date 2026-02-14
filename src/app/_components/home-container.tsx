@@ -7,5 +7,5 @@ interface HomeContainerProps {
 }
 
 export function HomeContainer({ children, className }: HomeContainerProps) {
-  return <div className={cn('mx-auto w-full max-w-360 px-6', className)}>{children}</div>;
+  return <section className={cn('mx-auto w-full max-w-360 px-6', className)}>{children}</section>;
 }
