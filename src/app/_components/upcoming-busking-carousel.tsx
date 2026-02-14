@@ -89,9 +89,9 @@ export function UpcomingBuskingCarousel() {
                   'active:scale-[0.98]',
                 )}
               >
-                <div className={cn(`
-                  relative h-112 w-80.5 overflow-hidden rounded-lg
-                `, `bg-white`)}
+                <div className={`
+                  relative h-112 w-80.5 overflow-hidden rounded-lg bg-white
+                `}
                 >
                   <Image
                     src={imageSrc}
