@@ -16,10 +16,7 @@ interface AboutUsVisionSectionProps {
 export function AboutUsVisionSection({ heading, cards }: AboutUsVisionSectionProps) {
   return (
     <section className="h-275 w-full bg-orange-400">
-      <MainLayout className={`
-        flex h-full flex-col items-center justify-center px-6
-      `}
-      >
+      <MainLayout className="flex h-full flex-col items-center justify-center">
         <h2 className="text-center typo-title-b-1 text-white">{heading}</h2>
 
         <div className="mt-23 grid w-full grid-cols-3 gap-10">
