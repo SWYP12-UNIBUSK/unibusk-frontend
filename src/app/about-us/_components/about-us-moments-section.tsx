@@ -13,9 +13,12 @@ interface AboutUsMomentsSectionProps {
 
 export function AboutUsMomentsSection({ heading, items }: AboutUsMomentsSectionProps) {
   return (
-    <section className="min-h-350 w-full bg-white">
+    <section className={`
+      flex h-full min-h-350 w-full flex-col items-center justify-center bg-white
+    `}
+    >
       <MainLayout
-        className="flex h-full flex-col items-center justify-center px-6"
+        className="px-6"
       >
         <h2 className="text-center typo-title-b-1 text-black">{heading}</h2>
 
