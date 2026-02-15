@@ -60,7 +60,7 @@ const MOMENT_ITEMS = [
 export default function AboutUsPage() {
   return (
     <main className="w-full bg-white">
-      <MainLayout>
+      <MainLayout className="pt-6.25">
         <Header />
       </MainLayout>
       <AboutUsHeroSection {...HERO_ITEMS} />

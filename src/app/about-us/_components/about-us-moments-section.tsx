@@ -1,4 +1,5 @@
 import { MainLayout } from '@/components/layout';
+import { cn } from '@/utils';
 
 interface MomentItem {
   title: string;
@@ -12,7 +13,7 @@ interface AboutUsMomentsSectionProps {
 
 export function AboutUsMomentsSection({ heading, items }: AboutUsMomentsSectionProps) {
   return (
-    <section className="h-350 w-full bg-white">
+    <section className="min-h-350 w-full bg-white">
       <MainLayout
         className="flex h-full flex-col items-center justify-center px-6"
       >
@@ -54,11 +55,11 @@ function MomentCard({
 
   return (
     <div
-      className={`
-        h-full min-h-46 w-full max-w-360 rounded-2xl bg-gray-200 px-12 py-10
-        shadow-[0_6px_14px_rgba(0,0,0,0.10)] ring-1 ring-black/10
-        ${shiftClass}
-      `}
+      className={cn(
+        'h-full min-h-46 w-full max-w-360 rounded-2xl bg-gray-200 px-12 py-10',
+        'shadow-[0_6px_14px_rgba(0,0,0,0.10)] ring-1 ring-black/10',
+        shiftClass,
+      )}
     >
       <h3 className="typo-title-b-3 break-keep text-gray-800">{title}</h3>
       <p
@@ -109,6 +110,7 @@ function TimelineDot({
         ? (
             <svg
               className="pointer-events-none absolute top-1/2 left-0 h-62 w-30"
+              aria-hidden="true"
               viewBox="0 0 30 100"
               preserveAspectRatio="none"
             >

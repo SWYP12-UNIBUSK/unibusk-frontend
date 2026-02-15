@@ -6,10 +6,13 @@ export default function Page() {
     <main className="w-full">
       <section className={`
         min-h-250 w-full
-        bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)] pt-5
+        bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
       `}
       >
-        <div className="mx-auto flex h-16 w-full max-w-360 items-center px-6">
+        <div className={`
+          mx-auto flex w-full max-w-360 items-center px-6 pt-6.25
+        `}
+        >
           <Header />
         </div>
 
