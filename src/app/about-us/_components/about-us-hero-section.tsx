@@ -23,7 +23,7 @@ export function AboutUsHeroSection({ logoSrc, headline, description }: AboutUsHe
         aria-hidden
       />
 
-      <MainLayout className="flex h-full items-center px-6">
+      <MainLayout className="flex h-full items-center">
         <div className={`
           mx-auto flex -translate-y-8 flex-col items-center justify-center
           text-center

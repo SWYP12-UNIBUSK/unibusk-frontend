@@ -17,9 +17,7 @@ export function AboutUsMomentsSection({ heading, items }: AboutUsMomentsSectionP
       flex h-full min-h-350 w-full flex-col items-center justify-center bg-white
     `}
     >
-      <MainLayout
-        className="px-6"
-      >
+      <MainLayout>
         <h2 className="text-center typo-title-b-1 text-black">{heading}</h2>
 
         <div className="mt-33.25 flex w-full flex-col items-center">
