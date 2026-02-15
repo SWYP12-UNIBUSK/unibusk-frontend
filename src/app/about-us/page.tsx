@@ -12,7 +12,7 @@ const HERO_ITEMS = {
 버스킹의 모든 순간을 잇다, UNIBUSK.`,
   description:
     'UNIBUSK는 거리 위의 아티스트와 관객을 하나로 연결하는 지도 기반의 버스킹 \n 통합 플랫폼입니다. 우리는 흩어져 있던 공연 정보를 한데 모아 아티스트에게는 \n 성장의 무대를, 관객에게는 일상 속 특별한 공연 경험을 제공합니다.',
-};
+} as const;
 
 const VISION_CARDS = [
   {
