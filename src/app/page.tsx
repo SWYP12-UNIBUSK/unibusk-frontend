@@ -1,6 +1,4 @@
 import { Header } from '@/components/common/header';
-import mapBg from '../../public/images/main-bg.webp';
-import heroIllust from '../../public/images/main-image.webp';
 import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
 export default function Page() {
@@ -15,7 +13,10 @@ export default function Page() {
           <Header />
         </div>
 
-        <HomeHeroSection mapBgSrc={mapBg} heroIllustSrc={heroIllust} />
+        <HomeHeroSection
+          mapBgSrc="/images/main-bg.webp"
+          heroIllustSrc="/images/main-image.webp"
+        />
       </section>
 
       <HomeUpcomingBuskingSection
