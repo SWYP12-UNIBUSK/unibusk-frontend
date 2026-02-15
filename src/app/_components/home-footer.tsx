@@ -1,9 +1,9 @@
-import { HomeContainer } from './home-container';
+import { MainLayout } from '@/components/layout';
 
 export function HomeFooter() {
   return (
     <footer className="w-full border-t border-gray-100 bg-white py-14">
-      <HomeContainer>
+      <MainLayout>
         <div className="flex items-start justify-between gap-12">
           <div className="flex items-center gap-3">
             <span className={`
@@ -22,7 +22,7 @@ export function HomeFooter() {
             </div>
           </div>
         </div>
-      </HomeContainer>
+      </MainLayout>
     </footer>
   );
 }

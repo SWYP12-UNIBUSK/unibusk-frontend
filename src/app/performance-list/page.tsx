@@ -27,7 +27,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   await queryClient.prefetchInfiniteQuery(performanceListInfiniteQueryOptions(tab));
 
   return (
-    <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
+    <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
       <Header />
       <main className="min-h-screen bg-white pt-[57px]">
 

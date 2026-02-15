@@ -21,7 +21,7 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="relative mt-5 container-1920 flex min-h-screen flex-col">
+    <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
       <Header />
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>

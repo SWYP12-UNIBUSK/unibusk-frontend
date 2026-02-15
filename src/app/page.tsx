@@ -1,6 +1,4 @@
 import { Header } from '@/components/common/header';
-import mapBg from '../../public/images/main-bg.webp';
-import heroIllust from '../../public/images/main-image.webp';
 import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
 export default function Page() {
@@ -8,14 +6,20 @@ export default function Page() {
     <main className="w-full">
       <section className={`
         min-h-250 w-full
-        bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)] pt-5
+        bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
       `}
       >
-        <div className="mx-auto flex h-16 w-full max-w-360 items-center px-6">
+        <div className={`
+          mx-auto flex w-full max-w-360 items-center px-6 pt-6.25
+        `}
+        >
           <Header />
         </div>
 
-        <HomeHeroSection mapBgSrc={mapBg} heroIllustSrc={heroIllust} />
+        <HomeHeroSection
+          mapBgSrc="/images/main-bg.webp"
+          heroIllustSrc="/images/main-image.webp"
+        />
       </section>
 
       <HomeUpcomingBuskingSection

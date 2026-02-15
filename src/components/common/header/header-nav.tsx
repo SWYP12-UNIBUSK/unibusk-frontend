@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { cn } from '@/utils';
 
 const NAV_ITEMS = [
-  // { label: 'ABOUT US', href: '/about-us' },
+  { label: 'ABOUT US', href: '/about-us' },
   { label: '공연 정보', href: '/performance-list' },
   { label: '버스킹 맵', href: '/busking-map' },
 ] as const;
