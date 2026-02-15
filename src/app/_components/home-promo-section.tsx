@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/common/button';
+import { MainLayout } from '@/components/layout';
 import { cn } from '@/utils';
-import { MainLayout } from '../../components/layout/main-layout';
 import { PromoStepCard } from './promo-step-card';
 
 export const PROMO_STEP_ICONS = {

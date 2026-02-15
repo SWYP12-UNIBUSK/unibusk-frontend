@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MainLayout } from '../../components/layout/main-layout';
+import { MainLayout } from '@/components/layout';
 import { UpcomingBuskingCarousel } from './upcoming-busking-carousel';
 
 interface HomeUpcomingBuskingSectionProps {

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { MainLayout } from '../../components/layout/main-layout';
+import { MainLayout } from '@/components/layout';
 
 interface HomeHeroSectionProps {
   mapBgSrc: string;

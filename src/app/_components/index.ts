@@ -1,4 +1,3 @@
-export { MainLayout as HomeContainer } from '../../components/layout/main-layout';
 export { HomeFooter } from './home-footer';
 export { HomeHeroSection } from './home-hero-section';
 export { HomePromoSection } from './home-promo-section';
