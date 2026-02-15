@@ -32,12 +32,18 @@ export function PromoStepCard({ step, title, description, iconSrc }: PromoStepCa
         {step}
       </div>
       <div className={`
-        mt-2 text-center typo-caption-sb-1 font-semibold text-gray-800
+        mt-2 text-center typo-caption-sb-1 font-semibold whitespace-nowrap
+        text-gray-800
       `}
       >
         {title}
       </div>
-      <div className="mt-2 text-center typo-caption-r-2 text-gray-700">{description}</div>
+      <div className={`
+        mt-2 text-center typo-caption-r-2 whitespace-nowrap text-gray-700
+      `}
+      >
+        {description}
+      </div>
     </article>
   );
 }

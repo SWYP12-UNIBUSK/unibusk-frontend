@@ -32,14 +32,19 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
           )}
         >
 
-          <div className="grid grid-cols-4 gap-6">
+          <div className={`
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-4
+          `}
+          >
             <PromoStepCard step="Step 1" title="Who you are" description="아티스트를 알려주세요" iconSrc={PROMO_STEP_ICONS.step1} />
             <PromoStepCard step="Step 2" title="When &amp; Where" description="언제 어디서 진행하나요?" iconSrc={PROMO_STEP_ICONS.step2} />
             <PromoStepCard step="Step 3" title="What's your Stage?" description="공연의 매력을 입력하세요" iconSrc={PROMO_STEP_ICONS.step3} />
             <PromoStepCard step="Step 4" title="Ready to Go?" description="마지막으로 체크하면 끝!" iconSrc={PROMO_STEP_ICONS.step4} />
           </div>
 
-          <div className="mt-20.25 flex justify-center">
+          <div className="mt-20 flex justify-center">
             <Button
               asChild
               size="lg"
