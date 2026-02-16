@@ -25,12 +25,11 @@ export function SidebarShell({ places }: SidebarShellProps) {
         <SidebarPanel
           listScope={model.sidebar.listScope}
           activeTab={model.sidebar.activeTab}
+          onTabClick={model.actions.onTabClick}
           places={model.sidebar.places}
           focusedPlace={model.sidebar.focusedPlace}
-          onTabClick={model.actions.onSidebarTabClick}
           onListItemClick={model.actions.onListItemClick}
           onFocusedCloseClick={model.actions.onFocusedCloseClick}
-          onExitClusterListClick={model.actions.onExitClusterListClick}
         />
 
         {model.detail.isOpen

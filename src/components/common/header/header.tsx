@@ -23,18 +23,22 @@ export function Header(props: HeaderProps) {
       <HeaderShell
         left={<HeaderLogo />}
         middle={(
-          <div className="flex w-full items-center gap-8 pr-8 pl-8">
-            <div className="w-116">
+          <div className="flex w-full min-w-0 items-center px-8">
+            <div className="w-full max-w-116 min-w-0">
               <HeaderSearch
                 onSearch={props.onSearch}
                 initialSearchKeyword={props.initialSearchKeyword}
                 placeholder={props.searchPlaceholder}
               />
             </div>
-            <HeaderNav align="right" className="ml-auto" />
           </div>
         )}
-        right={<HeaderAuth />}
+        right={(
+          <div className="flex items-center gap-10">
+            <HeaderNav align="right" />
+            <HeaderAuth />
+          </div>
+        )}
       />
     );
   }

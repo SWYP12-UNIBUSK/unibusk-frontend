@@ -13,10 +13,12 @@ interface HeaderNavProps {
 }
 
 export function HeaderNav({ align, className }: HeaderNavProps) {
-  const wrapper = align === 'center' ? 'justify-center' : 'justify-end';
+  const wrapper = align === 'center'
+    ? 'w-full justify-center'
+    : 'w-auto justify-end';
 
   return (
-    <nav aria-label="헤더 내비게이션" className={cn('flex w-full', wrapper, className)}>
+    <nav aria-label="헤더 내비게이션" className={cn('flex', wrapper, className)}>
       <ul className="flex flex-nowrap items-center gap-8 whitespace-nowrap">
         {NAV_ITEMS.map(item => (
           <li key={item.href} className="shrink-0">

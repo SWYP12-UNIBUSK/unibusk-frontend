@@ -13,7 +13,6 @@ interface SidebarPanelProps {
   onTabClick: (tab: SidebarTab) => void;
   onListItemClick: (placeId: string) => void;
   onFocusedCloseClick: () => void;
-  onExitClusterListClick: (() => void) | null;
 }
 
 function TabChips({

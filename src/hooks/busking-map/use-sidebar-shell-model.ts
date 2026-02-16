@@ -1,14 +1,19 @@
 'use client';
 
-import type { BuskingPlace, ListScope, SidebarTab } from '@/types/busking-map';
-import { useMemo } from 'react';
+import type { BuskingPlace } from '@/types/busking-map';
+import type { Coordinate } from '@/types/kakao/kakao-map';
+import { useEffect, useMemo, useRef } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { usePerformanceLocationSearchList } from '@/hooks/performance-locations/use-performance-location-list';
+import { usePerformanceLocationSearchList } from '@/hooks/performance-locations';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
-import { adaptPerformanceLocationsToBuskingPlaces } from '@/utils/busking-map/performance-location.adapter';
-import { createBuskingPlaceIndex } from '@/utils/busking-map/place-index';
-import { sortPlacesByAnchor } from '@/utils/busking-map/sort-places-by-anchor';
+import {
+  adaptPerformanceLocationsToBuskingPlaces,
+  createBuskingPlaceIndex,
+  panToCoordinate,
+} from '@/utils/busking-map';
+
+type SidebarTab = 'places' | 'search';
 
 export function useSidebarShellModel(places: BuskingPlace[]) {
   const state = useBuskingMapUiStore(
@@ -17,12 +22,15 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       listScope: s.listScope,
       clusterPlaceIds: s.clusterPlaceIds,
       viewportPlaceIds: s.viewportPlaceIds,
+
       selectedPlaceId: s.selectedPlaceId,
       focusedPlaceId: s.focusedPlaceId,
 
-      activeSidebarTab: s.activeSidebarTab,
       searchQuery: s.searchQuery,
-      searchAnchorCoordinate: s.searchAnchorCoordinate,
+      activeSidebarTab: s.activeSidebarTab as SidebarTab,
+      searchAnchorCoordinate: s.searchAnchorCoordinate as Coordinate | null,
+
+      map: s.map,
     })),
   );
 
@@ -37,7 +45,21 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
     })),
   );
 
-  const placeIndex = useMemo(() => createBuskingPlaceIndex(places), [places]);
+  const trimmedSearchQuery = state.searchQuery.trim();
+
+  const { data: searchListData } = usePerformanceLocationSearchList(trimmedSearchQuery);
+
+  const searchLocationDtos = useMemo(() => {
+    return searchListData?.performanceLocationSearchResponses ?? [];
+  }, [searchListData]);
+
+  const searchTabPlaces = useMemo(() => {
+    return adaptPerformanceLocationsToBuskingPlaces(searchLocationDtos);
+  }, [searchLocationDtos]);
+
+  const placeIndex = useMemo(() => {
+    return createBuskingPlaceIndex([...places, ...searchTabPlaces]);
+  }, [places, searchTabPlaces]);
 
   const selectedPlace = state.selectedPlaceId
     ? placeIndex.get(state.selectedPlaceId) ?? null
@@ -47,40 +69,71 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
     ? placeIndex.get(state.focusedPlaceId) ?? null
     : null;
 
-  const placesForPlacesTab = useMemo(() => {
+  const placesTabMode = state.listScope === 'cluster' ? 'cluster' : 'viewport';
+
+  const placesTabPlaces = useMemo(() => {
     if (state.listScope === 'cluster') {
       return state.clusterPlaceIds
         .map(id => placeIndex.get(id))
         .filter((p): p is BuskingPlace => Boolean(p));
     }
 
-    if (state.listScope === 'viewport') {
-      return state.viewportPlaceIds
-        .map(id => placeIndex.get(id))
-        .filter((p): p is BuskingPlace => Boolean(p));
+    return state.viewportPlaceIds
+      .map(id => placeIndex.get(id))
+      .filter((p): p is BuskingPlace => Boolean(p));
+  }, [placeIndex, state.clusterPlaceIds, state.listScope, state.viewportPlaceIds]);
+
+  const activeMode = state.activeSidebarTab === 'search' ? 'search' : placesTabMode;
+
+  const activePlaces = state.activeSidebarTab === 'search' ? searchTabPlaces : placesTabPlaces;
+
+  const lastAutoPanKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (state.activeSidebarTab !== 'search') {
+      return;
     }
 
-    return places;
-  }, [places, placeIndex, state.clusterPlaceIds, state.listScope, state.viewportPlaceIds]);
+    if (!trimmedSearchQuery) {
+      lastAutoPanKeyRef.current = null;
+      return;
+    }
 
-  const searchListQuery = usePerformanceLocationSearchList(state.searchQuery);
+    if (!state.map) {
+      return;
+    }
 
-  const placesForSearchTab = useMemo(() => {
-    const responses = searchListQuery.data?.performanceLocationSearchResponses ?? [];
-    const adapted = adaptPerformanceLocationsToBuskingPlaces(responses);
-    return sortPlacesByAnchor(adapted, state.searchAnchorCoordinate);
-  }, [searchListQuery.data, state.searchAnchorCoordinate]);
+    const nearest = searchTabPlaces[0];
+    if (!nearest) {
+      return;
+    }
 
-  const sidebarPlaces = state.activeSidebarTab === 'search'
-    ? placesForSearchTab
-    : placesForPlacesTab;
+    const autoPanKey = `${trimmedSearchQuery}:${nearest.id}`;
+    if (lastAutoPanKeyRef.current === autoPanKey) {
+      return;
+    }
+
+    lastAutoPanKeyRef.current = autoPanKey;
+    panToCoordinate(state.map, { lat: nearest.lat, lng: nearest.lng });
+  }, [searchTabPlaces, state.activeSidebarTab, state.map, trimmedSearchQuery]);
+
+  function handleListItemClick(placeId: string) {
+    const clickedPlace = placeIndex.get(placeId) ?? null;
+
+    if (state.activeSidebarTab === 'search' && clickedPlace && state.map) {
+      panToCoordinate(state.map, { lat: clickedPlace.lat, lng: clickedPlace.lng });
+    }
+
+    actions.selectPlace(placeId);
+  }
 
   return {
     sidebar: {
       isOpen: state.isSidebarOpen,
-      listScope: state.listScope as ListScope,
-      activeTab: state.activeSidebarTab as SidebarTab,
-      places: sidebarPlaces,
+      mode: activeMode,
+      listScope: state.listScope,
+      activeTab: state.activeSidebarTab,
+      places: activePlaces,
       focusedPlace,
     },
     detail: {
@@ -89,8 +142,8 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
     },
     actions: {
       onToggleSidebarButtonClick: actions.toggleSidebar,
-      onSidebarTabClick: actions.setActiveSidebarTab,
-      onListItemClick: actions.selectPlace,
+      onTabClick: actions.setActiveSidebarTab,
+      onListItemClick: handleListItemClick,
       onFocusedCloseClick: actions.clearFocusedPlace,
       onExitClusterListClick: actions.exitClusterList,
       onDetailCloseClick: actions.clearSelectedPlace,

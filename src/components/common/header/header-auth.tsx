@@ -13,7 +13,7 @@ export function HeaderAuth() {
 
   if (isPending) {
     return (
-      <div className="flex w-24 justify-end" aria-hidden={true}>
+      <div className="flex items-center justify-end" aria-hidden={true}>
         <div className="h-12.5 w-12.5 animate-pulse rounded-full bg-gray-200" />
       </div>
     );
@@ -21,7 +21,7 @@ export function HeaderAuth() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex w-24 justify-end">
+      <div className="flex items-center justify-end">
         <Button theme="orange" appearance="outline" size="md" asChild>
           <Link href="/login">로그인</Link>
         </Button>
@@ -31,7 +31,7 @@ export function HeaderAuth() {
 
   return (
     <div
-      className="relative flex w-24 justify-end"
+      className="relative flex items-center justify-end"
       onBlurCapture={(event) => {
         const nextTarget = event.relatedTarget;
         if (!(nextTarget instanceof Node)) {

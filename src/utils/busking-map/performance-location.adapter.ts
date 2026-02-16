@@ -1,7 +1,14 @@
 import type { PerformanceLocationDto } from '@/apis/performance-locations';
 import type { BuskingPlace } from '@/types/busking-map';
 
-export function adaptPerformanceLocationsToBuskingPlaces(locations: PerformanceLocationDto[]): BuskingPlace[] {
+type PerformanceLocationAdapterInput = Pick<
+  PerformanceLocationDto,
+  'performanceLocationId' | 'name' | 'latitude' | 'longitude' | 'imageUrls'
+>;
+
+export function adaptPerformanceLocationsToBuskingPlaces(
+  locations: readonly PerformanceLocationAdapterInput[],
+): BuskingPlace[] {
   return locations.map(dto => ({
     id: String(dto.performanceLocationId),
     title: dto.name,
