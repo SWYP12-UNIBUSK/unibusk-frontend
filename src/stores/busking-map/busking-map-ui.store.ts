@@ -1,6 +1,9 @@
 import type { ListScope } from '@/types/busking-map/busking-place';
+import type { Coordinate } from '@/types/kakao/kakao-map';
 import { create } from 'zustand';
 import { isSameOrderedIds } from '@/utils/id-equals';
+
+type SidebarTab = 'places' | 'search';
 
 interface SidebarSnapshot {
   listScope: ListScope;
@@ -9,6 +12,8 @@ interface SidebarSnapshot {
   selectedPlaceId: string | null;
   focusedPlaceId: string | null;
   searchQuery: string;
+  activeSidebarTab: SidebarTab;
+  searchOrigin: Coordinate | null;
 }
 
 interface BuskingMapUiState {
@@ -21,7 +26,9 @@ interface BuskingMapUiState {
 
   selectedPlaceId: string | null; // 2단 상세 패널에서 표시할 장소 id
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
-  searchQuery: string;
+  searchQuery: string; // 검색 실행으로 확정된 검색어(빈 문자열이면 검색 결과 없음)
+  activeSidebarTab: SidebarTab; // 공연 장소/검색 결과 탭 UI 상태
+  searchOrigin: Coordinate | null; // 검색 실행 시점의 지도 기준 좌표(거리 정렬 기준)
 
   map: kakao.maps.Map | null; // 카카오 지도 인스턴스(뷰포트 bounds/이벤트 처리용)
   setMap: (map: kakao.maps.Map | null) => void;
@@ -48,6 +55,8 @@ interface BuskingMapUiState {
   exitClusterList: () => void;
 
   // Search
+  setActiveSidebarTab: (tab: SidebarTab) => void;
+  openSearchResults: (query: string, origin: Coordinate | null) => void;
   setSearchQuery: (query: string) => void;
   clearSearchQuery: () => void;
 }
@@ -61,6 +70,8 @@ function makeSnapshot(state: BuskingMapUiState): SidebarSnapshot {
     selectedPlaceId: state.selectedPlaceId,
     focusedPlaceId: state.focusedPlaceId,
     searchQuery: state.searchQuery,
+    activeSidebarTab: state.activeSidebarTab,
+    searchOrigin: state.searchOrigin ? { ...state.searchOrigin } : null,
   };
 }
 
@@ -77,6 +88,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   selectedPlaceId: null,
   focusedPlaceId: null,
   searchQuery: '',
+  activeSidebarTab: 'places',
+  searchOrigin: null,
 
   map: null,
   setMap: (map) => {
@@ -100,6 +113,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       selectedPlaceId: lastOpenSnapshot.selectedPlaceId,
       focusedPlaceId: lastOpenSnapshot.focusedPlaceId,
       searchQuery: lastOpenSnapshot.searchQuery,
+      activeSidebarTab: lastOpenSnapshot.activeSidebarTab,
+      searchOrigin: lastOpenSnapshot.searchOrigin,
       lastOpenSnapshot: null,
     });
   },
@@ -186,6 +201,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       clusterPlaceIds,
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
+      activeSidebarTab: 'places',
     }));
   },
 
@@ -197,16 +213,23 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       listScope: searchQuery ? 'search' : 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
+      activeSidebarTab: searchQuery ? 'search' : 'places',
     });
   },
 
-  setSearchQuery: (query) => {
+  setActiveSidebarTab: (tab) => {
+    set({ activeSidebarTab: tab });
+  },
+
+  openSearchResults: (query, origin) => {
     if (!query) {
       set({
         searchQuery: '',
         listScope: 'viewport',
         clusterKey: null,
         clusterPlaceIds: [],
+        activeSidebarTab: 'places',
+        searchOrigin: null,
       });
       return;
     }
@@ -219,6 +242,34 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       clusterPlaceIds: [],
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
+      activeSidebarTab: 'search',
+      searchOrigin: origin,
+    }));
+  },
+
+  setSearchQuery: (query) => {
+    if (!query) {
+      set({
+        searchQuery: '',
+        listScope: 'viewport',
+        clusterKey: null,
+        clusterPlaceIds: [],
+        activeSidebarTab: 'places',
+        searchOrigin: null,
+      });
+      return;
+    }
+
+    set(state => ({
+      isSidebarOpen: true,
+      searchQuery: query,
+      listScope: 'search',
+      clusterKey: null,
+      clusterPlaceIds: [],
+      selectedPlaceId: state.selectedPlaceId,
+      focusedPlaceId: null,
+      activeSidebarTab: 'search',
+      searchOrigin: state.searchOrigin,
     }));
   },
 
@@ -228,6 +279,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
+      activeSidebarTab: 'places',
+      searchOrigin: null,
     });
   },
 }));
