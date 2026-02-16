@@ -1,9 +1,7 @@
-import type { ListScope } from '@/types/busking-map/busking-place';
+import type { ListScope, SidebarTab } from '@/types/busking-map/busking-place';
 import type { Coordinate } from '@/types/kakao/kakao-map';
 import { create } from 'zustand';
 import { isSameOrderedIds } from '@/utils/id-equals';
-
-type SidebarTab = 'places' | 'search';
 
 interface SidebarSnapshot {
   listScope: ListScope;
@@ -56,7 +54,7 @@ interface BuskingMapUiState {
 
   // Search
   setActiveSidebarTab: (tab: SidebarTab) => void;
-  openSearchResults: (query: string, origin: Coordinate | null) => void;
+  openSearchResults: (query: string, searchAnchorCoordinate: Coordinate | null) => void;
   setSearchQuery: (query: string) => void;
   clearSearchQuery: () => void;
 }
@@ -107,7 +105,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
 
     set({
       isSidebarOpen: true,
-      listScope: lastOpenSnapshot.listScope,
+      listScope: lastOpenSnapshot.listScope === 'search' ? 'viewport' : lastOpenSnapshot.listScope,
       clusterKey: lastOpenSnapshot.clusterKey,
       clusterPlaceIds: lastOpenSnapshot.clusterPlaceIds,
       selectedPlaceId: lastOpenSnapshot.selectedPlaceId,
@@ -199,21 +197,18 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       listScope: 'cluster',
       clusterKey,
       clusterPlaceIds,
-      selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
       activeSidebarTab: 'places',
+      selectedPlaceId: state.selectedPlaceId,
     }));
   },
 
-  // 클러스터 모드 종료: searchQuery 유무에 따라 viewport/search 복귀
+  // 클러스터 모드 종료: viewport 복귀(검색 상태/탭은 유지)
   exitClusterList: () => {
-    const { searchQuery } = get();
-
     set({
-      listScope: searchQuery ? 'search' : 'viewport',
+      listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
-      activeSidebarTab: searchQuery ? 'search' : 'places',
     });
   },
 
@@ -221,49 +216,35 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
     set({ activeSidebarTab: tab });
   },
 
-  openSearchResults: (query, origin) => {
+  openSearchResults: (query, searchAnchorCoordinate) => {
     if (!query) {
-      set({
-        searchQuery: '',
-        listScope: 'viewport',
-        clusterKey: null,
-        clusterPlaceIds: [],
-        activeSidebarTab: 'places',
-        searchAnchorCoordinate: null,
-      });
+      get().clearSearchQuery();
       return;
     }
 
     set(state => ({
       isSidebarOpen: true,
       searchQuery: query,
-      listScope: 'search',
+      listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
       activeSidebarTab: 'search',
-      searchAnchorCoordinate: origin,
+      searchAnchorCoordinate,
     }));
   },
 
   setSearchQuery: (query) => {
     if (!query) {
-      set({
-        searchQuery: '',
-        listScope: 'viewport',
-        clusterKey: null,
-        clusterPlaceIds: [],
-        activeSidebarTab: 'places',
-        searchAnchorCoordinate: null,
-      });
+      get().clearSearchQuery();
       return;
     }
 
     set(state => ({
       isSidebarOpen: true,
       searchQuery: query,
-      listScope: 'search',
+      listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
       selectedPlaceId: state.selectedPlaceId,
@@ -274,11 +255,11 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   },
 
   clearSearchQuery: () => {
+    const { listScope } = get();
+
     set({
       searchQuery: '',
-      listScope: 'viewport',
-      clusterKey: null,
-      clusterPlaceIds: [],
+      listScope: listScope === 'search' ? 'viewport' : listScope,
       activeSidebarTab: 'places',
       searchAnchorCoordinate: null,
     });

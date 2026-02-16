@@ -1,1 +1,1 @@
-export type { Bounds, BuskingPlace, ListScope } from './busking-place';
+export type { Bounds, BuskingPlace, ListScope, SidebarTab } from './busking-place';

@@ -1,10 +1,11 @@
 'use client';
 
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { DEFAULT_CLUSTER_MIN_LEVEL, DEFAULT_LEVEL } from '@/constants/kakao-map';
 import { useKakaoClusterer } from '@/hooks/kakao-map/use-kakao-clusterer';
+import { useKakaoExitClusterListOnMapInteraction } from '@/hooks/kakao-map/use-kakao-exit-cluster-list-on-map-interaction';
 import { useKakaoLoader } from '@/hooks/kakao-map/use-kakao-loader';
 import { useKakaoMap } from '@/hooks/kakao-map/use-kakao-map';
 import { useKakaoMarkers } from '@/hooks/kakao-map/use-kakao-markers';
@@ -46,9 +47,13 @@ export function KakaoMapView({
 
   const focusPlace = useBuskingMapUiStore(state => state.focusPlace);
   const openClusterList = useBuskingMapUiStore(state => state.openClusterList);
+  const exitClusterList = useBuskingMapUiStore(state => state.exitClusterList);
   const listScope = useBuskingMapUiStore(state => state.listScope);
 
   const isClusterListOpen = listScope === 'cluster';
+
+  const lastClusterClickAtMsRef = useRef(0);
+  const CLUSTER_CLICK_GUARD_MS = 250;
 
   useEffect(() => {
     setMap(map);
@@ -56,6 +61,14 @@ export function KakaoMapView({
       setMap(null);
     };
   }, [map, setMap]);
+
+  useKakaoExitClusterListOnMapInteraction({
+    map,
+    isClusterMode: isClusterListOpen,
+    clusterClickGuardMs: CLUSTER_CLICK_GUARD_MS,
+    lastClusterClickAtMsRef,
+    onExitClusterList: exitClusterList,
+  });
 
   useKakaoClusterer(
     map,
@@ -68,6 +81,8 @@ export function KakaoMapView({
         focusPlace(markerId);
       },
       onClusterClick: (cluster, markerIds) => {
+        lastClusterClickAtMsRef.current = Date.now();
+
         const clusterKey = buildClusterKeyFromCenter(cluster.getCenter());
         openClusterList(clusterKey, markerIds);
       },
