@@ -1,1 +1,1 @@
-export type { BuskingPlace } from './busking-place';
+export type { Bounds, BuskingPlace, ListScope } from './busking-place';

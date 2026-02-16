@@ -1,22 +1,11 @@
-'use client';
-
-import type { BuskingPlace } from '@/types/busking-map';
+import type { BuskingPlace, SidebarTab } from '@/types/busking-map/busking-place';
+import type { Coordinate } from '@/types/kakao/kakao-map';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 import { useBuskingMapUiStore } from '@/stores/busking-map';
-
-function makePlaceIndex(places: BuskingPlace[]) {
-  return new Map(places.map(p => [p.id, p]));
-}
-
-function filterPlacesBySearch(places: BuskingPlace[], query: string) {
-  const searchQuery = query.trim();
-  if (!searchQuery) {
-    return places;
-  }
-
-  return places.filter(p => p.title.includes(searchQuery));
-}
+import { adaptPerformanceLocationsToBuskingPlaces, createBuskingPlaceIndex, sortPlacesByAnchor } from '@/utils/busking-map';
+import { usePerformanceLocationSearchList } from '../performance-locations';
 
 export function useSidebarShellModel(places: BuskingPlace[]) {
   const state = useBuskingMapUiStore(
@@ -25,63 +14,66 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       listScope: s.listScope,
       clusterPlaceIds: s.clusterPlaceIds,
       viewportPlaceIds: s.viewportPlaceIds,
-      searchQuery: s.searchQuery,
+
       selectedPlaceId: s.selectedPlaceId,
       focusedPlaceId: s.focusedPlaceId,
+
+      activeSidebarTab: s.activeSidebarTab as SidebarTab,
+      searchQuery: s.searchQuery,
+      searchAnchorCoordinate: s.searchAnchorCoordinate as Coordinate | null,
     })),
   );
 
-  const storeActions = useBuskingMapUiStore(
+  const actions = useBuskingMapUiStore(
     useShallow(s => ({
       toggleSidebar: s.toggleSidebar,
       selectPlace: s.selectPlace,
       clearSelectedPlace: s.clearSelectedPlace,
       clearFocusedPlace: s.clearFocusedPlace,
       exitClusterList: s.exitClusterList,
+      setActiveSidebarTab: s.setActiveSidebarTab,
     })),
   );
 
-  const placeIndex = useMemo(() => makePlaceIndex(places), [places]);
+  const { data: searchListData } = usePerformanceLocationSearchList(state.searchQuery);
 
-  const selectedPlace
-    = state.selectedPlaceId ? placeIndex.get(state.selectedPlaceId) ?? null : null;
+  const searchLocationDtos = useMemo(() => {
+    return searchListData?.performanceLocationSearchResponses ?? [];
+  }, [searchListData]);
 
-  const focusedPlace
-    = state.focusedPlaceId ? placeIndex.get(state.focusedPlaceId) ?? null : null;
+  const searchTabPlaces = useMemo(() => {
+    const adapted = adaptPerformanceLocationsToBuskingPlaces(searchLocationDtos);
+    return sortPlacesByAnchor(adapted, state.searchAnchorCoordinate);
+  }, [searchLocationDtos, state.searchAnchorCoordinate]);
 
-  const sidebarPlaces = useMemo(() => {
-    if (state.listScope === 'cluster') {
-      return state.clusterPlaceIds
-        .map(id => placeIndex.get(id))
-        .filter((p): p is BuskingPlace => Boolean(p));
-    }
+  const placeIndex = useMemo(() => {
+    return createBuskingPlaceIndex([...places, ...searchTabPlaces]);
+  }, [places, searchTabPlaces]);
 
-    if (state.listScope === 'search') {
-      return filterPlacesBySearch(places, state.searchQuery);
-    }
+  const selectedPlace = state.selectedPlaceId
+    ? placeIndex.get(state.selectedPlaceId) ?? null
+    : null;
 
-    // viewport 모드에서 현재 지도에 보이는 place만 노출
-    if (state.listScope === 'viewport') {
-      return state.viewportPlaceIds
-        .map(id => placeIndex.get(id))
-        .filter((p): p is BuskingPlace => Boolean(p));
-    }
+  const focusedPlace = state.focusedPlaceId
+    ? placeIndex.get(state.focusedPlaceId) ?? null
+    : null;
 
-    return places;
-  }, [
-    places,
-    placeIndex,
-    state.clusterPlaceIds,
-    state.listScope,
-    state.searchQuery,
-    state.viewportPlaceIds,
-  ]);
+  const placesTabPlaces = useMemo(() => {
+    const placeIds = state.listScope === 'cluster' ? state.clusterPlaceIds : state.viewportPlaceIds;
+
+    return placeIds
+      .map(id => placeIndex.get(id))
+      .filter((place): place is BuskingPlace => Boolean(place));
+  }, [placeIndex, state.clusterPlaceIds, state.listScope, state.viewportPlaceIds]);
+
+  const activePlaces = state.activeSidebarTab === 'search' ? searchTabPlaces : placesTabPlaces;
 
   return {
     sidebar: {
       isOpen: state.isSidebarOpen,
       mode: state.listScope,
-      places: sidebarPlaces,
+      activeTab: state.activeSidebarTab,
+      places: activePlaces,
       focusedPlace,
     },
     detail: {
@@ -89,11 +81,12 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       place: selectedPlace,
     },
     actions: {
-      onToggleSidebarButtonClick: storeActions.toggleSidebar,
-      onListItemClick: storeActions.selectPlace,
-      onDetailCloseClick: storeActions.clearSelectedPlace,
-      onFocusedCloseClick: storeActions.clearFocusedPlace,
-      onExitClusterListClick: storeActions.exitClusterList,
+      onToggleSidebarButtonClick: actions.toggleSidebar,
+      onListItemClick: actions.selectPlace,
+      onFocusedCloseClick: actions.clearFocusedPlace,
+      onExitClusterListClick: actions.exitClusterList,
+      onDetailCloseClick: actions.clearSelectedPlace,
+      onSidebarTabClick: actions.setActiveSidebarTab,
     },
   };
 }

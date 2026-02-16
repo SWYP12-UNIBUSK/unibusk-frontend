@@ -1,5 +1,4 @@
-import type { BuskingPlace } from '@/types/busking-map';
-import type { ListScope } from '@/types/busking-map/busking-place';
+import type { BuskingPlace, ListScope } from '@/types/busking-map';
 import Image from 'next/image';
 import { LineDivider } from '@/components/common/line-divider';
 import { cn } from '@/utils';
@@ -14,17 +13,18 @@ interface SidebarPanelProps {
   onExitClusterListClick?: () => void;
 }
 
-function ListHeader() {
+function ListHeader({ mode }: { mode: ListScope }) {
+  const title = mode === 'search' ? '검색 결과' : '공연 장소';
+
   return (
     <div className="flex h-17 w-full items-center gap-1 px-4.5 pt-1">
-
       <h2
         className={`
           cursor-pointer rounded-full bg-primary px-2.5 py-1 text-caption-2
           font-semibold text-white
         `}
       >
-        공연 장소
+        {title}
       </h2>
     </div>
   );
@@ -103,7 +103,7 @@ export function SidebarPanel({
       shadow-sidebar
     `}
     >
-      <ListHeader />
+      <ListHeader mode={mode} />
       <LineDivider className="w-full" />
 
       <div className="relative flex-1">

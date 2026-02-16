@@ -13,7 +13,7 @@ interface SidebarSnapshot {
   focusedPlaceId: string | null;
   searchQuery: string;
   activeSidebarTab: SidebarTab;
-  searchOrigin: Coordinate | null;
+  searchAnchorCoordinate: Coordinate | null;
 }
 
 interface BuskingMapUiState {
@@ -28,7 +28,7 @@ interface BuskingMapUiState {
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
   searchQuery: string; // 검색 실행으로 확정된 검색어(빈 문자열이면 검색 결과 없음)
   activeSidebarTab: SidebarTab; // 공연 장소/검색 결과 탭 UI 상태
-  searchOrigin: Coordinate | null; // 검색 실행 시점의 지도 기준 좌표(거리 정렬 기준)
+  searchAnchorCoordinate: Coordinate | null; // 검색 실행 시점의 지도 기준 좌표(거리 정렬 기준)
 
   map: kakao.maps.Map | null; // 카카오 지도 인스턴스(뷰포트 bounds/이벤트 처리용)
   setMap: (map: kakao.maps.Map | null) => void;
@@ -71,7 +71,7 @@ function makeSnapshot(state: BuskingMapUiState): SidebarSnapshot {
     focusedPlaceId: state.focusedPlaceId,
     searchQuery: state.searchQuery,
     activeSidebarTab: state.activeSidebarTab,
-    searchOrigin: state.searchOrigin ? { ...state.searchOrigin } : null,
+    searchAnchorCoordinate: state.searchAnchorCoordinate ? { ...state.searchAnchorCoordinate } : null,
   };
 }
 
@@ -89,7 +89,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   focusedPlaceId: null,
   searchQuery: '',
   activeSidebarTab: 'places',
-  searchOrigin: null,
+  searchAnchorCoordinate: null,
 
   map: null,
   setMap: (map) => {
@@ -114,7 +114,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       focusedPlaceId: lastOpenSnapshot.focusedPlaceId,
       searchQuery: lastOpenSnapshot.searchQuery,
       activeSidebarTab: lastOpenSnapshot.activeSidebarTab,
-      searchOrigin: lastOpenSnapshot.searchOrigin,
+      searchAnchorCoordinate: lastOpenSnapshot.searchAnchorCoordinate,
       lastOpenSnapshot: null,
     });
   },
@@ -229,7 +229,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
         clusterKey: null,
         clusterPlaceIds: [],
         activeSidebarTab: 'places',
-        searchOrigin: null,
+        searchAnchorCoordinate: null,
       });
       return;
     }
@@ -243,7 +243,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
       activeSidebarTab: 'search',
-      searchOrigin: origin,
+      searchAnchorCoordinate: origin,
     }));
   },
 
@@ -255,7 +255,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
         clusterKey: null,
         clusterPlaceIds: [],
         activeSidebarTab: 'places',
-        searchOrigin: null,
+        searchAnchorCoordinate: null,
       });
       return;
     }
@@ -269,7 +269,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
       activeSidebarTab: 'search',
-      searchOrigin: state.searchOrigin,
+      searchAnchorCoordinate: state.searchAnchorCoordinate,
     }));
   },
 
@@ -280,7 +280,7 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       clusterKey: null,
       clusterPlaceIds: [],
       activeSidebarTab: 'places',
-      searchOrigin: null,
+      searchAnchorCoordinate: null,
     });
   },
 }));
