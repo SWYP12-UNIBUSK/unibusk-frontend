@@ -13,6 +13,7 @@ type HeaderProps
   | {
     layout: 'SEARCH';
     onSearch: (searchKeyword: string) => void;
+    onSearchClear?: () => void;
     initialSearchKeyword?: string;
     searchPlaceholder?: string;
   };
@@ -27,6 +28,7 @@ export function Header(props: HeaderProps) {
             <div className="w-full max-w-116 min-w-0">
               <HeaderSearch
                 onSearch={props.onSearch}
+                onSearchClear={props.onSearchClear}
                 initialSearchKeyword={props.initialSearchKeyword}
                 placeholder={props.searchPlaceholder}
               />

@@ -1,45 +1,70 @@
 'use client';
 
-import { useCallback } from 'react';
+import type { Coordinate } from '@/types/kakao/kakao-map';
+import { useCallback, useEffect, useRef } from 'react';
 import { Header } from '@/components/common/header';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 
-export function BuskingMapHeaderSection() {
+interface BuskingMapHeaderSectionProps {
+  initialSearchQuery?: string;
+}
+
+export function BuskingMapHeaderSection({ initialSearchQuery }: BuskingMapHeaderSectionProps) {
   const map = useBuskingMapUiStore(state => state.map);
   const searchQuery = useBuskingMapUiStore(state => state.searchQuery);
 
   const openSidebar = useBuskingMapUiStore(state => state.openSidebar);
-  const setSearchQuery = useBuskingMapUiStore(state => state.setSearchQuery);
+  const openSearchResults = useBuskingMapUiStore(state => state.openSearchResults);
   const clearSearchQuery = useBuskingMapUiStore(state => state.clearSearchQuery);
+  const setActiveSidebarTab = useBuskingMapUiStore(state => state.setActiveSidebarTab);
+
+  const didInitFromSearchParamsRef = useRef(false);
+
+  const clearSearchResults = useCallback(() => {
+    clearSearchQuery();
+    setActiveSidebarTab('places');
+  }, [clearSearchQuery, setActiveSidebarTab]);
 
   const handleSearch = useCallback((searchKeyword: string) => {
     const keyword = searchKeyword.trim();
 
     if (keyword === '') {
-      clearSearchQuery();
+      clearSearchResults();
       return;
     }
-
-    openSidebar();
 
     const center = map?.getCenter();
-    if (!center) {
-      setSearchQuery(keyword);
+    const originCoordinate: Coordinate | null = center
+      ? { lat: center.getLat(), lng: center.getLng() }
+      : null;
+
+    openSidebar();
+    openSearchResults(keyword, originCoordinate);
+  }, [map, openSidebar, openSearchResults, clearSearchResults]);
+
+  useEffect(() => {
+    if (didInitFromSearchParamsRef.current) {
       return;
     }
 
-    setSearchQuery(keyword);
-  }, [map, openSidebar, setSearchQuery, clearSearchQuery]);
+    const trimmed = initialSearchQuery?.trim() ?? '';
+    if (trimmed === '') {
+      didInitFromSearchParamsRef.current = true;
+      return;
+    }
+
+    didInitFromSearchParamsRef.current = true;
+
+    openSidebar();
+    openSearchResults(trimmed, null);
+  }, [initialSearchQuery, openSearchResults, openSidebar]);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-header">
-      <div className="pointer-events-auto px-5.5 pt-1.25">
-        <Header
-          layout="SEARCH"
-          onSearch={handleSearch}
-          initialSearchKeyword={searchQuery}
-        />
-      </div>
-    </div>
+    <Header
+      layout="SEARCH"
+      onSearch={handleSearch}
+      onSearchClear={clearSearchResults}
+      initialSearchKeyword={initialSearchQuery?.trim() || searchQuery || undefined}
+    />
   );
 }

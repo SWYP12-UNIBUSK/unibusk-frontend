@@ -1,4 +1,9 @@
+'use client';
+
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { SearchInput } from '@/components/common/search-input';
 import { MainLayout } from '@/components/layout';
 
 interface HomeHeroSectionProps {
@@ -7,6 +12,20 @@ interface HomeHeroSectionProps {
 }
 
 export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProps) {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const trimmed = searchQuery.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    router.push(`/busking-map?keyword=${encodeURIComponent(trimmed)}`);
+  }, [router, searchQuery]);
+
   return (
     <section className="w-full bg-[#FFFDFB]">
       <div className="relative mx-auto min-h-250 w-full max-w-480">
@@ -30,6 +49,19 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
               >
                 버스킹이 가능한 장소와 현장을 지도에서 바로 찾아보세요
               </p>
+
+              <form
+                onSubmit={handleSubmit}
+                className="mt-10 w-full max-w-115.75"
+              >
+                <SearchInput
+                  theme="gray"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="지역명이나 장소를 검색해보세요"
+                  aria-label="버스킹 장소 검색"
+                />
+              </form>
             </div>
 
             <div className="relative col-span-7">
