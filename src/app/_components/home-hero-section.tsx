@@ -55,7 +55,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                 className="mt-10 w-full max-w-115.75"
               >
                 <SearchInput
-                  theme="gray"
+                  theme="white"
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="지역명이나 장소를 검색해보세요"
