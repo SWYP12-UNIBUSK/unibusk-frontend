@@ -52,8 +52,7 @@ export function useKakaoExitClusterListOnMapInteraction({
     };
 
     const handleZoomChanged = () => {
-      const now = Date.now();
-      if (now - lastClusterClickAtMsRef.current < clusterClickGuardMs) {
+      if (isRecentClusterClick()) {
         return;
       }
 
