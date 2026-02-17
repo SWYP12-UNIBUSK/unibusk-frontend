@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { SearchInput } from '@/components/common/search-input';
 import { MainLayout } from '@/components/layout';
 
@@ -15,7 +15,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const trimmed = searchQuery.trim();
@@ -24,7 +24,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
     }
 
     router.push(`/busking-map?keyword=${encodeURIComponent(trimmed)}`);
-  }, [router, searchQuery]);
+  };
 
   return (
     <section className="w-full bg-[#FFFDFB]">

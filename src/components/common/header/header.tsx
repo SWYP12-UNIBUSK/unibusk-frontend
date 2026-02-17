@@ -29,6 +29,7 @@ export function Header(props: HeaderProps) {
             <div className="w-116">
               <HeaderSearch
                 onSearch={props.onSearch}
+                onSearchClear={props.onSearchClear}
                 initialSearchKeyword={props.initialSearchKeyword}
                 placeholder={props.searchPlaceholder}
               />
