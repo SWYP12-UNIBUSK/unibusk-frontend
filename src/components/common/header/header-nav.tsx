@@ -19,7 +19,7 @@ export function HeaderNav({ align, className }: HeaderNavProps) {
 
   return (
     <nav aria-label="헤더 내비게이션" className={cn('flex', wrapper, className)}>
-      <ul className="flex flex-nowrap items-center gap-8 whitespace-nowrap">
+      <ul className="flex flex-nowrap items-center gap-7.5 whitespace-nowrap">
         {NAV_ITEMS.map(item => (
           <li key={item.href} className="shrink-0">
             <Link

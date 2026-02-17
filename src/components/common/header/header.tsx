@@ -22,31 +22,34 @@ export function Header(props: HeaderProps) {
   if (props.layout === 'SEARCH') {
     return (
       <HeaderShell
-        left={<HeaderLogo />}
-        middle={(
-          <div className="flex w-full min-w-0 items-center px-8">
-            <div className="w-full max-w-116 min-w-0">
+        layout="search"
+        left={(
+          <div className="flex items-center gap-8">
+            <HeaderLogo />
+            <div className="w-116">
               <HeaderSearch
                 onSearch={props.onSearch}
-                onSearchClear={props.onSearchClear}
                 initialSearchKeyword={props.initialSearchKeyword}
                 placeholder={props.searchPlaceholder}
               />
             </div>
           </div>
         )}
+        middle={<div className="min-w-0 flex-1" />}
         right={(
-          <div className="flex items-center gap-10">
+          <div className="flex items-center gap-8">
             <HeaderNav align="right" />
-            <HeaderAuth />
+            <HeaderAuth slotWidthClassName="w-36" />
           </div>
         )}
+
       />
     );
   }
 
   return (
     <HeaderShell
+      layout="default"
       left={<HeaderLogo />}
       middle={(
         <div className="flex w-full items-center justify-center px-8">
