@@ -1,10 +1,11 @@
 import type { BuskingPlace } from '@/types/busking-map/busking-place';
 import type { Coordinate } from '@/types/kakao/kakao-map';
 
-function getApproxSquaredDistance(origin: Coordinate, target: Coordinate) {
-  const rad = (origin.lat * Math.PI) / 180;
-  const cosLat = Math.cos(rad);
-
+function getApproxSquaredDistance(
+  origin: Coordinate,
+  target: Coordinate,
+  cosLat: number,
+) {
   const dLat = origin.lat - target.lat;
   const dLng = (origin.lng - target.lng) * cosLat;
 
@@ -25,9 +26,12 @@ export function sortPlacesByAnchor(
     return [...places];
   }
 
+  const rad = (searchAnchorCoordinate.lat * Math.PI) / 180;
+  const cosLat = Math.cos(rad);
+
   return [...places].sort((a, b) => {
-    const distanceA = getApproxSquaredDistance(searchAnchorCoordinate, { lat: a.lat, lng: a.lng });
-    const distanceB = getApproxSquaredDistance(searchAnchorCoordinate, { lat: b.lat, lng: b.lng });
+    const distanceA = getApproxSquaredDistance(searchAnchorCoordinate, { lat: a.lat, lng: a.lng }, cosLat);
+    const distanceB = getApproxSquaredDistance(searchAnchorCoordinate, { lat: b.lat, lng: b.lng }, cosLat);
 
     return distanceA - distanceB || a.id.localeCompare(b.id);
   });

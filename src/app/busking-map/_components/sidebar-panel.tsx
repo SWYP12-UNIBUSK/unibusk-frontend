@@ -1,5 +1,4 @@
-import type { BuskingPlace, ListScope } from '@/types/busking-map';
-import type { SidebarTab } from '@/types/busking-map/busking-place';
+import type { BuskingPlace, ListScope, SidebarTab } from '@/types/busking-map';
 import Image from 'next/image';
 import { LineDivider } from '@/components/common/line-divider';
 import { cn } from '@/utils';
