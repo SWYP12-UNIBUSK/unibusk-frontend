@@ -33,6 +33,8 @@ function TabChips({
     <div className="flex h-17 w-full items-center gap-1 px-4.5 pt-1">
       <button
         type="button"
+        role="tab"
+        aria-selected={activeTab === 'places'}
         onClick={() => onTabClick('places')}
         className={cn(baseClassName, activeTab === 'places' ? activeClassName : inactiveClassName)}
       >
@@ -41,6 +43,8 @@ function TabChips({
 
       <button
         type="button"
+        role="tab"
+        aria-selected={activeTab === 'search'}
         onClick={() => onTabClick('search')}
         className={cn(baseClassName, activeTab === 'search' ? activeClassName : inactiveClassName)}
       >
@@ -136,10 +140,7 @@ export function SidebarPanel({
         shadow-sidebar
       `}
     >
-      <div className="flex h-17 w-full items-center gap-1">
-        <TabChips activeTab={activeTab} onTabClick={onTabClick} />
-      </div>
-
+      <TabChips activeTab={activeTab} onTabClick={onTabClick} />
       <LineDivider className="w-full" />
 
       <div className="relative flex-1">
