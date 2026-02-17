@@ -3,7 +3,7 @@
 import type { Coordinate, KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 import { useEffect, useRef } from 'react';
 
-import { DEFAULT_CLUSTER_MIN_LEVEL, DEFAULT_LEVEL } from '@/constants/kakao-map';
+import { CLUSTER_CLICK_GUARD_MS, DEFAULT_CLUSTER_MIN_LEVEL, DEFAULT_LEVEL } from '@/constants/kakao-map';
 import { useKakaoClusterer } from '@/hooks/kakao-map/use-kakao-clusterer';
 import { useKakaoExitClusterListOnMapInteraction } from '@/hooks/kakao-map/use-kakao-exit-cluster-list-on-map-interaction';
 import { useKakaoLoader } from '@/hooks/kakao-map/use-kakao-loader';
@@ -53,7 +53,6 @@ export function KakaoMapView({
   const isClusterListOpen = listScope === 'cluster';
 
   const lastClusterClickAtMsRef = useRef(0);
-  const CLUSTER_CLICK_GUARD_MS = 250;
 
   useEffect(() => {
     setMap(map);
