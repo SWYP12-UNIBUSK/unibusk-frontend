@@ -13,8 +13,6 @@ import {
   panToCoordinate,
 } from '@/utils/busking-map';
 
-type SidebarTab = 'places' | 'search';
-
 export function useSidebarShellModel(places: BuskingPlace[]) {
   const state = useBuskingMapUiStore(
     useShallow(s => ({
@@ -27,7 +25,7 @@ export function useSidebarShellModel(places: BuskingPlace[]) {
       focusedPlaceId: s.focusedPlaceId,
 
       searchQuery: s.searchQuery,
-      activeSidebarTab: s.activeSidebarTab as SidebarTab,
+      activeSidebarTab: s.activeSidebarTab,
       searchAnchorCoordinate: s.searchAnchorCoordinate as Coordinate | null,
 
       map: s.map,
