@@ -5,6 +5,6 @@ export function filterBuskingPlacesBySearchQuery(places: BuskingPlace[], query: 
   if (!searchQuery) {
     return places;
   }
-
-  return places.filter(place => place.title.includes(searchQuery));
+  const lowerQuery = searchQuery.toLowerCase();
+  return places.filter(place => place.title.toLowerCase().includes(lowerQuery));
 }

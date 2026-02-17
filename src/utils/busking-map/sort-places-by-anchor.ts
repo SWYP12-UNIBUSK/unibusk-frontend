@@ -29,10 +29,6 @@ export function sortPlacesByAnchor(
     const distanceA = getApproxSquaredDistance(searchAnchorCoordinate, { lat: a.lat, lng: a.lng });
     const distanceB = getApproxSquaredDistance(searchAnchorCoordinate, { lat: b.lat, lng: b.lng });
 
-    if (distanceA !== distanceB) {
-      return distanceA - distanceB;
-    }
-
-    return a.id.localeCompare(b.id);
+    return distanceA - distanceB || a.id.localeCompare(b.id);
   });
 }
