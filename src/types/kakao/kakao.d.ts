@@ -28,6 +28,8 @@ declare global {
         setLevel(level: number): void;
         setCenter(center: LatLng): void;
 
+        panTo(center: LatLng): void;
+
         getBounds(): LatLngBounds;
         getCenter(): LatLng;
         getLevel(): number;

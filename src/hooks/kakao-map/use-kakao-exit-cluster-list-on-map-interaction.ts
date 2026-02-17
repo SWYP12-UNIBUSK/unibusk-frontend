@@ -34,9 +34,13 @@ export function useKakaoExitClusterListOnMapInteraction({
       onExitRef.current();
     };
 
-    const handleMapClick = () => {
+    const isRecentClusterClick = () => {
       const now = Date.now();
-      if (now - lastClusterClickAtMsRef.current < clusterClickGuardMs) {
+      return now - lastClusterClickAtMsRef.current < clusterClickGuardMs;
+    };
+
+    const handleMapClick = () => {
+      if (isRecentClusterClick()) {
         return;
       }
 
@@ -48,6 +52,10 @@ export function useKakaoExitClusterListOnMapInteraction({
     };
 
     const handleZoomChanged = () => {
+      if (isRecentClusterClick()) {
+        return;
+      }
+
       exitClusterListIfNeeded();
     };
 

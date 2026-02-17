@@ -21,6 +21,10 @@ const inputThemeVariants = cva(`
 `, {
   variants: {
     theme: {
+      white: `
+        border-gray-300 bg-white
+        focus:border-gray-700
+      `,
       gray: `
         border-gray-300 bg-gray-100
         focus:border-gray-300

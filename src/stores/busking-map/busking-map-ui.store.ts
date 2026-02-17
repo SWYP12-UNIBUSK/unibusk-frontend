@@ -1,4 +1,5 @@
-import type { ListScope } from '@/types/busking-map/busking-place';
+import type { ListScope, SidebarTab } from '@/types/busking-map/busking-place';
+import type { Coordinate } from '@/types/kakao/kakao-map';
 import { create } from 'zustand';
 import { isSameOrderedIds } from '@/utils/id-equals';
 
@@ -9,6 +10,8 @@ interface SidebarSnapshot {
   selectedPlaceId: string | null;
   focusedPlaceId: string | null;
   searchQuery: string;
+  activeSidebarTab: SidebarTab;
+  searchAnchorCoordinate: Coordinate | null;
 }
 
 interface BuskingMapUiState {
@@ -21,7 +24,9 @@ interface BuskingMapUiState {
 
   selectedPlaceId: string | null; // 2단 상세 패널에서 표시할 장소 id
   focusedPlaceId: string | null; // 1단 사이드바 상세 패널에서 표시할 장소 id
-  searchQuery: string;
+  searchQuery: string; // 검색 실행으로 확정된 검색어(빈 문자열이면 검색 결과 없음)
+  activeSidebarTab: SidebarTab; // 공연 장소/검색 결과 탭 UI 상태
+  searchAnchorCoordinate: Coordinate | null; // 검색 실행 시점의 지도 기준 좌표(거리 정렬 기준)
 
   map: kakao.maps.Map | null; // 카카오 지도 인스턴스(뷰포트 bounds/이벤트 처리용)
   setMap: (map: kakao.maps.Map | null) => void;
@@ -48,6 +53,8 @@ interface BuskingMapUiState {
   exitClusterList: () => void;
 
   // Search
+  setActiveSidebarTab: (tab: SidebarTab) => void;
+  openSearchResults: (query: string, searchAnchorCoordinate: Coordinate | null) => void;
   setSearchQuery: (query: string) => void;
   clearSearchQuery: () => void;
 }
@@ -61,6 +68,8 @@ function makeSnapshot(state: BuskingMapUiState): SidebarSnapshot {
     selectedPlaceId: state.selectedPlaceId,
     focusedPlaceId: state.focusedPlaceId,
     searchQuery: state.searchQuery,
+    activeSidebarTab: state.activeSidebarTab,
+    searchAnchorCoordinate: state.searchAnchorCoordinate ? { ...state.searchAnchorCoordinate } : null,
   };
 }
 
@@ -77,6 +86,8 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
   selectedPlaceId: null,
   focusedPlaceId: null,
   searchQuery: '',
+  activeSidebarTab: 'places',
+  searchAnchorCoordinate: null,
 
   map: null,
   setMap: (map) => {
@@ -94,12 +105,14 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
 
     set({
       isSidebarOpen: true,
-      listScope: lastOpenSnapshot.listScope,
+      listScope: lastOpenSnapshot.listScope === 'search' ? 'viewport' : lastOpenSnapshot.listScope,
       clusterKey: lastOpenSnapshot.clusterKey,
       clusterPlaceIds: lastOpenSnapshot.clusterPlaceIds,
       selectedPlaceId: lastOpenSnapshot.selectedPlaceId,
       focusedPlaceId: lastOpenSnapshot.focusedPlaceId,
       searchQuery: lastOpenSnapshot.searchQuery,
+      activeSidebarTab: lastOpenSnapshot.activeSidebarTab,
+      searchAnchorCoordinate: lastOpenSnapshot.searchAnchorCoordinate,
       lastOpenSnapshot: null,
     });
   },
@@ -184,50 +197,71 @@ export const useBuskingMapUiStore = create<BuskingMapUiState>((set, get) => ({
       listScope: 'cluster',
       clusterKey,
       clusterPlaceIds,
-      selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
+      activeSidebarTab: 'places',
+      selectedPlaceId: state.selectedPlaceId,
     }));
   },
 
-  // 클러스터 모드 종료: searchQuery 유무에 따라 viewport/search 복귀
+  // 클러스터 모드 종료: viewport 복귀(검색 상태/탭은 유지)
   exitClusterList: () => {
-    const { searchQuery } = get();
-
     set({
-      listScope: searchQuery ? 'search' : 'viewport',
+      listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
     });
   },
 
-  setSearchQuery: (query) => {
+  setActiveSidebarTab: (tab) => {
+    set({ activeSidebarTab: tab });
+  },
+
+  openSearchResults: (query, searchAnchorCoordinate) => {
     if (!query) {
-      set({
-        searchQuery: '',
-        listScope: 'viewport',
-        clusterKey: null,
-        clusterPlaceIds: [],
-      });
+      get().clearSearchQuery();
       return;
     }
 
     set(state => ({
       isSidebarOpen: true,
       searchQuery: query,
-      listScope: 'search',
+      listScope: 'viewport',
       clusterKey: null,
       clusterPlaceIds: [],
       selectedPlaceId: state.selectedPlaceId,
       focusedPlaceId: null,
+      activeSidebarTab: 'search',
+      searchAnchorCoordinate,
+    }));
+  },
+
+  setSearchQuery: (query) => {
+    if (!query) {
+      get().clearSearchQuery();
+      return;
+    }
+
+    set(state => ({
+      isSidebarOpen: true,
+      searchQuery: query,
+      listScope: 'viewport',
+      clusterKey: null,
+      clusterPlaceIds: [],
+      selectedPlaceId: state.selectedPlaceId,
+      focusedPlaceId: null,
+      activeSidebarTab: 'search',
+      searchAnchorCoordinate: state.searchAnchorCoordinate,
     }));
   },
 
   clearSearchQuery: () => {
+    const { listScope } = get();
+
     set({
       searchQuery: '',
-      listScope: 'viewport',
-      clusterKey: null,
-      clusterPlaceIds: [],
+      listScope: listScope === 'search' ? 'viewport' : listScope,
+      activeSidebarTab: 'places',
+      searchAnchorCoordinate: null,
     });
   },
 }));

@@ -6,23 +6,49 @@ interface HeaderShellProps {
   middle: ReactNode;
   right: ReactNode;
   className?: string;
+  layout?: 'default' | 'search';
 }
 
-export function HeaderShell({ left, middle, right, className }: HeaderShellProps) {
+export function HeaderShell({
+  left,
+  middle,
+  right,
+  className,
+  layout = 'default',
+}: HeaderShellProps) {
+  const isDefault = layout === 'default';
+
+  const innerClassName = isDefault
+    ? 'grid grid-cols-[1fr_auto_1fr] items-center'
+    : 'flex items-center justify-between';
+
   return (
     <header className={cn('relative z-header w-full', className)}>
       <div className="mx-auto w-full px-2.5 py-2.5">
-        <div
-          className={cn(
-            `
-              flex h-20 items-center justify-between rounded-full bg-white px-7
-              shadow-[0_0_10px_rgba(0,0,0,0.15)]
-            `,
-          )}
+        <div className={cn(`
+          h-20 rounded-full bg-white px-7 shadow-[0_0_10px_rgba(0,0,0,0.15)]
+        `, innerClassName)}
         >
-          <div className="flex items-center">{left}</div>
-          <div className="flex min-w-0 flex-1 items-center">{middle}</div>
-          <div className="flex items-center justify-end">{right}</div>
+          <div className={cn('flex min-w-0 items-center', isDefault
+            ? `justify-self-start`
+            : '')}
+          >
+            {left}
+          </div>
+
+          <div className={cn('flex min-w-0 items-center', isDefault
+            ? `justify-self-center`
+            : '')}
+          >
+            {middle}
+          </div>
+
+          <div className={cn('flex min-w-0 items-center justify-end', isDefault
+            ? `justify-self-end`
+            : '')}
+          >
+            {right}
+          </div>
         </div>
       </div>
     </header>

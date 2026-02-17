@@ -1,39 +1,71 @@
-import type { BuskingPlace } from '@/types/busking-map';
-import type { ListScope } from '@/types/busking-map/busking-place';
+import type { BuskingPlace, ListScope, SidebarTab } from '@/types/busking-map';
 import Image from 'next/image';
 import { LineDivider } from '@/components/common/line-divider';
 import { cn } from '@/utils';
 import { DetailPanel } from './detail-panel';
 
 interface SidebarPanelProps {
-  mode: ListScope;
+  listScope: ListScope;
+  activeTab: SidebarTab;
   places: BuskingPlace[];
   focusedPlace: BuskingPlace | null;
+  onTabClick: (tab: SidebarTab) => void;
   onListItemClick: (placeId: string) => void;
   onFocusedCloseClick: () => void;
-  onExitClusterListClick?: () => void;
 }
 
-function ListHeader() {
+function TabChips({
+  activeTab,
+  onTabClick,
+}: {
+  activeTab: SidebarTab;
+  onTabClick: (tab: SidebarTab) => void;
+}) {
+  const baseClassName = `
+    cursor-pointer rounded-full px-2.5 py-1 typo-caption-r-2 font-semibold 
+  `;
+
+  const activeClassName = 'bg-primary text-white';
+  const inactiveClassName = 'bg-gray-100 text-gray-700 ring-1 ring-gray-200';
+
   return (
     <div className="flex h-17 w-full items-center gap-1 px-4.5 pt-1">
-
-      <h2
-        className={`
-          cursor-pointer rounded-full bg-primary px-2.5 py-1 text-caption-2
-          font-semibold text-white
-        `}
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeTab === 'places'}
+        onClick={() => onTabClick('places')}
+        className={cn(baseClassName, activeTab === 'places' ? activeClassName : inactiveClassName)}
       >
         공연 장소
-      </h2>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeTab === 'search'}
+        onClick={() => onTabClick('search')}
+        className={cn(baseClassName, activeTab === 'search' ? activeClassName : inactiveClassName)}
+      >
+        검색 결과
+      </button>
     </div>
   );
 }
 
-function EmptyState({ mode }: { mode: ListScope }) {
-  const message = mode === 'search'
-    ? '검색 결과가 없습니다.'
-    : '표시할 공연 장소가 없습니다.';
+function EmptyState({
+  activeTab,
+  isClusterModeInPlacesTab,
+}: {
+  activeTab: SidebarTab;
+  isClusterModeInPlacesTab: boolean;
+}) {
+  const message
+    = activeTab === 'search'
+      ? '검색 결과가 없습니다.'
+      : isClusterModeInPlacesTab
+        ? '클러스터 내 공연 장소가 없습니다.'
+        : '표시할 공연 장소가 없습니다.';
 
   return (
     <div className="px-4 text-center">
@@ -80,9 +112,11 @@ function PlaceCard({
 }
 
 export function SidebarPanel({
-  mode,
+  listScope,
+  activeTab,
   places,
   focusedPlace,
+  onTabClick,
   onListItemClick,
   onFocusedCloseClick,
 }: SidebarPanelProps) {
@@ -95,27 +129,32 @@ export function SidebarPanel({
     );
   }
 
+  const isClusterModeInPlacesTab = activeTab === 'places' && listScope === 'cluster';
   const isEmpty = places.length === 0;
 
   return (
-    <section className={`
-      flex h-full w-full flex-col overflow-hidden rounded-xl bg-white
-      shadow-sidebar
-    `}
+    <section
+      className={`
+        flex h-full w-full flex-col overflow-hidden rounded-xl bg-white
+        shadow-sidebar
+      `}
     >
-      <ListHeader />
+      <TabChips activeTab={activeTab} onTabClick={onTabClick} />
       <LineDivider className="w-full" />
 
       <div className="relative flex-1">
         <div
-          className={cn(
-            'absolute inset-x-0 top-0 bottom-6',
-            isEmpty ? 'flex items-center justify-center' : 'overflow-y-auto',
-          )}
+          className={`
+            absolute inset-x-0 top-0 bottom-6
+            ${isEmpty ? 'flex items-center justify-center' : 'overflow-y-auto'}
+          `}
         >
           {isEmpty
             ? (
-                <EmptyState mode={mode} />
+                <EmptyState
+                  activeTab={activeTab}
+                  isClusterModeInPlacesTab={isClusterModeInPlacesTab}
+                />
               )
             : (
                 <div className="flex w-full flex-col pb-4">
@@ -123,7 +162,9 @@ export function SidebarPanel({
                     <div key={place.id}>
                       <PlaceCard place={place} onClick={() => onListItemClick(place.id)} />
                       {index < places.length - 1
-                        ? <LineDivider width="84%" thickness={1} colorClassName="bg-gray-200" />
+                        ? (
+                            <LineDivider width="84%" thickness={1} colorClassName="bg-gray-200" />
+                          )
                         : null}
                     </div>
                   ))}

@@ -2,7 +2,7 @@ export const KAKAO_MAP_SCRIPT_ID = 'kakao-map-sdk'; // script 중복 삽입 방�
 
 export const KAKAO_MAP_LIBRARIES = ['services', 'clusterer'] as const; // 추가 라이브러리들 로드 목록
 
-export const CLUSTER_CLICK_GUARD_MS = 150;
+export const CLUSTER_CLICK_GUARD_MS = 250;
 
 export const DEFAULT_LEVEL = 6;
 export const DEFAULT_CLUSTER_MIN_LEVEL = 5;

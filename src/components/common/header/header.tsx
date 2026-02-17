@@ -13,6 +13,7 @@ type HeaderProps
   | {
     layout: 'SEARCH';
     onSearch: (searchKeyword: string) => void;
+    onSearchClear?: () => void;
     initialSearchKeyword?: string;
     searchPlaceholder?: string;
   };
@@ -21,26 +22,35 @@ export function Header(props: HeaderProps) {
   if (props.layout === 'SEARCH') {
     return (
       <HeaderShell
-        left={<HeaderLogo />}
-        middle={(
-          <div className="flex w-full items-center gap-8 pr-8 pl-8">
+        layout="search"
+        left={(
+          <div className="flex items-center gap-8">
+            <HeaderLogo />
             <div className="w-116">
               <HeaderSearch
                 onSearch={props.onSearch}
+                onSearchClear={props.onSearchClear}
                 initialSearchKeyword={props.initialSearchKeyword}
                 placeholder={props.searchPlaceholder}
               />
             </div>
-            <HeaderNav align="right" className="ml-auto" />
           </div>
         )}
-        right={<HeaderAuth />}
+        middle={<div className="min-w-0 flex-1" />}
+        right={(
+          <div className="flex items-center gap-8">
+            <HeaderNav align="right" />
+            <HeaderAuth slotWidthClassName="w-36" />
+          </div>
+        )}
+
       />
     );
   }
 
   return (
     <HeaderShell
+      layout="default"
       left={<HeaderLogo />}
       middle={(
         <div className="flex w-full items-center justify-center px-8">
