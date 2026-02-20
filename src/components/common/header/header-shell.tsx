@@ -17,17 +17,31 @@ export function HeaderShell({
   layout = 'default',
 }: HeaderShellProps) {
   const isDefault = layout === 'default';
+  const isSearch = layout === 'search';
 
   const innerClassName = isDefault
     ? 'grid grid-cols-[1fr_auto_1fr] items-center'
     : 'flex items-center justify-between';
 
+  const headerPositionClassName = isSearch
+    ? 'fixed inset-x-0 top-0 pointer-events-none'
+    : 'relative';
+
+  const outerPaddingXClassName = isSearch
+    ? 'px-8'
+    : 'px-2.5';
+
   return (
-    <header className={cn('relative z-header w-full', className)}>
-      <div className="mx-auto w-full px-2.5 py-2.5">
-        <div className={cn(`
-          h-20 rounded-full bg-white px-7 shadow-[0_0_10px_rgba(0,0,0,0.15)]
-        `, innerClassName)}
+    <header className={cn('z-header w-full', headerPositionClassName, className)}>
+      <div className={cn('mx-auto w-full py-2.5', outerPaddingXClassName)}>
+        <div
+          className={cn(
+            `
+              pointer-events-auto h-20 rounded-full bg-white px-7
+              shadow-[0_0_10px_rgba(0,0,0,0.15)]
+            `,
+            innerClassName,
+          )}
         >
           <div className={cn('flex min-w-0 items-center', isDefault
             ? `justify-self-start`

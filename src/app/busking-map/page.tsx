@@ -15,7 +15,10 @@ export default async function BuskingMapPage({
   const initialSearchQuery = typeof keyword === 'string' ? keyword : '';
 
   return (
-    <main className="relative h-screen w-full bg-gray-100">
+    <main className={`
+      relative flex h-screen w-full flex-col overflow-hidden bg-gray-100
+    `}
+    >
       <h1 className="sr-only">버스킹 장소 지도</h1>
 
       <BuskingMapDataProvider>
