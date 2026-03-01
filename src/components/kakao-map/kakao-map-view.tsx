@@ -11,6 +11,7 @@ import { useKakaoMap } from '@/hooks/kakao-map/use-kakao-map';
 import { useKakaoMarkers } from '@/hooks/kakao-map/use-kakao-markers';
 import { useBuskingMapUiStore } from '@/stores/busking-map';
 import { cn } from '@/utils';
+import { buildClusterKeyFromCenter } from '@/utils/kakao-map';
 import { ClusterBadge } from './cluster-badge';
 
 interface KakaoMapViewProps {
@@ -20,10 +21,6 @@ interface KakaoMapViewProps {
   className?: string;
   enableClusterer?: boolean;
   clusterMinLevel?: number;
-}
-
-function buildClusterKeyFromCenter(center: kakao.maps.LatLng) {
-  return `${center.getLat().toFixed(5)},${center.getLng().toFixed(5)}`;
 }
 
 export function KakaoMapView({
