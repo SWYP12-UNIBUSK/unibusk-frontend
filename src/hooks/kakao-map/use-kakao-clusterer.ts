@@ -6,6 +6,7 @@ import type { KakaoMarkerInputs } from '@/types/kakao/kakao-map';
 import { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CLUSTER_BADGE_SIZE_PX } from '@/constants/busking-map';
+import { buildClusterKeyFromCenter } from '@/utils/kakao-map/build-cluster-key-from-center';
 
 interface UseKakaoClustererOptions {
   enabled: boolean;
@@ -18,7 +19,12 @@ interface UseKakaoClustererOptions {
 interface OverlayEntry {
   badgeReactRoot: Root;
   badgeLayerEl: HTMLDivElement;
+  containerEl: HTMLDivElement;
   count: number;
+
+  // clusterclick이 content 교체로 끊기는 케이스가 있어, DOM click 브릿지를 위해 보관
+  cluster: kakao.maps.Cluster | null;
+  markerIds: string[];
 }
 
 interface RenderClusterBadge {
@@ -44,11 +50,11 @@ export function useKakaoClusterer(
   // 마커 인스턴스 → id 역매핑(WeakMap: 마커 GC 시 매핑도 함께 정리)
   const markerIdByInstanceRef = useRef<WeakMap<kakao.maps.Marker, string>>(new WeakMap());
 
-  // CustomOverlay별 React root/container를 추적해 배지를 갱신하고 누수 없이 정리
-  const overlayRootMapRef = useRef<Map<kakao.maps.CustomOverlay, OverlayEntry>>(new Map());
+  // clusterKey별 React root/container를 추적해 배지를 갱신하고 누수 없이 정리
+  const overlayEntryByClusterKeyRef = useRef<Map<string, OverlayEntry>>(new Map());
 
-  // 마지막으로 클릭된 클러스터 overlay(배지 active 스타일용)
-  const activeOverlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
+  // 마지막으로 클릭된 클러스터 key(배지 active 스타일용)
+  const activeClusterKeyRef = useRef<string | null>(null);
 
   // 최신 동작 보장
   const renderRef = useRef(renderClusterBadge);
@@ -76,14 +82,14 @@ export function useKakaoClusterer(
       return;
     }
 
-    const prevActiveOverlay = activeOverlayRef.current;
-    if (!prevActiveOverlay) {
+    const prevActiveClusterKey = activeClusterKeyRef.current;
+    if (!prevActiveClusterKey) {
       return;
     }
 
-    activeOverlayRef.current = null;
+    activeClusterKeyRef.current = null;
 
-    const overlayEntry = overlayRootMapRef.current.get(prevActiveOverlay);
+    const overlayEntry = overlayEntryByClusterKeyRef.current.get(prevActiveClusterKey);
     if (!overlayEntry) {
       return;
     }
@@ -119,7 +125,7 @@ export function useKakaoClusterer(
     };
   }, []);
 
-  // clusterer 생성 + clustered/clusterclick 이벤트 연결 + overlay 배지 렌더링
+  // clusterer 생성 + clustered 이벤트 연결 + overlay 배지 렌더링
   useEffect(() => {
     if (!isClustererEnabled || !map || !window.kakao?.maps) {
       return;
@@ -133,25 +139,46 @@ export function useKakaoClusterer(
     const kakaoMaps = window.kakao.maps;
 
     // 로컬 변수 캡처로 cleanup에서 동일 참조를 사용(Ref 변경 경고 방지)
-    const overlayRootMap = overlayRootMapRef.current;
+    const overlayEntryByClusterKey = overlayEntryByClusterKeyRef.current;
 
-    const pendingDisposeMap = new Map<kakao.maps.CustomOverlay, OverlayEntry>();
+    const pendingDisposeMap = new Map<string, OverlayEntry>();
     let disposeTimer: number | null = null;
 
+    const ensureOverlayContent = (overlay: kakao.maps.CustomOverlay, containerEl: HTMLDivElement) => {
+      const content = overlay.getContent();
+      if (typeof content === 'string' || content !== containerEl) {
+        overlay.setContent(containerEl);
+      }
+    };
+
+    const renderEntry = (clusterKey: string) => {
+      const overlayEntry = overlayEntryByClusterKey.get(clusterKey);
+      if (!overlayEntry) {
+        return;
+      }
+
+      const isActive = activeClusterKeyRef.current === clusterKey;
+      overlayEntry.badgeReactRoot.render(renderRef.current({ count: overlayEntry.count, isActive }));
+    };
+
     const flushOverlayDisposals = () => {
-      pendingDisposeMap.forEach((overlayEntry, overlay) => {
-        const current = overlayRootMap.get(overlay);
+      pendingDisposeMap.forEach((overlayEntry, clusterKey) => {
+        const current = overlayEntryByClusterKey.get(clusterKey);
         if (!current || current !== overlayEntry) {
           return;
         }
 
-        if (activeOverlayRef.current === overlay) {
-          activeOverlayRef.current = null;
+        if (activeClusterKeyRef.current === clusterKey) {
+          activeClusterKeyRef.current = null;
         }
+
+        overlayEntry.containerEl.onclick = null;
 
         overlayEntry.badgeReactRoot.unmount();
         overlayEntry.badgeLayerEl.remove();
-        overlayRootMap.delete(overlay);
+        overlayEntry.containerEl.remove();
+
+        overlayEntryByClusterKey.delete(clusterKey);
       });
 
       pendingDisposeMap.clear();
@@ -168,13 +195,12 @@ export function useKakaoClusterer(
       }, 0);
     };
 
-    const queueOverlayDisposal = (overlay: kakao.maps.CustomOverlay, overlayEntry: OverlayEntry) => {
-      if (pendingDisposeMap.has(overlay)) {
+    const queueOverlayDisposal = (clusterKey: string, overlayEntry: OverlayEntry) => {
+      if (pendingDisposeMap.has(clusterKey)) {
         return;
       }
 
-      pendingDisposeMap.set(overlay, overlayEntry);
-      overlayEntry.badgeReactRoot.render(null);
+      pendingDisposeMap.set(clusterKey, overlayEntry);
       scheduleFlushOverlayDisposals();
     };
 
@@ -199,39 +225,30 @@ export function useKakaoClusterer(
       clusterer.redraw();
     }
 
-    const renderOverlay = (overlay: kakao.maps.CustomOverlay) => {
-      const overlayEntry = overlayRootMap.get(overlay);
-      if (!overlayEntry) {
-        return;
-      }
-
-      const isActive = activeOverlayRef.current === overlay;
-      overlayEntry.badgeReactRoot.render(renderRef.current({ count: overlayEntry.count, isActive }));
-    };
-
-    // overlay가 있으면 갱신, 없으면 생성해서 연결
-    const upsertOverlay = (overlay: kakao.maps.CustomOverlay, count: number) => {
-      const overlayEntry = overlayRootMap.get(overlay);
-      const isActive = activeOverlayRef.current === overlay;
+    // clusterKey가 있으면 갱신, 없으면 생성해서 연결
+    // overlay 인스턴스가 교체되어도 같은 clusterKey면 동일 DOM/ReactRoot를 setContent로 재부착
+    const upsertOverlay = (
+      clusterKey: string,
+      overlay: kakao.maps.CustomOverlay,
+      cluster: kakao.maps.Cluster,
+      markerIds: string[],
+      count: number,
+    ) => {
+      const overlayEntry = overlayEntryByClusterKey.get(clusterKey);
+      const isActive = activeClusterKeyRef.current === clusterKey;
 
       if (!overlayEntry) {
-        const content = overlay.getContent();
-        const overlayContentEl = typeof content === 'string' ? document.createElement('div') : content;
-
-        if (typeof content === 'string') {
-          overlay.setContent(overlayContentEl);
-        }
-
-        overlayContentEl.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
-        overlayContentEl.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
-        overlayContentEl.style.cursor = 'pointer';
-        overlayContentEl.style.position = 'relative';
+        const containerEl = document.createElement('div');
+        containerEl.style.width = `${CLUSTER_BADGE_SIZE_PX}px`;
+        containerEl.style.height = `${CLUSTER_BADGE_SIZE_PX}px`;
+        containerEl.style.cursor = 'pointer';
+        containerEl.style.position = 'relative';
         // 브라우저 기본 focus outline 삭제
-        overlayContentEl.style.outline = 'none';
-        overlayContentEl.style.border = '0';
-        overlayContentEl.style.boxShadow = 'none';
-        overlayContentEl.style.background = 'transparent';
-        overlayContentEl.tabIndex = -1;
+        containerEl.style.outline = 'none';
+        containerEl.style.border = '0';
+        containerEl.style.boxShadow = 'none';
+        containerEl.style.background = 'transparent';
+        containerEl.tabIndex = -1;
 
         const badgeMountEl = document.createElement('div');
         badgeMountEl.style.position = 'absolute';
@@ -240,86 +257,95 @@ export function useKakaoClusterer(
         badgeMountEl.style.height = '100%';
         badgeMountEl.style.pointerEvents = 'none';
 
-        overlayContentEl.appendChild(badgeMountEl);
+        containerEl.appendChild(badgeMountEl);
+
+        ensureOverlayContent(overlay, containerEl);
 
         const overlayReactRoot = createRoot(badgeMountEl);
         overlayReactRoot.render(renderRef.current({ count, isActive }));
 
-        overlayRootMap.set(overlay, {
+        overlayEntryByClusterKey.set(clusterKey, {
           badgeReactRoot: overlayReactRoot,
           badgeLayerEl: badgeMountEl,
+          containerEl,
           count,
+          cluster,
+          markerIds,
         });
+
+        // clusterclick이 content 교체로 끊기는 케이스가 있어, DOM click으로 전이를 보장합니다.
+        containerEl.onclick = (event: MouseEvent) => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const prevActiveClusterKey = activeClusterKeyRef.current;
+          if (prevActiveClusterKey !== clusterKey) {
+            activeClusterKeyRef.current = clusterKey;
+
+            if (prevActiveClusterKey) {
+              renderEntry(prevActiveClusterKey);
+            }
+          }
+
+          renderEntry(clusterKey);
+
+          const entry = overlayEntryByClusterKey.get(clusterKey);
+          if (!entry || !entry.cluster) {
+            return;
+          }
+
+          onClusterClickRef.current?.(entry.cluster, entry.markerIds);
+        };
 
         return;
       }
 
       overlayEntry.count = count;
+      overlayEntry.cluster = cluster;
+      overlayEntry.markerIds = markerIds;
+
+      ensureOverlayContent(overlay, overlayEntry.containerEl);
       overlayEntry.badgeReactRoot.render(renderRef.current({ count, isActive }));
     };
 
-    // prune: 이번 clustered 계산에 포함되지 않은 overlay 정리
-    const removeStaleOverlays = (activeOverlays: Set<kakao.maps.CustomOverlay>) => {
-      overlayRootMap.forEach((overlayEntry, overlay) => {
-        if (activeOverlays.has(overlay)) {
+    // prune: 이번 clustered 계산에 포함되지 않은 clusterKey 정리
+    const removeStaleEntries = (activeClusterKeys: Set<string>) => {
+      overlayEntryByClusterKey.forEach((overlayEntry, clusterKey) => {
+        if (activeClusterKeys.has(clusterKey)) {
           return;
         }
 
-        queueOverlayDisposal(overlay, overlayEntry);
+        queueOverlayDisposal(clusterKey, overlayEntry);
       });
     };
 
     const handleClustered = (clusters: kakao.maps.Cluster[]) => {
-      const activeOverlays = new Set<kakao.maps.CustomOverlay>();
+      const activeClusterKeys = new Set<string>();
+      const markerIdByInstance = markerIdByInstanceRef.current;
 
       clusters.forEach((cluster) => {
-        const overlay = cluster.getClusterMarker();
-        activeOverlays.add(overlay);
+        const clusterKey = buildClusterKeyFromCenter(cluster.getCenter());
+        activeClusterKeys.add(clusterKey);
 
-        if (pendingDisposeMap.has(overlay)) {
-          pendingDisposeMap.delete(overlay);
+        if (pendingDisposeMap.has(clusterKey)) {
+          pendingDisposeMap.delete(clusterKey);
         }
 
-        upsertOverlay(overlay, cluster.getSize());
+        const markerIds = cluster.getMarkers()
+          .map(markerInstance => markerIdByInstance.get(markerInstance))
+          .filter((id): id is string => Boolean(id));
+
+        const overlay = cluster.getClusterMarker();
+        upsertOverlay(clusterKey, overlay, cluster, markerIds, cluster.getSize());
       });
 
-      removeStaleOverlays(activeOverlays);
-    };
-
-    // cluster 클릭 시:
-    // 1) 클릭된 overlay를 active로 만들고(이전 active는 해제), 배지 렌더를 갱신
-    // 2) cluster에 포함된 markerIds를 추출해 상위로 전달
-    const handleClusterClick = (cluster: kakao.maps.Cluster) => {
-      const prevActiveOverlay = activeOverlayRef.current;
-      const nextActiveOverlay = cluster.getClusterMarker();
-
-      if (prevActiveOverlay !== nextActiveOverlay) {
-        activeOverlayRef.current = nextActiveOverlay;
-
-        if (prevActiveOverlay) {
-          renderOverlay(prevActiveOverlay);
-        }
-      }
-
-      // 클릭 직후 clustered 렌더가 아직 안 들어왔을 수도 있으니, 우선 upsert로 보장 + active 스타일 반영
-      upsertOverlay(nextActiveOverlay, cluster.getSize());
-
-      const markerIdByInstance = markerIdByInstanceRef.current;
-      const clusterMarkerInstances = cluster.getMarkers();
-
-      const markerIds = clusterMarkerInstances
-        .map(markerInstance => markerIdByInstance.get(markerInstance))
-        .filter((id): id is string => Boolean(id));
-
-      onClusterClickRef.current?.(cluster, markerIds);
+      removeStaleEntries(activeClusterKeys);
     };
 
     kakaoMaps.event.addListener(clusterer, 'clustered', handleClustered);
-    kakaoMaps.event.addListener(clusterer, 'clusterclick', handleClusterClick);
 
     return () => {
       kakaoMaps.event.removeListener(clusterer, 'clustered', handleClustered);
-      kakaoMaps.event.removeListener(clusterer, 'clusterclick', handleClusterClick);
 
       if (disposeTimer !== null) {
         window.clearTimeout(disposeTimer);
@@ -329,21 +355,23 @@ export function useKakaoClusterer(
       // overlay React root 정리(배치 처리)
       const entriesToDispose: OverlayEntry[] = [];
 
-      overlayRootMap.forEach((overlayEntry, overlay) => {
-        pendingDisposeMap.delete(overlay);
+      overlayEntryByClusterKey.forEach((overlayEntry, clusterKey) => {
+        pendingDisposeMap.delete(clusterKey);
+        overlayEntry.containerEl.onclick = null;
         entriesToDispose.push(overlayEntry);
       });
 
-      overlayRootMap.clear();
+      overlayEntryByClusterKey.clear();
       pendingDisposeMap.clear();
 
       cleanupTimerRef.current = window.setTimeout(() => {
         cleanupTimerRef.current = null;
-        activeOverlayRef.current = null;
+        activeClusterKeyRef.current = null;
 
         entriesToDispose.forEach((overlayEntry) => {
           overlayEntry.badgeReactRoot.unmount();
           overlayEntry.badgeLayerEl.remove();
+          overlayEntry.containerEl.remove();
         });
       }, 0);
 
