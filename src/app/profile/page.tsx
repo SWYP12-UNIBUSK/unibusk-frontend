@@ -4,7 +4,14 @@ import { getUser } from '@/apis/user';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
+import { createPageMetadata } from '@/utils/creat-page-metadata';
 import { Footer, ProfileTab } from './_components';
+
+export const metadata = createPageMetadata({
+  title: '마이페이지',
+  description: '내가 등록한 공연과 계정 정보를 한곳에서 확인해보세요.',
+  path: '/profile',
+});
 
 export default async function ProfilePage() {
   const cookieStore = await cookies();

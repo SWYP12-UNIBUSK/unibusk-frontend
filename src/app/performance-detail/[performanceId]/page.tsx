@@ -1,10 +1,46 @@
+import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
-import { Suspense } from 'react';
+import { cache, Suspense } from 'react';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
+import { createPageMetadata } from '@/utils/creat-page-metadata';
 import { Footer, PerformanceInfo } from './_components';
+
+const getPerformanceDetail = cache(async (performanceId: number) => {
+  const queryClient = getQueryClient();
+
+  return queryClient.fetchQuery(performanceDetailQueryOptions(performanceId));
+});
+
+export async function generateMetadata(
+  {
+    params,
+  }: {
+    params: Promise<{ performanceId: string }>;
+  },
+): Promise<Metadata> {
+  const { performanceId: rawPerformanceId } = await params;
+  const performanceId = Number(rawPerformanceId);
+
+  if (Number.isNaN(performanceId) || performanceId <= 0) {
+    return createPageMetadata({
+      title: '공연 상세',
+      description: '버스킹 공연 상세 정보와 일정, 장소, 진행 내용을 확인해보세요.',
+      path: '/performance-detail',
+    });
+  }
+
+  const performanceDetail = await getPerformanceDetail(performanceId);
+
+  return createPageMetadata({
+    title: performanceDetail.title,
+    description: `${performanceDetail.title} 공연의 일정, 장소, 상세 정보를 확인해보세요.`,
+    path: `/performance-detail/${performanceId}`,
+    image: performanceDetail.images[0],
+  });
+}
 
 export default async function PerformanceDetailPage(
   {
@@ -20,9 +56,14 @@ export default async function PerformanceDetailPage(
     notFound();
   }
 
+  const performanceDetail = await getPerformanceDetail(performanceId);
+
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery(performanceDetailQueryOptions(performanceId));
+  queryClient.setQueryData(
+    performanceDetailQueryOptions(performanceId).queryKey,
+    performanceDetail,
+  );
 
   return (
     <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
