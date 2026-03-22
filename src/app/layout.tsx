@@ -13,10 +13,22 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'UNIBUSK',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL ?? 'https://unibusk.site'),
+  title: {
+    template: '%s | UNIBUSK',
+    default: 'UNIBUSK',
+  },
   description: '공연이 만들어지고, 보여지고, 시작되는 곳. 버스킹의 모든 순간을 잇다, UNIBUSK',
   icons: {
     icon: '/logos/small-logo-unibusk-primary.png',
+  },
+  openGraph: {
+    siteName: 'UNIBUSK',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
 };
 
