@@ -7,7 +7,7 @@ interface SearchParams {
 };
 
 export const metadata = createPageMetadata({
-  title: '버스킹맵',
+  title: '버스킹 맵',
   description: '지도에서 버스킹 가능한 장소와 공연 장소를 빠르게 찾아보세요.',
   path: '/busking-map',
 });
