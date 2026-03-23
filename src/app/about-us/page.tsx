@@ -1,10 +1,17 @@
 import { Header } from '@/components/common/header';
 import { MainLayout } from '@/components/layout';
+import { createPageMetadata } from '@/utils';
 import {
   AboutUsHeroSection,
   AboutUsMomentsSection,
   AboutUsVisionSection,
 } from './_components';
+
+export const metadata = createPageMetadata({
+  title: 'ABOUT US',
+  description: 'UNIBUSK가 버스킹의 시작과 연결을 어떻게 바꾸고 있는지, 서비스가 만들어진 배경과 방향성을 소개합니다.',
+  path: '/about-us',
+});
 
 const HERO_ITEMS = {
   logoSrc: '/logos/logo-unibusk-stacked-vertical-small.webp',

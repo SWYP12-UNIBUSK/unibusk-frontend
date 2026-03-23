@@ -1,9 +1,16 @@
 import { BuskingMapDataProvider } from '@/providers/busking-map/busking-map-data.context';
+import { createPageMetadata } from '@/utils';
 import { BuskingMapHeaderSection, BuskingMapMapSection, BuskingMapSidebarSection } from './_components';
 
 interface SearchParams {
   keyword?: string | string[];
 };
+
+export const metadata = createPageMetadata({
+  title: '버스킹 맵',
+  description: '지도에서 버스킹 가능한 장소와 공연 장소를 빠르게 찾아보세요.',
+  path: '/busking-map',
+});
 
 export default async function BuskingMapPage({
   searchParams,
