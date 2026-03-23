@@ -5,7 +5,7 @@ import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceListInfiniteQueryOptions } from '@/queries/performance';
 import { isValidPerformanceTab } from '@/types/performance';
-import { createPageMetadata } from '@/utils/creat-page-metadata';
+import { createPageMetadata } from '@/utils';
 import { Hero, PerformanceTabs } from './_components';
 
 export const metadata = createPageMetadata({

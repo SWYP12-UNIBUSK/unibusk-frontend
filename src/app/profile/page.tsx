@@ -4,7 +4,7 @@ import { getUser } from '@/apis/user';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
-import { createPageMetadata } from '@/utils/creat-page-metadata';
+import { createPageMetadata } from '@/utils';
 import { Footer, ProfileTab } from './_components';
 
 export const metadata = createPageMetadata({

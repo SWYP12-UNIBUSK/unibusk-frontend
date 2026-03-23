@@ -1,5 +1,5 @@
 import { BuskingMapDataProvider } from '@/providers/busking-map/busking-map-data.context';
-import { createPageMetadata } from '@/utils/creat-page-metadata';
+import { createPageMetadata } from '@/utils';
 import { BuskingMapHeaderSection, BuskingMapMapSection, BuskingMapSidebarSection } from './_components';
 
 interface SearchParams {

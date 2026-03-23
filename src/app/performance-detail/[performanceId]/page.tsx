@@ -5,7 +5,7 @@ import { cache, Suspense } from 'react';
 import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
-import { createPageMetadata } from '@/utils/creat-page-metadata';
+import { createPageMetadata } from '@/utils';
 import { Footer, PerformanceInfo } from './_components';
 
 const getPerformanceDetail = cache(async (performanceId: number) => {

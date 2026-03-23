@@ -1,6 +1,6 @@
 import { Header } from '@/components/common/header';
 import { MainLayout } from '@/components/layout';
-import { createPageMetadata } from '@/utils/creat-page-metadata';
+import { createPageMetadata } from '@/utils';
 import {
   AboutUsHeroSection,
   AboutUsMomentsSection,

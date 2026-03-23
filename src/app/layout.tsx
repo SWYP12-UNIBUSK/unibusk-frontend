@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/common/toast';
 import { QueryProvider } from '@/providers';
+import { SHARED_OPEN_GRAPH } from '@/utils';
 import '../styles/globals.css';
 
 const pretendard = localFont({
@@ -23,9 +24,7 @@ export const metadata: Metadata = {
     icon: '/logos/small-logo-unibusk-primary.png',
   },
   openGraph: {
-    siteName: 'UNIBUSK',
-    locale: 'ko_KR',
-    type: 'website',
+    ...SHARED_OPEN_GRAPH,
   },
   twitter: {
     card: 'summary_large_image',
