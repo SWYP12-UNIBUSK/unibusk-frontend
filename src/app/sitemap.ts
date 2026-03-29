@@ -1,11 +1,10 @@
 import type { MetadataRoute } from 'next';
 import type { PerformanceFilterTab } from '@/types/performance';
 import { getPerformanceList } from '@/apis/performance';
-import { ENV, routePaths } from '@/utils';
+import { routePaths } from '@/utils';
+import { toAbsoluteUrl } from '@/utils/seo';
 
 export const revalidate = 60 * 60;
-
-const SITE_URL = ENV.NEXT_PUBLIC_API_URL || 'https://unibusk.site';
 
 const STATIC_PAGES: Array<{
   path: string;
@@ -17,10 +16,6 @@ const STATIC_PAGES: Array<{
   { path: '/performance-list', changeFrequency: 'daily', priority: 0.9 },
   { path: '/busking-map', changeFrequency: 'daily', priority: 0.8 },
 ];
-
-function toAbsoluteUrl(path: string) {
-  return new URL(path, SITE_URL).toString();
-}
 
 async function getPerformanceIds(type: PerformanceFilterTab): Promise<number[]> {
   const performanceIds: number[] = [];

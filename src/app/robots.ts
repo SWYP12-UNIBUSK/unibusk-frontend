@@ -1,7 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { ENV } from '@/utils';
-
-const SITE_URL = ENV.NEXT_PUBLIC_API_URL || 'https://unibusk.site';
+import { SITE_URL } from '@/constants';
 
 export default function robots(): MetadataRoute.Robots {
   return {

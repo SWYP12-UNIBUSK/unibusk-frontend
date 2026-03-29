@@ -2,9 +2,12 @@ import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { cache, Suspense } from 'react';
+import { Header } from '@/components/common/header';
+import { JsonLdScript } from '@/components/seo';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { createPageMetadata } from '@/utils';
+import { buildPerformanceBreadcrumbJsonLd, buildPerformanceEventJsonLd } from '@/utils/seo';
 import { Footer, PerformanceInfo } from './_components';
 
 const getPerformanceDetail = cache(async (performanceId: number) => {
@@ -56,6 +59,8 @@ export default async function PerformanceDetailPage(
   }
 
   const performanceDetail = await getPerformanceDetail(performanceId);
+  const eventJsonLd = buildPerformanceEventJsonLd(performanceId, performanceDetail);
+  const breadcrumbJsonLd = buildPerformanceBreadcrumbJsonLd(performanceId, performanceDetail.title);
 
   const queryClient = getQueryClient();
 
@@ -66,6 +71,8 @@ export default async function PerformanceDetailPage(
 
   return (
     <div className="relative container-1920 flex min-h-screen flex-col">
+      <JsonLdScript id="performance-event-json-ld" data={eventJsonLd} />
+      <JsonLdScript id="performance-breadcrumb-json-ld" data={breadcrumbJsonLd} />
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense fallback={<div>Loading...</div>}>
