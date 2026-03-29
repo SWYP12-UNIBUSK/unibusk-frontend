@@ -1,4 +1,11 @@
+import { createPageMetadata } from '@/utils';
 import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
+
+export const metadata = createPageMetadata({
+  title: 'HOME',
+  description: 'UNIBUSK에서 버스킹 공연 일정과 장소를 찾고, 다가오는 공연 정보를 확인해보세요.',
+  path: '/',
+});
 
 export default function Page() {
   return (
