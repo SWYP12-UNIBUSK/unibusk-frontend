@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/common/toast';
 import { QueryProvider } from '@/providers';
-import { SHARED_OPEN_GRAPH } from '@/utils';
+import { ENV, SHARED_OPEN_GRAPH } from '@/utils';
 import '../styles/globals.css';
 
 const pretendard = localFont({
@@ -14,7 +14,7 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_API_URL ?? 'https://unibusk.site'),
+  metadataBase: new URL(ENV.NEXT_PUBLIC_API_URL ?? 'https://unibusk.site'),
   title: {
     template: '%s | UNIBUSK',
     default: 'UNIBUSK',
