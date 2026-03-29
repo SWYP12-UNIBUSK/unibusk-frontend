@@ -4,7 +4,7 @@ import { getPerformanceList } from '@/apis/performance';
 import { routePaths } from '@/utils';
 import { toAbsoluteUrl } from '@/utils/seo';
 
-export const revalidate = 60 * 60;
+export const revalidate = 3600;
 
 const STATIC_PAGES: Array<{
   path: string;
