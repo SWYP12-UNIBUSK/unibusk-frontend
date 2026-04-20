@@ -1,26 +1,10 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/common/button';
-import { RegisterModal } from '@/components/performance';
-import { useAuth } from '@/hooks';
-import { cn, routePaths } from '@/utils';
+import { PerformanceRegisterButton } from '@/components/performance';
+import { cn } from '@/utils';
 
 export function Hero() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
-
-  const handleRegisterClick = () => {
-    if (!isAuthenticated) {
-      router.push(routePaths.login());
-      return;
-    }
-    setIsModalOpen(true);
-  };
-
   return (
     <section
       className={cn(`
@@ -51,19 +35,10 @@ export function Hero() {
           <span className="block">나의 공연 정보를</span>
           <span className="block">등록하고 홍보해 보세요</span>
         </h2>
-        <Button
-          theme="orange"
-          size="lg"
-          appearance="filled"
-          onClick={handleRegisterClick}
-        >
+        <PerformanceRegisterButton theme="orange" size="lg" appearance="filled">
           공연 등록하기
-        </Button>
+        </PerformanceRegisterButton>
       </div>
-      <RegisterModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </section>
   );
 }
