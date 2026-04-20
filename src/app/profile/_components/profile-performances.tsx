@@ -147,6 +147,7 @@ function MyPerformanceCard({
               alt={title}
               fill
               className="object-cover"
+              sizes="150px"
             />
           )}
         </div>
@@ -272,7 +273,7 @@ function MyPerformanceCard({
               <Image
                 src="/icons/mapPin.svg"
                 alt=""
-                width={10}
+                width={14}
                 height={14}
                 aria-hidden="true"
                 unoptimized
