@@ -13,14 +13,20 @@ type PerformanceRegisterButtonProps = ComponentProps<typeof Button>;
 export function PerformanceRegisterButton({
   children,
   onClick,
+  disabled,
   ...buttonProps
 }: PerformanceRegisterButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isPending } = useAuth();
   const router = useRouter();
 
   const handleClick: ComponentProps<typeof Button>['onClick'] = (e) => {
     onClick?.(e);
+
+    if (e.defaultPrevented || isPending) {
+      return;
+    }
+
     if (!isAuthenticated) {
       router.push(routePaths.login());
       return;
@@ -30,7 +36,7 @@ export function PerformanceRegisterButton({
 
   return (
     <>
-      <Button {...buttonProps} onClick={handleClick}>
+      <Button {...buttonProps} disabled={disabled || isPending} onClick={handleClick}>
         {children}
       </Button>
       <RegisterModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

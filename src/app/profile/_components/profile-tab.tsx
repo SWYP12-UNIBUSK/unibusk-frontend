@@ -30,7 +30,9 @@ function BaseProfileTab() {
     = rawTab === 'my-performances' ? 'my-performances' : 'my-info';
 
   const handleTabChange = (value: string) => {
-    router.replace(`${pathname}?tab=${value}`);
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', value); // tab만 덮어쓰기
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   return (
