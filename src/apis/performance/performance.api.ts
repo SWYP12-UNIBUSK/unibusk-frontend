@@ -4,7 +4,7 @@ import type { PerformanceFilterTab } from '@/types/performance';
 import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import {
-
+  MyPerformanceCursorResponseSchema,
   performanceByLocationCursorSchema,
   PerformanceDetailResponseDtoSchema,
   PerformanceListResponseDtoSchema,
@@ -126,4 +126,32 @@ export function getUpcomingPerformancePreview(config?: FetchConfig) {
   return api
     .get('/api/performances/upcoming/preview', { ...config })
     .then(parseResponse(PerformanceUpcomingPreviewResponseDtoSchema));
+}
+
+/**
+ * 내 공연 목록 조회 (커서 기반 페이지네이션)
+ * @param cursorId - 다음 페이지 커서 ID (첫 요청 시 undefined)
+ * @param size - 조회 개수 (기본값 10)
+ */
+export function getMyPerformances(
+  cursorId?: number,
+  size = 10,
+  config?: FetchConfig,
+) {
+  const params: Record<string, string> = { size: String(size) };
+  if (cursorId !== undefined) {
+    params.cursorId = String(cursorId);
+  }
+
+  return api
+    .get('/api/performances/me', { ...config, params })
+    .then(parseResponse(MyPerformanceCursorResponseSchema));
+}
+
+/**
+ * 내 공연 삭제
+ * @param performanceId - 삭제할 공연 ID
+ */
+export function deletePerformance(performanceId: number, config?: FetchConfig) {
+  return api.delete<void>(`/api/performances/${performanceId}`, config);
 }

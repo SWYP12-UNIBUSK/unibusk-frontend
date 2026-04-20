@@ -12,8 +12,10 @@ export function useCreatePerformance() {
       return createPerformance(apiRequestData);
     },
     onSuccess: () => {
-      // 공연 목록 쿼리 무효화 (performanceKeys.lists() 사용)
+      // 공연 목록 쿼리 무효화
       queryClient.invalidateQueries({ queryKey: performanceKeys.lists() });
+      // 내 공연 목록 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: performanceKeys.myPerformances() });
     },
   });
 }

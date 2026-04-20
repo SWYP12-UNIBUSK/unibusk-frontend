@@ -206,3 +206,25 @@ export type PerformanceUpcomingPreviewItemDto = z.infer<
 export type PerformanceUpcomingPreviewResponseDto = z.infer<
   typeof PerformanceUpcomingPreviewResponseDtoSchema
 >;
+
+// 내 공연 목록 아이템 스키마
+export const MyPerformanceSummarySchema = z.object({
+  performanceId: z.number(),
+  memberId: z.number(),
+  title: z.string(),
+  startTime: z.string(), // ISO 8601 그대로 유지 (date-fns format 사용)
+  endTime: z.string(),
+  performanceLocationName: z.string(),
+  imageUrls: z.array(z.string()).default([]),
+});
+
+// 내 공연 목록 커서 응답 스키마
+export const MyPerformanceCursorResponseSchema = z.object({
+  content: z.array(MyPerformanceSummarySchema),
+  nextCursorId: z.number().nullable(),
+  nextCursorTime: z.string().nullable(),
+  hasNext: z.boolean(),
+});
+
+export type MyPerformanceSummary = z.infer<typeof MyPerformanceSummarySchema>;
+export type MyPerformanceCursorResponse = z.infer<typeof MyPerformanceCursorResponseSchema>;

@@ -1,20 +1,19 @@
 'use client';
 
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@/components/common/button';
 import { AvatarCircleIcon } from '@/components/common/icon';
+import { userQueryOptions } from '@/queries/user/user.query';
 import { cn } from '@/utils';
-
-interface ProfileInfoProps {
-  email: string;
-  name: string;
-}
 
 interface DisplayInputProps {
   label: string;
   value?: string | number;
 }
 
-export function ProfileInfo({ email, name }: ProfileInfoProps) {
+export function ProfileInfo() {
+  const { data: { email, name } } = useSuspenseQuery(userQueryOptions);
+
   return (
     <section className="flex w-full flex-col items-center gap-16.75">
       {/* 아바타 아이콘 */}
