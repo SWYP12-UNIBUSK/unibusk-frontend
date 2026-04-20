@@ -41,8 +41,8 @@ export function ProfileInfo() {
         >
           수정하기
         </Button>
+        <DisplayInput label="닉네임" value={name} />
         <DisplayInput label="이메일" value={email} />
-        <DisplayInput label="이름" value={name} />
       </div>
 
       {/* 이탈 버튼 */}
