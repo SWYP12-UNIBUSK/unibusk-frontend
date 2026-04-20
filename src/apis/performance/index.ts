@@ -1,5 +1,6 @@
 export {
   createPerformance,
+  deletePerformance,
   getMyPerformances,
   getPastPerformancesByLocation,
   getPerformanceDetail,

@@ -147,3 +147,11 @@ export function getMyPerformances(
     .get('/api/performances/me', { ...config, params })
     .then(parseResponse(MyPerformanceCursorResponseSchema));
 }
+
+/**
+ * 내 공연 삭제
+ * @param performanceId - 삭제할 공연 ID
+ */
+export function deletePerformance(performanceId: number, config?: FetchConfig) {
+  return api.delete<void>(`/api/performances/${performanceId}`, config);
+}

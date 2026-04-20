@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 import { Spinner } from '@/components/common/spinner';
 import { PerformanceRegisterButton } from '@/components/performance';
+import { useDeletePerformance } from '@/hooks/performance';
 import { myPerformancesInfiniteQueryOptions } from '@/queries/performance/performance.query';
 import { routePaths } from '@/utils';
 
@@ -125,6 +126,7 @@ function MyPerformanceCard({
   imageUrls,
 }: MyPerformanceCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { mutate: deleteMyPerformance, isPending: isDeletePending } = useDeletePerformance();
   const { date, time } = formatPerformanceTime(startTime, endTime);
   const thumbnailSrc = imageUrls[0];
 
@@ -231,15 +233,18 @@ function MyPerformanceCard({
                   <button
                     type="button"
                     role="menuitem"
+                    disabled={isDeletePending}
                     className={`
                       flex h-12.5 w-full cursor-pointer items-center gap-1.25
                       p-2.5 typo-caption-r-1 text-black transition-colors
                       hover:bg-gray-100
+                      disabled:cursor-not-allowed disabled:opacity-50
                     `}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       setIsMenuOpen(false);
+                      deleteMyPerformance(performanceId);
                     }}
                   >
                     <Image
