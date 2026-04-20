@@ -1,9 +1,8 @@
 'use client';
 
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags/tabs';
-import { userQueryOptions } from '@/queries/user/user.query';
 import { cn } from '@/utils';
 import { ProfileInfo } from './profile-info';
 import { ProfilePerformances } from './profile-performances';
@@ -22,32 +21,43 @@ export function ProfileTab() {
 }
 
 function BaseProfileTab() {
-  const { data: { email, name } }
-    = useSuspenseQuery(userQueryOptions);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const rawTab = searchParams.get('tab');
+  const activeTab: 'my-info' | 'my-performances'
+    = rawTab === 'my-performances' ? 'my-performances' : 'my-info';
+
+  const handleTabChange = (value: string) => {
+    router.replace(`${pathname}?tab=${value}`);
+  };
 
   return (
     <div className="flex w-full flex-1 flex-col pt-21.25">
 
-      <Tabs
-        defaultValue="my-info"
-        className="flex min-h-[500px] flex-1 flex-row gap-6"
-      >
+      {/* 타이틀: TabsList 밖으로 분리 → 탭 트리거 y=0 기준점 확보 */}
+      <h1 className="mb-25 pl-5 typo-title-sb-2 text-black">마이페이지</h1>
 
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="flex min-h-125 flex-1 flex-row gap-11"
+      >
+        {/* 좌: 탭 트리거 — y=0 기준 */}
         <TabsList className="mb-0 h-full w-55 flex-col bg-transparent p-0">
-          <h1 className="mb-25 typo-title-sb-2 text-black">마이페이지</h1>
-          <div className="m-auto flex h-30 w-full flex-col gap-5 px-5">
+          <div className="flex w-full flex-col gap-5 px-5">
             <ProfileTabTrigger filter="my-info" content="내 정보" />
             <ProfileTabTrigger filter="my-performances" content="내가 등록한 공연" />
           </div>
-
         </TabsList>
 
-        <div className="flex flex-1 flex-col">
+        <div className="relative flex flex-1 flex-col">
           <TabsContent
             value="my-info"
             className="mt-0 flex flex-1 outline-none"
           >
-            <ProfileInfo email={email} name={name} />
+            <ProfileInfo />
           </TabsContent>
 
           <TabsContent
