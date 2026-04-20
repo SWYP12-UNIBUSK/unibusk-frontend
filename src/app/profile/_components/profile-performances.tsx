@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Spinner } from '@/components/common/spinner';
 import { PerformanceRegisterButton } from '@/components/performance';
 import { myPerformancesInfiniteQueryOptions } from '@/queries/performance/performance.query';
@@ -124,6 +124,7 @@ function MyPerformanceCard({
   performanceLocationName,
   imageUrls,
 }: MyPerformanceCardProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { date, time } = formatPerformanceTime(startTime, endTime);
   const thumbnailSrc = imageUrls[0];
 
@@ -153,20 +154,107 @@ function MyPerformanceCard({
           {/* 상단: 제목 + 더보기 */}
           <div className="flex items-center justify-between">
             <h3 className="typo-body-sb-1 text-black">{title}</h3>
-            <button
-              type="button"
-              aria-label="더보기"
-              className="flex shrink-0 items-center justify-center"
+            <div
+              className="relative"
+              onBlurCapture={(event) => {
+                const nextTarget = event.relatedTarget;
+                if (!(nextTarget instanceof Node)) {
+                  setIsMenuOpen(false);
+                  return;
+                }
+                if (!event.currentTarget.contains(nextTarget)) {
+                  setIsMenuOpen(false);
+                }
+              }}
             >
-              <Image
-                src="/icons/ellipsisVertical.svg"
-                alt=""
-                width={5}
-                height={21}
-                aria-hidden="true"
-                unoptimized
-              />
-            </button>
+              <button
+                type="button"
+                aria-label="더보기"
+                aria-haspopup="menu"
+                aria-expanded={isMenuOpen}
+                className={`
+                  flex shrink-0 cursor-pointer items-center justify-center
+                  rounded-full p-1.5 transition-colors
+                  hover:bg-gray-100
+                `}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsMenuOpen(prev => !prev);
+                }}
+              >
+                <Image
+                  src="/icons/ellipsisVertical.svg"
+                  alt=""
+                  width={30}
+                  height={30}
+                  aria-hidden="true"
+                  unoptimized
+                />
+              </button>
+
+              {isMenuOpen && (
+                <div
+                  role="menu"
+                  aria-label="더보기 메뉴"
+                  className={`
+                    absolute top-[calc(100%+8px)] right-0 z-dropdown w-30
+                    overflow-hidden rounded-[10px] bg-white
+                    shadow-[0_0_4px_rgba(0,0,0,0.25)]
+                  `}
+                >
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`
+                      flex h-12.5 w-full cursor-pointer items-center gap-1.25
+                      border-b border-black/10 p-2.5 typo-caption-r-1 text-black
+                      transition-colors
+                      hover:bg-gray-100
+                    `}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <Image
+                      src="/icons/pencilSquare.svg"
+                      alt=""
+                      width={19}
+                      height={19}
+                      aria-hidden="true"
+                      unoptimized
+                    />
+                    수정하기
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={`
+                      flex h-12.5 w-full cursor-pointer items-center gap-1.25
+                      p-2.5 typo-caption-r-1 text-black transition-colors
+                      hover:bg-gray-100
+                    `}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <Image
+                      src="/icons/trashCan.svg"
+                      alt=""
+                      width={19}
+                      height={19}
+                      aria-hidden="true"
+                      unoptimized
+                    />
+                    삭제하기
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* 하단: 날짜/시간 + 장소 */}
