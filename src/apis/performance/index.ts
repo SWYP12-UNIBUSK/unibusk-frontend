@@ -1,5 +1,6 @@
 export {
   createPerformance,
+  getMyPerformances,
   getPastPerformancesByLocation,
   getPerformanceDetail,
   getPerformanceList,
@@ -9,6 +10,8 @@ export {
 } from './performance.api';
 export { transformPerformanceFormToApiRequest } from './performance.lib';
 export type {
+  MyPerformanceCursorResponse,
+  MyPerformanceSummary,
   PerformanceDetailResponseDto,
   PerformanceListResponseDto,
   PerformanceRegisterForm,

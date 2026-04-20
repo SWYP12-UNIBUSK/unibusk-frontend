@@ -28,4 +28,7 @@ export const performanceKeys = {
 
   upcomingPreview: () => [...performanceKeys.all, 'upcoming', 'preview'] as const,
 
+  // 내 공연 목록
+  myPerformances: () => [...performanceKeys.all, 'my-performances'] as const,
+
 } as const;

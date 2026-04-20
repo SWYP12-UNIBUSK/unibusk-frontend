@@ -1,6 +1,6 @@
 import type { PerformanceFilterTab } from '@/types/performance';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import { getPerformanceDetail, getPerformanceList, getSearchPerformanceList } from '@/apis/performance';
+import { getMyPerformances, getPerformanceDetail, getPerformanceList, getSearchPerformanceList } from '@/apis/performance';
 import { performanceKeys } from './performance.keys';
 
 /** 공연 목록 무한 스크롤 쿼리 옵션 */
@@ -42,5 +42,18 @@ export function performanceDetailQueryOptions(performanceId: number) {
     queryFn: async ({ signal }) => {
       return getPerformanceDetail(performanceId, { signal });
     },
+  });
+}
+
+/** 내 공연 목록 무한 스크롤 쿼리 옵션 (커서 기반) */
+export function myPerformancesInfiniteQueryOptions() {
+  return infiniteQueryOptions({
+    queryKey: performanceKeys.myPerformances(),
+    queryFn: async ({ pageParam, signal }) => {
+      return getMyPerformances(pageParam, 10, { signal });
+    },
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: lastPage =>
+      lastPage.hasNext ? (lastPage.nextCursorId ?? undefined) : undefined,
   });
 }
