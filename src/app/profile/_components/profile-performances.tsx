@@ -6,9 +6,18 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCallback, useRef } from 'react';
+import { Spinner } from '@/components/common/spinner';
 import { PerformanceRegisterButton } from '@/components/performance';
 import { myPerformancesInfiniteQueryOptions } from '@/queries/performance/performance.query';
 import { routePaths } from '@/utils';
+
+interface PerformancesProps {
+  performances: MyPerformanceSummary[];
+  onLoadMore: () => void;
+  hasMore: boolean;
+  isLoading: boolean;
+}
 
 interface MyPerformanceCardProps {
   performanceId: number;
@@ -30,7 +39,8 @@ function formatPerformanceTime(startTime: string, endTime: string) {
 }
 
 export function ProfilePerformances() {
-  const { data } = useSuspenseInfiniteQuery(myPerformancesInfiniteQueryOptions());
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage }
+    = useSuspenseInfiniteQuery(myPerformancesInfiniteQueryOptions());
   const performances = data.pages.flatMap(page => page.content);
 
   return (
@@ -48,14 +58,39 @@ export function ProfilePerformances() {
               <PerformanceRegisterButton className="absolute -top-17.5 right-0" theme="lightGray" size="md">
                 내 공연 등록하기
               </PerformanceRegisterButton>
-              <Performances performances={performances} />
+              <Performances
+                performances={performances}
+                onLoadMore={fetchNextPage}
+                hasMore={!!hasNextPage}
+                isLoading={isFetchingNextPage}
+              />
             </>
           )}
     </div>
   );
 }
 
-function Performances({ performances }: { performances: MyPerformanceSummary[] }) {
+function Performances({ performances, onLoadMore, hasMore, isLoading }: PerformancesProps) {
+  const isLoadingRef = useRef(isLoading);
+  isLoadingRef.current = isLoading;
+
+  const sentinelCallbackRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node)
+      return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoadingRef.current) {
+          onLoadMore();
+        }
+      },
+      { threshold: 0.5 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [onLoadMore]);
+
   return (
     <section className="flex w-full flex-1 flex-col gap-7.5">
       {performances.map(performance => (
@@ -69,6 +104,14 @@ function Performances({ performances }: { performances: MyPerformanceSummary[] }
           imageUrls={performance.imageUrls}
         />
       ))}
+      {hasMore && (
+        <div
+          ref={sentinelCallbackRef}
+          className="flex h-20 items-center justify-center"
+        >
+          {isLoading && <Spinner className="size-6 text-gray-400" />}
+        </div>
+      )}
     </section>
   );
 }

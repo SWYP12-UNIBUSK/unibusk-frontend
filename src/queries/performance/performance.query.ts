@@ -50,7 +50,7 @@ export function myPerformancesInfiniteQueryOptions() {
   return infiniteQueryOptions({
     queryKey: performanceKeys.myPerformances(),
     queryFn: async ({ pageParam, signal }) => {
-      return getMyPerformances(pageParam, 10, { signal });
+      return getMyPerformances(pageParam, 4, { signal });
     },
     initialPageParam: undefined as number | undefined,
     getNextPageParam: lastPage =>
