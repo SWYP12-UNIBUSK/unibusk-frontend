@@ -88,6 +88,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
           pt-12
         `}
         showCloseButton={false}
+        nested
       >
 
         <button
