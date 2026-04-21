@@ -45,7 +45,13 @@ export function ProfileEditModal({ open, onOpenChange, currentName }: ProfileEdi
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!isPending)
+          onOpenChange(nextOpen);
+      }}
+    >
       <DialogContent
         showCloseButton={false}
         className="w-143.75 gap-0 px-28.5 py-16.25"
@@ -70,6 +76,7 @@ export function ProfileEditModal({ open, onOpenChange, currentName }: ProfileEdi
               theme="gray"
               appearance="filled"
               size="md"
+              disabled={isPending}
               onClick={() => onOpenChange(false)}
             >
               취소
