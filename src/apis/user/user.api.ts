@@ -1,10 +1,15 @@
 import type { FetchConfig } from '../api.types';
+import type { UpdateMemberNameRequestDto } from './user.schema';
 import { api } from '../api.instance';
 import { parseResponse } from '../api.parse';
 import { UserResponseDtoSchema } from './user.schema';
 
 export function getUser(config?: FetchConfig) {
   return api.get('/api/members/me', config).then(parseResponse(UserResponseDtoSchema));
+}
+
+export function patchUser(data: UpdateMemberNameRequestDto, config?: FetchConfig) {
+  return api.patch('/api/members/me', data, config).then(parseResponse(UserResponseDtoSchema));
 }
 
 export function logoutUser(config?: FetchConfig) {
