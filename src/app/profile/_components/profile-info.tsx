@@ -1,10 +1,12 @@
 'use client';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { AvatarCircleIcon } from '@/components/common/icon';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { cn } from '@/utils';
+import { ProfileEditModal } from './profile-edit-modal';
 
 interface DisplayInputProps {
   label: string;
@@ -13,6 +15,7 @@ interface DisplayInputProps {
 
 export function ProfileInfo() {
   const { data: { email, name } } = useSuspenseQuery(userQueryOptions);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <section className="flex w-full flex-col items-center gap-16.75">
@@ -38,6 +41,7 @@ export function ProfileInfo() {
           appearance="outline"
           size="sm"
           className="absolute right-0 mr-91.5"
+          onClick={() => setIsModalOpen(true)}
         >
           수정하기
         </Button>
@@ -52,6 +56,11 @@ export function ProfileInfo() {
       </div>
 
       {/* 프로필 수정 모달 */}
+      <ProfileEditModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        currentName={name}
+      />
     </section>
   );
 }
