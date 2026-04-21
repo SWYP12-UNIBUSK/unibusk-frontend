@@ -185,6 +185,34 @@ class APIClient {
   }
 
   /**
+   * PATCH 요청
+   *
+   * @example
+   * await api.patch('/users/123', { name: 'Partial Update' });
+   */
+  async patch<T>(endpoint: string, data?: unknown, config?: FetchConfig): Promise<T> {
+    if (data === undefined || data === null) {
+      return this.request<T>(endpoint, {
+        ...config,
+        method: 'PATCH',
+      });
+    }
+
+    const body
+      = data instanceof FormData
+        || data instanceof Blob
+        || data instanceof URLSearchParams
+        ? data
+        : JSON.stringify(data);
+
+    return this.request<T>(endpoint, {
+      ...config,
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  /**
    * DELETE 요청
    *
    * @example
