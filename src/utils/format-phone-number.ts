@@ -1,7 +1,8 @@
 export function formatPhoneNumber(value: string): string {
-  const digits = value.replace(/\D/g, '').slice(0, 11);
+  const raw = value.replace(/\D/g, '');
 
-  if (digits.startsWith('02')) {
+  if (raw.startsWith('02')) {
+    const digits = raw.slice(0, 10);
     if (digits.length <= 2)
       return digits;
     if (digits.length <= 5)
@@ -11,6 +12,7 @@ export function formatPhoneNumber(value: string): string {
     return `${digits.slice(0, 2)}-${digits.slice(2, 6)}-${digits.slice(6, 10)}`;
   }
 
+  const digits = raw.slice(0, 11);
   if (digits.length <= 3)
     return digits;
   if (digits.length <= 7)
