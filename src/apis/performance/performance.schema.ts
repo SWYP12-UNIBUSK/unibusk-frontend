@@ -12,7 +12,7 @@ export const PerformanceRegisterFormSchema = z.object({
   teamName: z.string().min(1, PERFORMANCE_ERROR_MESSAGE),
   contactNumber: z.string()
     .min(1, PERFORMANCE_ERROR_MESSAGE)
-    .regex(/^(02|0[1-9]\d)-?(\d{3,4})-?(\d{4})$/, '올바른 전화번호 형식이 아닙니다.'),
+    .regex(/^(02|0[1-9]\d)-(\d{3,4})-(\d{4})$/, '올바른 전화번호 형식이 아닙니다.'),
   email: z.email('올바른 이메일 형식이 아닙니다.'),
   instagramUrl: z.string().optional(),
 
