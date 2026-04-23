@@ -1,11 +1,12 @@
 'use client';
 
 import type { PerformanceRegisterForm } from '@/apis/performance';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { FormInput } from '@/components/common/input';
+import { formatPhoneNumber } from '@/utils';
 
 export function Step01() {
-  const { register, watch, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
+  const { register, control, watch, formState: { errors } } = useFormContext<PerformanceRegisterForm>();
   const teamName = watch('teamName');
 
   return (
@@ -24,12 +25,20 @@ export function Step01() {
       </div>
       <div className="flex w-full gap-6">
         <div className="flex-1 space-y-2">
-          <FormInput
-            label="공연자 전화번호"
-            required
-            placeholder="전화번호를 적어주세요"
-            error={errors.contactNumber?.message}
-            {...register('contactNumber')}
+          <Controller
+            name="contactNumber"
+            control={control}
+            render={({ field }) => (
+              <FormInput
+                {...field}
+                label="공연자 전화번호"
+                required
+                placeholder="전화번호를 적어주세요"
+                error={errors.contactNumber?.message}
+                inputMode="tel"
+                onChange={e => field.onChange(formatPhoneNumber(e.target.value))}
+              />
+            )}
           />
         </div>
         <div className="flex-1 space-y-2">
