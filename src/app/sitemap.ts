@@ -36,12 +36,31 @@ async function getPerformanceIds(type: PerformanceFilterTab): Promise<number[]> 
   }
 }
 
+function getUniqueValues<TValue>(values: TValue[]): TValue[] {
+  return values.filter((value, index) => values.indexOf(value) === index);
+}
+
+async function getPerformanceIdsSafely(): Promise<number[]> {
+  const performanceIdResults = await Promise.allSettled([
+    getPerformanceIds('upcoming'),
+    getPerformanceIds('past'),
+  ]);
+
+  const performanceIds = performanceIdResults.flatMap((result) => {
+    if (result.status === 'rejected') {
+      console.error('사이트맵 생성 중 공연 ID 조회에 실패했습니다.', result.reason);
+      return [];
+    }
+
+    return result.value;
+  });
+
+  return getUniqueValues(performanceIds);
+}
+
 async function getPerformanceDetailEntries(): Promise<MetadataRoute.Sitemap> {
   try {
-    const performanceIds = await Promise.all([
-      getPerformanceIds('upcoming'),
-      getPerformanceIds('past'),
-    ]).then(results => [...new Set(results.flat())]);
+    const performanceIds = await getPerformanceIdsSafely();
 
     return performanceIds.map(performanceId => ({
       url: toAbsoluteUrl(routePaths.performanceDetail(performanceId)),
@@ -50,7 +69,7 @@ async function getPerformanceDetailEntries(): Promise<MetadataRoute.Sitemap> {
     }));
   }
   catch (error) {
-    console.error('Failed to build performance detail entries for sitemap.', error);
+    console.error('사이트맵 생성 중 공연 상세 URL 목록 생성에 실패했습니다.', error);
     return [];
   }
 }
