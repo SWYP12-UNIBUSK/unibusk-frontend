@@ -7,13 +7,15 @@ import { useKakaoLoader } from '@/hooks/kakao-map/use-kakao-loader';
 import { useKakaoMap } from '@/hooks/kakao-map/use-kakao-map';
 import { useKakaoMarkers } from '@/hooks/kakao-map/use-kakao-markers';
 
+const DEFAULT_MAP_LEVEL = 3;
+
 interface PerformanceLocationProps {
   coordinate: Coordinate;
 }
 
 export function PerformanceLocation({ coordinate }: PerformanceLocationProps) {
   const { isLoaded, error } = useKakaoLoader();
-  const { mapContainerRef, map } = useKakaoMap({ isLoaded, center: coordinate, level: 3 });
+  const { mapContainerRef, map } = useKakaoMap({ isLoaded, center: coordinate, level: DEFAULT_MAP_LEVEL });
 
   const markers = useMemo(
     () => [{ id: 'performance-location', position: coordinate }],
@@ -28,7 +30,7 @@ export function PerformanceLocation({ coordinate }: PerformanceLocationProps) {
     }
 
     map.setCenter(new window.kakao.maps.LatLng(coordinate.lat, coordinate.lng));
-    map.setLevel(3);
+    map.setLevel(DEFAULT_MAP_LEVEL);
   }, [map, coordinate]);
 
   return (
@@ -39,11 +41,23 @@ export function PerformanceLocation({ coordinate }: PerformanceLocationProps) {
           ? (
               <div
                 className={`
-                  flex h-full items-center justify-center text-gray-400
+                  flex h-full flex-col items-center justify-center gap-3
+                  text-gray-400
                 `}
                 role="alert"
               >
-                지도를 불러오지 못했습니다.
+                <p>지도를 불러오지 못했습니다.</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className={`
+                    rounded-full bg-gray-100 px-4 py-1.5 typo-caption-r-1
+                    text-gray-600
+                    hover:bg-gray-200
+                  `}
+                >
+                  다시 시도
+                </button>
               </div>
             )
           : (
