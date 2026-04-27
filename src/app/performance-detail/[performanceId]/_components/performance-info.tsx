@@ -16,7 +16,7 @@ interface PerformanceInfoProps {
 
 export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
   const { data: performanceDetail } = useSuspenseQuery(performanceDetailQueryOptions(performanceId));
-  const { title, performanceDate, locationName, images, summary, startTime, endTime, performers, description } = performanceDetail;
+  const { title, performanceDate, locationName, images, summary, startTime, endTime, performers, description, latitude, longitude } = performanceDetail;
   const router = useRouter();
 
   return (
@@ -37,7 +37,7 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
         performers={performers[0] ?? { name: '', email: '', phoneNumber: '' }}
         description={description}
       />
-      <PerformanceLocation />
+      <PerformanceLocation coordinate={{ lat: latitude, lng: longitude }} />
       <div className="flex justify-center pt-17.5 pb-20.75">
         <Button
           onClick={() => {
