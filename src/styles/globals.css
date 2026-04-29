@@ -2,6 +2,14 @@
 @import 'tw-animate-css';
 @import './typography.css';
 
+/* 디자인 시스템 브레이크포인트 */
+@theme {
+  --breakpoint-sm: 36rem; /* 576px */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 75rem; /* 1200px */
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -253,7 +261,7 @@ body {
   padding-right: 1.25rem; /* 20px */
 
   /* 태블릿 이상에서 패딩 증가 */
-  @media (min-width: 768px) {
+  @media (min-width: var(--breakpoint-md)) {
     padding-left: 2.5rem; /* 40px */
     padding-right: 2.5rem; /* 40px */
   }
