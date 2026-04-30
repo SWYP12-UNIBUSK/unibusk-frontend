@@ -34,9 +34,8 @@ export default function LoginPage() {
             카카오로 로그인 하기
           </button>
 
-          {/* TODO: 약관 페이지 구현 후 href 연결 */}
           <Link
-            href="/"
+            href={routePaths.terms()}
             className={`
               inline-flex h-15 items-center justify-center text-gray-400
               transition-colors
@@ -45,9 +44,8 @@ export default function LoginPage() {
             UNIBUSK 서비스 약관
           </Link>
 
-          {/* TODO: 개인정보 처리방침 페이지 구현 후 href 연결 */}
           <Link
-            href="/"
+            href={routePaths.privacy()}
             className={`
               inline-flex h-15 items-center justify-center text-gray-400
               transition-colors
