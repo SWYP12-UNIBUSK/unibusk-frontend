@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 import { Spinner } from '@/components/common/spinner';
-import { PerformanceRegisterButton } from '@/components/performance';
+import { PerformanceDeleteConfirmDialog, PerformanceRegisterButton } from '@/components/performance';
 import { useDeletePerformance } from '@/hooks/performance';
 import { myPerformancesInfiniteQueryOptions } from '@/queries/performance/performance.query';
 import { routePaths } from '@/utils';
@@ -126,166 +126,178 @@ function MyPerformanceCard({
   imageUrls,
 }: MyPerformanceCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { mutate: deleteMyPerformance, isPending: isDeletePending } = useDeletePerformance();
   const { date, time } = formatPerformanceTime(startTime, endTime);
   const thumbnailSrc = imageUrls[0];
 
   return (
-    <Link href={routePaths.performanceDetail(performanceId)}>
-      <div className={`
-        flex w-full items-center rounded-lg bg-white p-2.5 shadow-elevate-2
-      `}
-      >
-        {/* 썸네일 */}
+    <>
+      <Link href={routePaths.performanceDetail(performanceId)}>
         <div className={`
-          relative h-45 w-37.5 shrink-0 overflow-hidden rounded-lg bg-gray-300
+          flex w-full items-center rounded-lg bg-white p-2.5 shadow-elevate-2
         `}
         >
-          {thumbnailSrc && (
-            <Image
-              src={thumbnailSrc}
-              alt={title}
-              fill
-              className="object-cover"
-              sizes="150px"
-            />
-          )}
-        </div>
+          {/* 썸네일 */}
+          <div className={`
+            relative h-45 w-37.5 shrink-0 overflow-hidden rounded-lg bg-gray-300
+          `}
+          >
+            {thumbnailSrc && (
+              <Image
+                src={thumbnailSrc}
+                alt={title}
+                fill
+                className="object-cover"
+                sizes="150px"
+              />
+            )}
+          </div>
 
-        {/* 콘텐츠 */}
-        <div className="flex h-45 flex-1 flex-col justify-center gap-7.5 px-10">
-          {/* 상단: 제목 + 더보기 */}
-          <div className="flex items-center justify-between">
-            <h3 className="typo-body-sb-1 text-black">{title}</h3>
-            <div
-              className="relative"
-              onBlurCapture={(event) => {
-                const nextTarget = event.relatedTarget;
-                if (!(nextTarget instanceof Node)) {
-                  setIsMenuOpen(false);
-                  return;
-                }
-                if (!event.currentTarget.contains(nextTarget)) {
-                  setIsMenuOpen(false);
-                }
-              }}
-            >
-              <button
-                type="button"
-                aria-label="더보기"
-                aria-haspopup="menu"
-                aria-expanded={isMenuOpen}
-                className={`
-                  flex shrink-0 cursor-pointer items-center justify-center
-                  rounded-full p-1.5 transition-colors
-                  hover:bg-gray-100
-                `}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIsMenuOpen(prev => !prev);
+          {/* 콘텐츠 */}
+          <div className={`
+            flex h-45 flex-1 flex-col justify-center gap-7.5 px-10
+          `}
+          >
+            {/* 상단: 제목 + 더보기 */}
+            <div className="flex items-center justify-between">
+              <h3 className="typo-body-sb-1 text-black">{title}</h3>
+              <div
+                className="relative"
+                onBlurCapture={(event) => {
+                  const nextTarget = event.relatedTarget;
+                  if (!(nextTarget instanceof Node)) {
+                    setIsMenuOpen(false);
+                    return;
+                  }
+                  if (!event.currentTarget.contains(nextTarget)) {
+                    setIsMenuOpen(false);
+                  }
                 }}
               >
+                <button
+                  type="button"
+                  aria-label="더보기"
+                  aria-haspopup="menu"
+                  aria-expanded={isMenuOpen}
+                  className={`
+                    flex shrink-0 cursor-pointer items-center justify-center
+                    rounded-full p-1.5 transition-colors
+                    hover:bg-gray-100
+                  `}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsMenuOpen(prev => !prev);
+                  }}
+                >
+                  <Image
+                    src="/icons/ellipsisVertical.svg"
+                    alt=""
+                    width={30}
+                    height={30}
+                    aria-hidden="true"
+                    unoptimized
+                  />
+                </button>
+
+                {isMenuOpen && (
+                  <div
+                    role="menu"
+                    aria-label="더보기 메뉴"
+                    className={`
+                      absolute top-[calc(100%+8px)] right-0 z-dropdown w-30
+                      overflow-hidden rounded-[10px] bg-white
+                      shadow-[0_0_4px_rgba(0,0,0,0.25)]
+                    `}
+                  >
+                    <button
+                      type="button"
+                      role="menuitem"
+                      className={`
+                        flex h-12.5 w-full cursor-pointer items-center gap-1.25
+                        border-b border-black/10 p-2.5 typo-caption-r-1
+                        text-black transition-colors
+                        hover:bg-gray-100
+                      `}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      <Image
+                        src="/icons/pencilSquare.svg"
+                        alt=""
+                        width={19}
+                        height={19}
+                        aria-hidden="true"
+                        unoptimized
+                      />
+                      수정하기
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      disabled={isDeletePending}
+                      className={`
+                        flex h-12.5 w-full cursor-pointer items-center gap-1.25
+                        p-2.5 typo-caption-r-1 text-black transition-colors
+                        hover:bg-gray-100
+                        disabled:cursor-not-allowed disabled:opacity-50
+                      `}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsMenuOpen(false);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Image
+                        src="/icons/trashCan.svg"
+                        alt=""
+                        width={19}
+                        height={19}
+                        aria-hidden="true"
+                        unoptimized
+                      />
+                      삭제하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 하단: 날짜/시간 + 장소 */}
+            <div className="flex flex-col gap-1.25">
+              <div className="typo-caption-m-1 text-gray-700">
+                <p>{date}</p>
+                <p>{time}</p>
+              </div>
+              <div className="flex items-center gap-1.25">
                 <Image
-                  src="/icons/ellipsisVertical.svg"
+                  src="/icons/mapPin.svg"
                   alt=""
-                  width={30}
-                  height={30}
+                  width={14}
+                  height={14}
                   aria-hidden="true"
                   unoptimized
                 />
-              </button>
-
-              {isMenuOpen && (
-                <div
-                  role="menu"
-                  aria-label="더보기 메뉴"
-                  className={`
-                    absolute top-[calc(100%+8px)] right-0 z-dropdown w-30
-                    overflow-hidden rounded-[10px] bg-white
-                    shadow-[0_0_4px_rgba(0,0,0,0.25)]
-                  `}
-                >
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className={`
-                      flex h-12.5 w-full cursor-pointer items-center gap-1.25
-                      border-b border-black/10 p-2.5 typo-caption-r-1 text-black
-                      transition-colors
-                      hover:bg-gray-100
-                    `}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    <Image
-                      src="/icons/pencilSquare.svg"
-                      alt=""
-                      width={19}
-                      height={19}
-                      aria-hidden="true"
-                      unoptimized
-                    />
-                    수정하기
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    disabled={isDeletePending}
-                    className={`
-                      flex h-12.5 w-full cursor-pointer items-center gap-1.25
-                      p-2.5 typo-caption-r-1 text-black transition-colors
-                      hover:bg-gray-100
-                      disabled:cursor-not-allowed disabled:opacity-50
-                    `}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setIsMenuOpen(false);
-                      deleteMyPerformance(performanceId);
-                    }}
-                  >
-                    <Image
-                      src="/icons/trashCan.svg"
-                      alt=""
-                      width={19}
-                      height={19}
-                      aria-hidden="true"
-                      unoptimized
-                    />
-                    삭제하기
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 하단: 날짜/시간 + 장소 */}
-          <div className="flex flex-col gap-1.25">
-            <div className="typo-caption-m-1 text-gray-700">
-              <p>{date}</p>
-              <p>{time}</p>
-            </div>
-            <div className="flex items-center gap-1.25">
-              <Image
-                src="/icons/mapPin.svg"
-                alt=""
-                width={14}
-                height={14}
-                aria-hidden="true"
-                unoptimized
-              />
-              <p className="typo-caption-m-1 text-gray-700">
-                {performanceLocationName}
-              </p>
+                <p className="typo-caption-m-1 text-gray-700">
+                  {performanceLocationName}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+      <PerformanceDeleteConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={() => deleteMyPerformance(performanceId)}
+        isPending={isDeletePending}
+      />
+    </>
   );
 }
 
