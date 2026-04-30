@@ -22,4 +22,6 @@ export const routePaths = {
   kakaoLogin: () => ROUTES.KAKAO_LOGIN,
   oauthCallback: (provider: string) => `${ROUTES.OAUTH_CALLBACK}/${provider}`,
   performanceDetail: (performanceId: number) => `${ROUTES.PERFORMANCE_DETAIL}/${performanceId}`,
+  terms: () => ROUTES.TERMS,
+  privacy: () => ROUTES.PRIVACY,
 } as const;

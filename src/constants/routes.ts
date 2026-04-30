@@ -4,4 +4,6 @@ export const ROUTES = {
   KAKAO_LOGIN: '/api/auths/login',
   OAUTH_CALLBACK: '/oauth-callback',
   PERFORMANCE_DETAIL: '/performance-detail',
+  TERMS: '/terms',
+  PRIVACY: '/privacy',
 } as const;
