@@ -38,7 +38,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 5조 ( 회원 가입을 위한 정보 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 4조 ( 회원 가입을 위한 정보 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 이용자의 회사 서비스에 대한 회원가입을 위하여 다음과 같은 정보를 수집합니다.
         </p>
@@ -53,7 +53,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 6조 ( 결제 서비스를 위한 정보 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 5조 ( 결제 서비스를 위한 정보 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 이용자에게 회사의 결제 서비스 제공을 위하여 다음과 같은 정보를 수집합니다.
         </p>
@@ -63,7 +63,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 7조 ( 현금 영수증 발행을 위한 정보 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 6조 ( 현금 영수증 발행을 위한 정보 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 이용자의 현금 영수증을 발행하기 위하여 다음과 같은 정보를 수집합니다.
         </p>
@@ -73,7 +73,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 8조 ( 회사 서비스 제공을 위한 정보 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 7조 ( 회사 서비스 제공을 위한 정보 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 이용자에게 회사의 서비스를 제공하기 위해서 다음과 같은 정보를 수집합니다.
         </p>
@@ -88,7 +88,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 9조 ( 서비스 이용 및 부정 이용 확인을 위한 정보 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 8조 ( 서비스 이용 및 부정 이용 확인을 위한 정보 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 이용자의 서비스 이용 및 부정이용의 확인 및 분석을 위하여 다음과 같은 정보를 수집합니다.
         </p>
@@ -104,7 +104,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 10조 ( 개인정보 수집 방법 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 9조 ( 개인정보 수집 방법 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 다음과 같은 방법으로 이용자의 개인정보를 수집합니다.
         </p>
@@ -116,7 +116,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 11조 ( 개인정보의 이용 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 10조 ( 개인정보의 이용 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 개인정보를 다음 각 호의 경우에 이용합니다.
         </p>
@@ -133,7 +133,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 12조 ( 개인정보 처리 위탁 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 11조 ( 개인정보 처리 위탁 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 원활한 서비스 제공과 효과적인 업무를 처리하기 위하여 다음 각 호와 같이 개인정보를 처리 위탁하고 있습니다.
         </p>
@@ -145,7 +145,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 13조 ( 개인정보의 보유 및 이용기간 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 12조 ( 개인정보의 보유 및 이용기간 )</h2>
         <ol className="flex list-decimal flex-col gap-1 pl-5 typo-caption-r-2">
           <li>회사는 이용자의 개인정보에 대해 개인정보의 수집, 이용 목적 달성을 위한 기간 동안 개인정보를 보유 및 이용합니다.</li>
           <li>전항에도 불구하고 회사는 내부 방침에 의해 서비스 부정이용기록은 부정 가입 및 이용 방지를 위하여 회원 탈퇴 시점으로부터 최대 1년간 보관합니다.</li>
@@ -153,7 +153,7 @@ export function PrivacyContent() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="typo-body-sb-3 text-black">제 14조 ( 법령에 따른 개인정보의 보유 및 이용기간 )</h2>
+        <h2 className="typo-body-sb-3 text-black">제 13조 ( 법령에 따른 개인정보의 보유 및 이용기간 )</h2>
         <p className="typo-caption-r-2 leading-relaxed">
           회사는 관계법령에 따라 다음과 같이 개인정보를 보유 및 이용합니다.
         </p>

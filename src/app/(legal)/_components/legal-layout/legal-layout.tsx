@@ -24,14 +24,20 @@ export function LegalLayout({ title, children }: LegalLayoutProps) {
         )}
       >
         <section className="flex flex-col items-center">
-          <h1 className="text-center typo-title-b-3 text-black">{title}</h1>
+          <h1 className={cn(
+            `text-center typo-title-b-5 text-black`,
+            `md:typo-title-b-3`,
+          )}
+          >
+            {title}
+          </h1>
 
           <div
             className={cn(
               'mt-12.5',
               `
-                md:mt-20.5 md:h-211.5 md:w-205.5 md:overflow-y-auto
-                md:rounded-lg md:bg-gray-50
+                md:mt-20.5 md:h-211.5 md:w-full md:max-w-205.5
+                md:overflow-y-auto md:rounded-lg md:bg-gray-50
               `,
               'md:px-11.25 md:py-7.5',
             )}
