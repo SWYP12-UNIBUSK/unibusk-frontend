@@ -16,7 +16,7 @@ interface DisplayInputProps {
 
 export function ProfileInfo() {
   const { data: { email, name } } = useSuspenseQuery(userQueryOptions);
-  const { logout } = useAuth();
+  const { logout, isLogoutPending } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -55,7 +55,14 @@ export function ProfileInfo() {
       {/* 이탈 버튼 */}
       <div className="flex gap-2.5">
         <Button theme="lightOrange" size="md">회원탈퇴</Button>
-        <Button theme="gray" size="md" onClick={async () => await logout()}>로그아웃</Button>
+        <Button
+          theme="gray"
+          size="md"
+          disabled={isLogoutPending}
+          onClick={() => void logout()}
+        >
+          로그아웃
+        </Button>
       </div>
 
       {/* 프로필 수정 모달 */}
