@@ -4,6 +4,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { AvatarCircleIcon } from '@/components/common/icon';
+import { useAuth } from '@/hooks';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { cn } from '@/utils';
 import { ProfileEditModal } from './profile-edit-modal';
@@ -15,6 +16,8 @@ interface DisplayInputProps {
 
 export function ProfileInfo() {
   const { data: { email, name } } = useSuspenseQuery(userQueryOptions);
+  const { logout } = useAuth();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -52,7 +55,7 @@ export function ProfileInfo() {
       {/* 이탈 버튼 */}
       <div className="flex gap-2.5">
         <Button theme="lightOrange" size="md">회원탈퇴</Button>
-        <Button theme="gray" size="md">로그아웃</Button>
+        <Button theme="gray" size="md" onClick={async () => await logout()}>로그아웃</Button>
       </div>
 
       {/* 프로필 수정 모달 */}
