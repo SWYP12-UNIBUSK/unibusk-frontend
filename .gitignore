@@ -50,6 +50,7 @@ storybook-static
 .open-next
 
 # Local AI Guideline
+.claude/
 GEMINI.md
 CLAUDE.md
 CHATGPT.md
