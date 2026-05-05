@@ -261,7 +261,7 @@ body {
   padding-right: 1.25rem; /* 20px */
 
   /* 태블릿 이상에서 패딩 증가 */
-  @media (min-width: var(--breakpoint-md)) {
+  @media (min-width: 768px) {
     padding-left: 2.5rem; /* 40px */
     padding-right: 2.5rem; /* 40px */
   }
