@@ -138,64 +138,78 @@ function MyPerformanceCard({
 
   return (
     <>
-      <Link href={routePaths.performanceDetail(performanceId)}>
+      <article className={`
+        relative flex w-full items-center rounded-lg bg-white p-2.5
+        shadow-elevate-2
+      `}
+      >
+        {/* 썸네일 */}
         <div className={`
-          flex w-full items-center rounded-lg bg-white p-2.5 shadow-elevate-2
+          relative h-45 w-37.5 shrink-0 overflow-hidden rounded-lg bg-gray-300
         `}
         >
-          {/* 썸네일 */}
-          <div className={`
-            relative h-45 w-37.5 shrink-0 overflow-hidden rounded-lg bg-gray-300
-          `}
-          >
-            {thumbnailSrc && (
-              <Image
-                src={thumbnailSrc}
-                alt={title}
-                fill
-                className="object-cover"
-                sizes="150px"
-              />
-            )}
-          </div>
+          {thumbnailSrc && (
+            <Image
+              src={thumbnailSrc}
+              alt={title}
+              fill
+              className="object-cover"
+              sizes="150px"
+            />
+          )}
+        </div>
 
-          {/* 콘텐츠 */}
-          <div className={`
-            flex h-45 flex-1 flex-col justify-center gap-7.5 px-10
-          `}
-          >
-            {/* 상단: 제목 + 더보기 */}
-            <div className="flex items-center justify-between">
-              <h3 className="typo-body-sb-1 text-black">{title}</h3>
+        {/* 콘텐츠 */}
+        <div className="flex h-45 flex-1 flex-col justify-center gap-7.5 px-10">
+          {/* 상단: 제목 + 더보기 */}
+          <div className="flex items-center justify-between">
+            <h3 className="typo-body-sb-1 text-black">
+              {/*
+                ::after overlay 패턴: 이 <a> 의 ::after 가 <article> 전체를 덮어
+                카드 아무 곳이나 클릭하면 상세로 이동. nesting 없음.
+              */}
+              <Link
+                href={routePaths.performanceDetail(performanceId)}
+                className={`
+                  text-black outline-0
+                  after:absolute after:inset-0 after:content-['']
+                  focus-visible:underline
+                `}
+              >
+                {title}
+              </Link>
+            </h3>
+            {/* z-20: ::after(z-10) 위에 떠야 클릭이 트리거에 닿음 */}
+            <div className="relative z-20">
               <MyPerformanceCardMoreMenu
                 onDeleteClick={() => setIsDeleteDialogOpen(true)}
                 isDeletePending={isDeletePending}
               />
             </div>
+          </div>
 
-            {/* 하단: 날짜/시간 + 장소 */}
-            <div className="flex flex-col gap-1.25">
-              <div className="typo-caption-m-1 text-gray-700">
-                <p>{date}</p>
-                <p>{time}</p>
-              </div>
-              <div className="flex items-center gap-1.25">
-                <Image
-                  src="/icons/mapPin.svg"
-                  alt=""
-                  width={14}
-                  height={14}
-                  aria-hidden="true"
-                  unoptimized
-                />
-                <p className="typo-caption-m-1 text-gray-700">
-                  {performanceLocationName}
-                </p>
-              </div>
+          {/* 하단: 날짜/시간 + 장소 */}
+          <div className="flex flex-col gap-1.25">
+            <div className="typo-caption-m-1 text-gray-700">
+              <p>{date}</p>
+              <p>{time}</p>
+            </div>
+            <div className="flex items-center gap-1.25">
+              <Image
+                src="/icons/mapPin.svg"
+                alt=""
+                width={14}
+                height={14}
+                aria-hidden="true"
+                unoptimized
+              />
+              <p className="typo-caption-m-1 text-gray-700">
+                {performanceLocationName}
+              </p>
             </div>
           </div>
         </div>
-      </Link>
+      </article>
       <PerformanceDeleteConfirmDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -211,70 +225,63 @@ export function MyPerformanceCardMoreMenu({
   isDeletePending,
 }: MyPerformanceCardMoreMenuProps) {
   return (
-    <div
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-    >
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            type="button"
-            aria-label="더보기"
-            className={`
-              cursor-pointer rounded-full p-1.5 outline-0
-              hover:bg-gray-100
-              focus-visible:ring-0 focus-visible:ring-offset-0
-            `}
-          >
-            <Image
-              src="/icons/ellipsisVertical.svg"
-              alt=""
-              width={30}
-              height={30}
-              aria-hidden="true"
-              unoptimized
-            />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="더보기"
           className={`
-            w-30 typo-caption-r-1 text-black shadow-[0_0_4px_rgba(0,0,0,0.25)]
-            outline-0
+            cursor-pointer rounded-full p-1.5 outline-0
+            hover:bg-gray-100
+            focus-visible:ring-0 focus-visible:ring-offset-0
           `}
         >
-          <DropdownMenuItem className="cursor-pointer px-2.5 py-[14.5px]">
-            <Image
-              src="/icons/pencilSquare.svg"
-              alt=""
-              width={19}
-              height={19}
-              aria-hidden="true"
-              unoptimized
-            />
-            수정하기
-          </DropdownMenuItem>
-          <DropdownMenuSeparator className="bg-black/10" />
-          <DropdownMenuItem
-            disabled={isDeletePending}
-            className="cursor-pointer px-2.5 py-[14.5px]"
-            onSelect={onDeleteClick}
-          >
-            <Image
-              src="/icons/trashCan.svg"
-              alt=""
-              width={19}
-              height={19}
-              aria-hidden="true"
-              unoptimized
-            />
-            삭제하기
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          <Image
+            src="/icons/ellipsisVertical.svg"
+            alt=""
+            width={30}
+            height={30}
+            aria-hidden="true"
+            unoptimized
+          />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end"
+        className={`
+          w-30 typo-caption-r-1 text-black shadow-[0_0_4px_rgba(0,0,0,0.25)]
+          outline-0
+        `}
+      >
+        <DropdownMenuItem className="cursor-pointer px-2.5 py-[14.5px]">
+          <Image
+            src="/icons/pencilSquare.svg"
+            alt=""
+            width={19}
+            height={19}
+            aria-hidden="true"
+            unoptimized
+          />
+          수정하기
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-black/10" />
+        <DropdownMenuItem
+          disabled={isDeletePending}
+          className="cursor-pointer px-2.5 py-[14.5px]"
+          onSelect={onDeleteClick}
+        >
+          <Image
+            src="/icons/trashCan.svg"
+            alt=""
+            width={19}
+            height={19}
+            aria-hidden="true"
+            unoptimized
+          />
+          삭제하기
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
