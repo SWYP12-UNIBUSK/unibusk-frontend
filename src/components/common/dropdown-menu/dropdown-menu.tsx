@@ -290,7 +290,8 @@ function DropdownMenuSubContent({
       data-slot="dropdown-menu-sub-content"
       className={cn(
         `
-          z-50 min-w-32 origin-(--radix-dropdown-menu-content-transform-origin)
+          z-dropdown min-w-32
+          origin-(--radix-dropdown-menu-content-transform-origin)
           overflow-hidden rounded-md border bg-popover p-1
           text-popover-foreground shadow-lg
           data-[side=bottom]:slide-in-from-top-2
