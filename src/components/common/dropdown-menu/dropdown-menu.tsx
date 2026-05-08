@@ -11,10 +11,25 @@ function DropdownMenu({
 }
 
 function DropdownMenuPortal({
+  children,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
+  if (process.env.NODE_ENV !== 'production') {
+    const childArray = Array.isArray(children) ? children : [children];
+    childArray.forEach((child) => {
+      if (React.isValidElement(child) && child.type === DropdownMenuContent) {
+        throw new Error(
+          '[DropdownMenu] DropdownMenuPortal로 DropdownMenuContent를 감싸지 마세요. '
+          + 'DropdownMenuContent는 내부적으로 Portal을 포함하고 있어 중복 렌더링이 발생합니다.',
+        );
+      }
+    });
+  }
+
   return (
-    <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
+    <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props}>
+      {children}
+    </DropdownMenuPrimitive.Portal>
   );
 }
 
@@ -292,8 +307,8 @@ function DropdownMenuSubContent({
         `
           z-dropdown min-w-32
           origin-(--radix-dropdown-menu-content-transform-origin)
-          overflow-hidden rounded-md border bg-popover p-1
-          text-popover-foreground shadow-lg
+          overflow-hidden rounded-sm border bg-popover text-popover-foreground
+          shadow-lg
           data-[side=bottom]:slide-in-from-top-2
           data-[side=left]:slide-in-from-right-2
           data-[side=right]:slide-in-from-left-2

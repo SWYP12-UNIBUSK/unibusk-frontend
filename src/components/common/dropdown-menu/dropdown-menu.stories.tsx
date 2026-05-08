@@ -44,11 +44,14 @@ export const ProfileMenu: Story = {
           shadow-[0_0_10px_rgba(0,0,0,0.15)]
         `}
       >
-        <DropdownMenuItem asChild className="px-2.5 py-5">
+        <DropdownMenuItem asChild className="cursor-pointer px-2.5 py-5">
           <Link href="/profile">마이페이지</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-black/10" />
-        <DropdownMenuItem variant="destructive" className="px-2.5 py-5">
+        <DropdownMenuItem
+          variant="destructive"
+          className="cursor-pointer px-2.5 py-5"
+        >
           로그아웃
         </DropdownMenuItem>
       </DropdownMenuContent>
