@@ -50,7 +50,7 @@ export const MediumOrangeFilled: Story = {
   },
 };
 
-/** 3. 디자인 시안: 모바일 확인/취소 버튼 (Small Orange Filled — 120×35px) */
+/** 3. 디자인 시안: 모바일 확인/취소 버튼 (Small Orange Filled — 120×36px) */
 export const SmallOrangeFilled: Story = {
   args: {
     size: 'sm',

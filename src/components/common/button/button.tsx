@@ -28,7 +28,7 @@ const buttonVariants = cva(
       size: {
         lg: 'h-15 min-w-87.5 typo-body-sb-1',
         md: 'h-11.25 min-w-37.5 px-7.5 py-2.5 typo-body-m-3',
-        sm: 'h-9 w-30 min-w-0 typo-caption-m-1',
+        sm: 'h-9 min-w-30 typo-caption-m-1',
         xs: 'h-7.5 min-w-25 typo-caption-r-1',
       },
     },
