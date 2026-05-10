@@ -28,11 +28,13 @@ const buttonVariants = cva(
       size: {
         lg: 'h-15 min-w-87.5 typo-body-sb-1',
         md: 'h-11.25 min-w-37.5 px-7.5 py-2.5 typo-body-m-3',
-        sm: 'h-7.5 min-w-25 typo-caption-r-1',
+        sm: 'h-9 min-w-30 typo-caption-m-1',
+        xs: 'h-7.5 min-w-25 typo-caption-r-1',
       },
     },
     compoundVariants: [
       // 1. Outline 상태일 때 사이즈별 테두리 두께 설정
+      { appearance: 'outline', size: 'xs', className: 'border' },
       { appearance: 'outline', size: 'sm', className: 'border' },
       { appearance: 'outline', size: 'md', className: 'border-2' },
       { appearance: 'outline', size: 'lg', className: 'border-[3px]' },
@@ -124,7 +126,7 @@ interface ButtonProps
   asChild?: boolean;
   theme?: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
   appearance?: 'filled' | 'outline';
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'lg' | 'md' | 'sm' | 'xs';
 }
 
 function Button({

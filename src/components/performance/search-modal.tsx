@@ -75,7 +75,7 @@ export function SearchModal({ onSelect, trigger }: LocationSearchModalProps) {
           <Button
             appearance="outline"
             theme="orange"
-            size="sm"
+            size="xs"
             className="rounded-full px-4 text-xs"
           >
             장소 찾기

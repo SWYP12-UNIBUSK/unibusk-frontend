@@ -42,7 +42,7 @@ export function ProfileInfo() {
         <Button
           theme="orange"
           appearance="outline"
-          size="sm"
+          size="xs"
           className="absolute right-0 mr-91.5"
           onClick={() => setIsModalOpen(true)}
         >

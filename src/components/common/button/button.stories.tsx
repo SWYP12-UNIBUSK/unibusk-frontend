@@ -21,7 +21,7 @@ const meta: Meta<typeof Button> = {
     },
     size: {
       control: 'select',
-      options: ['lg', 'md', 'sm'],
+      options: ['lg', 'md', 'sm', 'xs'],
       description: '버튼의 크기를 선택합니다. outline 시 크기별로 테두리 두께가 달라집니다.',
     },
   },
@@ -40,23 +40,44 @@ export const LargeOrangeFilled: Story = {
   },
 };
 
-/** 2. 디자인 시안: '장소 찾기' (Small Orange Outline - border 1px) */
-export const SmallOrangeOutline: Story = {
+/** 2. 디자인 시안: 기본 버튼 (Medium Orange Filled) */
+export const MediumOrangeFilled: Story = {
+  args: {
+    size: 'md',
+    theme: 'orange',
+    appearance: 'filled',
+    children: '버튼',
+  },
+};
+
+/** 3. 디자인 시안: 모바일 확인/취소 버튼 (Small Orange Filled — 120×36px) */
+export const SmallOrangeFilled: Story = {
   args: {
     size: 'sm',
+    theme: 'orange',
+    appearance: 'filled',
+    children: '확인',
+  },
+};
+
+/** 4. 디자인 시안: '장소 찾기' (XSmall Orange Outline - border 1px) */
+export const XSmallOrangeOutline: Story = {
+  args: {
+    size: 'xs',
     theme: 'orange',
     appearance: 'outline',
     children: '장소 찾기',
   },
 };
 
-/** 3. 사이즈별 Outline 두께 비교 (lg: 3px, md: 2px, sm: 1px) */
+/** 5. 사이즈별 Outline 두께 비교 (lg: 3px, md: 2px, sm: 1px, xs: 1px) */
 export const OutlineSizeComparison: Story = {
   render: args => (
     <div className="flex flex-col items-center gap-4">
       <Button {...args} size="lg" appearance="outline">Large Outline (3px)</Button>
       <Button {...args} size="md" appearance="outline">Medium Outline (2px)</Button>
       <Button {...args} size="sm" appearance="outline">Small Outline (1px)</Button>
+      <Button {...args} size="xs" appearance="outline">XSmall Outline (1px)</Button>
     </div>
   ),
   args: {
@@ -64,7 +85,7 @@ export const OutlineSizeComparison: Story = {
   },
 };
 
-/** 4. 다양한 색상의 Filled 버튼 조합 */
+/** 6. 다양한 색상의 Filled 버튼 조합 */
 export const ThemeVariants: Story = {
   render: args => (
     <div className="flex items-center gap-4">
@@ -80,7 +101,7 @@ export const ThemeVariants: Story = {
   },
 };
 
-/** 5. 비활성화 상태 */
+/** 7. 비활성화 상태 */
 export const Disabled: Story = {
   args: {
     size: 'md',
