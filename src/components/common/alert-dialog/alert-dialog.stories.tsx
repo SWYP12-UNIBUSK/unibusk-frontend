@@ -111,10 +111,10 @@ export const Small: Story = {
       </AlertDialogTrigger>
       <AlertDialogContent size="sm" className="gap-6 px-10 py-8">
         <AlertDialogHeader className="gap-2.5">
-          <AlertDialogTitle className="typo-body-sb-3 text-black">
+          <AlertDialogTitle className="typo-body-sb-3">
             정말 삭제할까요?
           </AlertDialogTitle>
-          <AlertDialogDescription className="typo-caption-r-2 text-black">
+          <AlertDialogDescription className="typo-caption-r-2">
             이 작업은 되돌릴 수 없습니다.
           </AlertDialogDescription>
         </AlertDialogHeader>
