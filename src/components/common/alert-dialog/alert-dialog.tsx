@@ -183,12 +183,13 @@ function AlertDialogAction({
   className,
   theme,
   size = 'md',
+  mobileSize,
   appearance,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Action>
-  & Pick<React.ComponentProps<typeof Button>, 'size' | 'appearance' | 'theme'>) {
+  & Pick<React.ComponentProps<typeof Button>, 'size' | 'appearance' | 'theme' | 'mobileSize'>) {
   return (
-    <Button theme={theme} size={size} appearance={appearance} asChild className={className}>
+    <Button theme={theme} size={size} mobileSize={mobileSize} appearance={appearance} asChild className={className}>
       <AlertDialogPrimitive.Action
         data-slot="alert-dialog-action"
         {...props}
@@ -201,12 +202,13 @@ function AlertDialogCancel({
   className,
   theme,
   size = 'md',
+  mobileSize,
   appearance,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>
-  & Pick<React.ComponentProps<typeof Button>, 'theme' | 'size' | 'appearance'>) {
+  & Pick<React.ComponentProps<typeof Button>, 'theme' | 'size' | 'appearance' | 'mobileSize'>) {
   return (
-    <Button theme={theme} size={size} appearance={appearance} asChild className={className}>
+    <Button theme={theme} size={size} mobileSize={mobileSize} appearance={appearance} asChild className={className}>
       <AlertDialogPrimitive.Cancel
         data-slot="alert-dialog-cancel"
         {...props}

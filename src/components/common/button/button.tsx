@@ -3,6 +3,45 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/utils';
 
+type ButtonSize = 'lg' | 'md' | 'sm' | 'xs';
+
+/**
+ * 사이즈 토큰별 클래스 (기본).
+ * 항상 적용되며, mobileSize가 지정된 경우 모바일(< 576px) 사이즈로 사용됩니다.
+ */
+const SIZE_CLASSES_BASE: Record<ButtonSize, string> = {
+  lg: 'h-15 min-w-87.5 typo-body-sb-1',
+  md: 'h-11.25 min-w-37.5 px-7.5 py-2.5 typo-body-m-3',
+  sm: 'h-9 min-w-30 typo-caption-m-1',
+  xs: 'h-7.5 min-w-25 typo-caption-r-1',
+};
+
+/**
+ * 사이즈 토큰별 클래스 (sm 브레이크포인트 이상, >= 576px).
+ * Tailwind JIT가 정적으로 인식하도록 sm: prefix를 명시적으로 적어둡니다.
+ * SIZE_CLASSES_BASE와 동기화 필요 — 토큰 추가/변경 시 양쪽 모두 갱신하세요.
+ */
+const SIZE_CLASSES_SM_UP: Record<ButtonSize, string> = {
+  lg: 'sm:h-15 sm:min-w-87.5 sm:typo-body-sb-1',
+  md: 'sm:h-11.25 sm:min-w-37.5 sm:px-7.5 sm:py-2.5 sm:typo-body-m-3',
+  sm: 'sm:h-9 sm:min-w-30 sm:typo-caption-m-1',
+  xs: 'sm:h-7.5 sm:min-w-25 sm:typo-caption-r-1',
+};
+
+const OUTLINE_BORDER_BASE: Record<ButtonSize, string> = {
+  lg: 'border-[3px]',
+  md: 'border-2',
+  sm: 'border',
+  xs: 'border',
+};
+
+const OUTLINE_BORDER_SM_UP: Record<ButtonSize, string> = {
+  lg: 'sm:border-[3px]',
+  md: 'sm:border-2',
+  sm: 'sm:border',
+  xs: 'sm:border',
+};
+
 const buttonVariants = cva(
   `
     inline-flex shrink-0 cursor-pointer items-center justify-center gap-2
@@ -25,20 +64,8 @@ const buttonVariants = cva(
         filled: '',
         outline: 'bg-transparent',
       },
-      size: {
-        lg: 'h-15 min-w-87.5 typo-body-sb-1',
-        md: 'h-11.25 min-w-37.5 px-7.5 py-2.5 typo-body-m-3',
-        sm: 'h-9 min-w-30 typo-caption-m-1',
-        xs: 'h-7.5 min-w-25 typo-caption-r-1',
-      },
     },
     compoundVariants: [
-      // 1. Outline 상태일 때 사이즈별 테두리 두께 설정
-      { appearance: 'outline', size: 'xs', className: 'border' },
-      { appearance: 'outline', size: 'sm', className: 'border' },
-      { appearance: 'outline', size: 'md', className: 'border-2' },
-      { appearance: 'outline', size: 'lg', className: 'border-[3px]' },
-
       // Orange 조합
       {
         theme: 'orange',
@@ -115,7 +142,6 @@ const buttonVariants = cva(
     defaultVariants: {
       theme: 'orange',
       appearance: 'filled',
-      size: 'md',
     },
   },
 );
@@ -126,19 +152,32 @@ interface ButtonProps
   asChild?: boolean;
   theme?: 'orange' | 'gray' | 'lightGray' | 'lightOrange';
   appearance?: 'filled' | 'outline';
-  size?: 'lg' | 'md' | 'sm' | 'xs';
+  size?: ButtonSize;
+  mobileSize?: ButtonSize;
 }
 
 function Button({
   className,
   theme,
   appearance,
-  size,
+  size = 'md',
+  mobileSize,
   asChild = false,
   disabled,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : 'button';
+
+  const sizeClasses = mobileSize
+    ? cn(SIZE_CLASSES_BASE[mobileSize], SIZE_CLASSES_SM_UP[size])
+    : SIZE_CLASSES_BASE[size];
+
+  const borderClasses
+    = appearance === 'outline'
+      ? mobileSize
+        ? cn(OUTLINE_BORDER_BASE[mobileSize], OUTLINE_BORDER_SM_UP[size])
+        : OUTLINE_BORDER_BASE[size]
+      : '';
 
   return (
     <Comp
@@ -146,7 +185,9 @@ function Button({
       aria-disabled={disabled}
       disabled={disabled}
       className={cn(
-        buttonVariants({ theme, appearance, size }),
+        buttonVariants({ theme, appearance }),
+        sizeClasses,
+        borderClasses,
         className,
       )}
       {...props}

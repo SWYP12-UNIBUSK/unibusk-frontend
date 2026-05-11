@@ -22,7 +22,12 @@ const meta: Meta<typeof Button> = {
     size: {
       control: 'select',
       options: ['lg', 'md', 'sm', 'xs'],
-      description: '버튼의 크기를 선택합니다. outline 시 크기별로 테두리 두께가 달라집니다.',
+      description: '버튼의 크기를 선택합니다. mobileSize가 함께 지정되면 sm(576px) 이상 뷰포트에 적용됩니다.',
+    },
+    mobileSize: {
+      control: 'select',
+      options: [undefined, 'lg', 'md', 'sm', 'xs'],
+      description: '모바일(< 576px) 사이즈. 미지정 시 size를 그대로 사용하며, 지정 시 size는 sm 이상 뷰포트에 적용됩니다.',
     },
   },
 };
@@ -109,5 +114,37 @@ export const Disabled: Story = {
     appearance: 'filled',
     children: '비활성화 버튼',
     disabled: true,
+  },
+};
+
+/**
+ * 8. 반응형 사이즈 대표 데모: mobileSize="sm" + size="lg"
+ * 뷰포트 툴바에서 mobile(375px) ↔ sm(576px) 이상으로 전환하며 확인하세요.
+ * - mobile: 36px(h-9), min-w-120, typo-caption-m-1
+ * - sm 이상: 60px(h-15), min-w-350, typo-body-sb-1
+ */
+export const ResponsiveSmallToLarge: Story = {
+  args: {
+    mobileSize: 'sm',
+    size: 'lg',
+    theme: 'orange',
+    appearance: 'filled',
+    children: '내 공연 등록하기',
+  },
+};
+
+/**
+ * 9. 반응형 Outline 두께 확인: mobileSize="xs" + size="lg"
+ * 사이즈에 짝지어 border 두께도 함께 전환됩니다.
+ * - mobile: border 1px
+ * - sm 이상: border 3px
+ */
+export const ResponsiveOutlineThickness: Story = {
+  args: {
+    mobileSize: 'xs',
+    size: 'lg',
+    theme: 'orange',
+    appearance: 'outline',
+    children: '장소 찾기',
   },
 };
