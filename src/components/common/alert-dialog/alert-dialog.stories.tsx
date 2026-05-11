@@ -70,22 +70,16 @@ export const Default: Story = {
           <AlertDialogCancel
             theme="gray"
             appearance="filled"
+            mobileSize="sm"
             size="md"
-            className={`
-              h-9 w-30 min-w-0
-              sm:h-11.25 sm:w-auto sm:min-w-37.5
-            `}
           >
             취소
           </AlertDialogCancel>
           <AlertDialogAction
             theme="orange"
             appearance="filled"
+            mobileSize="sm"
             size="md"
-            className={`
-              h-9 w-30 min-w-0
-              sm:h-11.25 sm:w-auto sm:min-w-37.5
-            `}
           >
             확인
           </AlertDialogAction>
@@ -122,16 +116,14 @@ export const Small: Story = {
           <AlertDialogCancel
             theme="gray"
             appearance="filled"
-            size="md"
-            className="h-9 min-w-0"
+            size="sm"
           >
             취소
           </AlertDialogCancel>
           <AlertDialogAction
             theme="orange"
             appearance="filled"
-            size="md"
-            className="h-9 min-w-0"
+            size="sm"
           >
             확인
           </AlertDialogAction>
