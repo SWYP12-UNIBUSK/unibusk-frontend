@@ -26,23 +26,43 @@ export function PerformanceDeleteConfirmDialog({
 }: PerformanceDeleteConfirmDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent
-        size="default"
-        className="max-w-238! gap-5 rounded-[20px] border-0 px-20 py-12.5"
+      <AlertDialogContent className={`
+        gap-6 rounded-lg px-10 py-12.5
+        sm:gap-10 sm:px-20
+      `}
       >
-        <AlertDialogHeader className="gap-5">
-          <AlertDialogTitle className="typo-body-sb-1 text-black">등록한 공연을 삭제하시겠습니까?</AlertDialogTitle>
-          <AlertDialogDescription className="typo-body-m-3 text-black">
+        <AlertDialogHeader className={`
+          gap-2.5
+          sm:gap-5
+        `}
+        >
+          <AlertDialogTitle className={`
+            typo-body-sb-3
+            sm:typo-body-sb-1
+          `}
+          >
+            등록한 공연을 삭제하시겠습니까?
+          </AlertDialogTitle>
+          <AlertDialogDescription className={`
+            typo-caption-r-2
+            sm:typo-body-m-3
+          `}
+          >
             삭제된 공연 정보는 복구할 수 없으며, 모든 목록에서 삭제됩니다.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="flex-row items-center justify-center">
-          <AlertDialogCancel theme="gray" appearance="filled" size="md">
+        <AlertDialogFooter className={`
+          gap-1
+          sm:gap-2
+        `}
+        >
+          <AlertDialogCancel theme="gray" appearance="filled" mobileSize="sm" size="md">
             취소
           </AlertDialogCancel>
           <AlertDialogAction
             theme="orange"
             appearance="filled"
+            mobileSize="sm"
             size="md"
             disabled={isPending}
             onClick={onConfirm}
