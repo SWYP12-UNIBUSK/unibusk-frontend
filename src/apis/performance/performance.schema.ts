@@ -116,6 +116,8 @@ export const PerformanceListResponseDtoSchema = z.object({
  * 공연 상세 조회 API 응답 스키마
  */
 export const PerformanceDetailResponseDtoSchema = z.object({
+  /** 유저 고유 ID */
+  memberId: z.number(),
   /** 공연 고유 ID */
   performanceId: z.number(),
   /** 공연 제목 */

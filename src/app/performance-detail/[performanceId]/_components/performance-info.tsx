@@ -3,9 +3,20 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Button } from '@/components/common/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/common/dropdown-menu';
+import { PerformanceDeleteConfirmDialog } from '@/components/performance/performance-delete-confirm-dialog';
+import { useDeletePerformance } from '@/hooks/performance/use-delete-performance';
+import { useAuth } from '@/hooks/use-auth';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { cn } from '@/utils';
 import { PerformanceLocation } from './performance-location';
@@ -16,8 +27,10 @@ interface PerformanceInfoProps {
 
 export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
   const { data: performanceDetail } = useSuspenseQuery(performanceDetailQueryOptions(performanceId));
-  const { title, performanceDate, locationName, images, summary, startTime, endTime, performers, description, latitude, longitude } = performanceDetail;
+  const { title, performanceDate, locationName, images, summary, startTime, endTime, performers, description, latitude, longitude, memberId } = performanceDetail;
   const router = useRouter();
+  const { user, isAuthenticated, isPending } = useAuth();
+  const isOwner = !isPending && isAuthenticated && user?.memberId === memberId;
 
   return (
     <section className="pt-37.5">
@@ -26,6 +39,8 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
           title={title}
           performanceDate={performanceDate}
           locationName={locationName}
+          isOwner={isOwner}
+          performanceId={performanceId}
         />
       </Suspense>
       <Content
@@ -62,9 +77,11 @@ interface SummaryProps {
   title: string;
   performanceDate: string;
   locationName: string;
+  isOwner: boolean;
+  performanceId: number;
 }
 
-function Summary({ title, performanceDate, locationName }: SummaryProps) {
+function Summary({ title, performanceDate, locationName, isOwner, performanceId }: SummaryProps) {
   const currentTab = useSearchParams().get('tab') ?? 'upcoming';
 
   return (
@@ -89,7 +106,7 @@ function Summary({ title, performanceDate, locationName }: SummaryProps) {
       </div>
 
       {/* 공연 요약 */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center justify-between gap-5">
         <div className="flex flex-col gap-3.75">
           <h1 className="typo-title-b-3 text-black">{title}</h1>
           <div className="flex items-center gap-5 pb-5">
@@ -100,8 +117,102 @@ function Summary({ title, performanceDate, locationName }: SummaryProps) {
             </span>
           </div>
         </div>
+        {isOwner && <PerformanceOwnerMenu performanceId={performanceId} />}
       </div>
     </div>
+  );
+}
+
+interface PerformanceOwnerMenuProps {
+  performanceId: number;
+}
+
+function PerformanceOwnerMenu({ performanceId }: PerformanceOwnerMenuProps) {
+  const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { mutate, isPending: isDeletePending } = useDeletePerformance();
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label="더보기"
+            className={`
+              cursor-pointer rounded-full p-1.5 outline-0
+              hover:bg-gray-100
+              focus-visible:ring-0 focus-visible:ring-offset-0
+            `}
+          >
+            <Image
+              src="/icons/ellipsisVertical.svg"
+              alt=""
+              width={30}
+              height={30}
+              aria-hidden="true"
+              unoptimized
+            />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className={`
+            w-30 typo-caption-r-1 text-black shadow-[0_0_4px_rgba(0,0,0,0.25)]
+            outline-0
+          `}
+        >
+          <DropdownMenuItem
+            asChild
+            className="cursor-pointer px-2.5 py-[14.5px]"
+          >
+            <Link href={`/performance/${performanceId}/edit`}>
+              <Image
+                src="/icons/pencilSquare.svg"
+                alt=""
+                width={19}
+                height={19}
+                aria-hidden="true"
+                unoptimized
+              />
+              수정하기
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className="bg-black/10" />
+          <DropdownMenuItem
+            disabled={isDeletePending}
+            className="cursor-pointer px-2.5 py-[14.5px]"
+            onSelect={() => setIsDeleteDialogOpen(true)}
+          >
+            <Image
+              src="/icons/trashCan.svg"
+              alt=""
+              width={19}
+              height={19}
+              aria-hidden="true"
+              unoptimized
+            />
+            삭제하기
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <PerformanceDeleteConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={() =>
+          mutate(performanceId, {
+            onSuccess: () => {
+              if (window.history.length > 1) {
+                router.back();
+              }
+              else {
+                router.push('/performance-list');
+              }
+            },
+          })}
+        isPending={isDeletePending}
+      />
+    </>
   );
 }
 
