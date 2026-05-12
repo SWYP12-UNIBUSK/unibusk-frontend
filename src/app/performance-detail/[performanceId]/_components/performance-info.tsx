@@ -142,7 +142,8 @@ function PerformanceOwnerMenu({ performanceId }: PerformanceOwnerMenuProps) {
             className={`
               cursor-pointer rounded-full p-1.5 outline-0
               hover:bg-gray-100
-              focus-visible:ring-0 focus-visible:ring-offset-0
+              focus-visible:ring-2 focus-visible:ring-primary
+              focus-visible:ring-offset-2
             `}
           >
             <Image
