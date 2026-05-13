@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import type { ReactNode } from 'react';
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -235,7 +236,7 @@ export const LocationSearchMobileWithResults: Story = {
   render: () => <LocationSearchWithResults />,
 };
 
-function MobileNavLoggedIn() {
+function MobileNavSheet({ userSection, isLoggedIn }: { userSection: ReactNode; isLoggedIn: boolean }) {
   return (
     <Sheet>
       <header className="flex items-center justify-between px-5 py-4">
@@ -248,7 +249,6 @@ function MobileNavLoggedIn() {
       </header>
 
       <SheetContent side="right" className="w-full gap-0 pt-0" showCloseButton={false}>
-        {/* 헤더 복제 행 — 햄버거가 X로 변한 것처럼 보이게 함 */}
         <div className="flex items-center justify-between px-5 py-4">
           <HeaderLogo />
           <SheetClose asChild>
@@ -258,7 +258,44 @@ function MobileNavLoggedIn() {
           </SheetClose>
         </div>
 
-        {/* 유저 섹션 */}
+        {userSection}
+
+        <nav className="flex flex-col px-5">
+          <p className="py-3 typo-caption-sb-1 text-gray-550">ABOUT US</p>
+          <Link href="/busking-map" className="py-4 typo-body-m-3 text-black">버스킹 맵</Link>
+          <Link
+            href="/performance-list"
+            className="py-4 typo-body-m-3 text-black"
+          >
+            공연 정보
+          </Link>
+          <Link href="/community" className="py-4 typo-body-m-3 text-black">커뮤니티</Link>
+          <hr className="my-2 border-gray-200" />
+          <Link
+            href="/performance/register"
+            className="py-4 typo-body-m-3 text-black"
+          >
+            공연 등록하기
+          </Link>
+          {isLoggedIn && (
+            <button
+              type="button"
+              className="py-4 text-left typo-body-m-3 text-black"
+            >
+              로그아웃
+            </button>
+          )}
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function MobileNavLoggedIn() {
+  return (
+    <MobileNavSheet
+      isLoggedIn
+      userSection={(
         <div className="flex flex-col items-center gap-4 px-5 py-6">
           <div className={`
             flex size-20 items-center justify-center rounded-full bg-gray-200
@@ -286,61 +323,16 @@ function MobileNavLoggedIn() {
             </Button>
           </div>
         </div>
-
-        {/* 내비게이션 */}
-        <nav className="flex flex-col px-5">
-          <p className="py-3 typo-caption-sb-1 text-gray-550">ABOUT US</p>
-          <Link href="/busking-map" className="py-4 typo-body-m-3 text-black">버스킹 맵</Link>
-          <Link
-            href="/performance-list"
-            className="py-4 typo-body-m-3 text-black"
-          >
-            공연 정보
-          </Link>
-          <Link href="/community" className="py-4 typo-body-m-3 text-black">커뮤니티</Link>
-          <hr className="my-2 border-gray-200" />
-          <Link
-            href="/performance/register"
-            className="py-4 typo-body-m-3 text-black"
-          >
-            공연 등록하기
-          </Link>
-          <button
-            type="button"
-            className="py-4 text-left typo-body-m-3 text-black"
-          >
-            로그아웃
-          </button>
-        </nav>
-      </SheetContent>
-    </Sheet>
+      )}
+    />
   );
 }
 
 function MobileNavLoggedOut() {
   return (
-    <Sheet>
-      <header className="flex items-center justify-between px-5 py-4">
-        <HeaderLogo />
-        <SheetTrigger asChild>
-          <button type="button" aria-label="메뉴 열기" className="cursor-pointer">
-            <Menu size={24} />
-          </button>
-        </SheetTrigger>
-      </header>
-
-      <SheetContent side="right" className="w-full gap-0 pt-0" showCloseButton={false}>
-        {/* 헤더 복제 행 */}
-        <div className="flex items-center justify-between px-5 py-4">
-          <HeaderLogo />
-          <SheetClose asChild>
-            <button type="button" aria-label="메뉴 닫기" className="cursor-pointer">
-              <XIcon />
-            </button>
-          </SheetClose>
-        </div>
-
-        {/* 비로그인 유저 섹션 */}
+    <MobileNavSheet
+      isLoggedIn={false}
+      userSection={(
         <div className="flex flex-col items-center gap-4 px-5 py-6">
           <div className={`
             flex size-20 items-center justify-center rounded-full bg-gray-200
@@ -359,34 +351,8 @@ function MobileNavLoggedOut() {
             <Link href="/login">로그인</Link>
           </Button>
         </div>
-
-        {/* 내비게이션 */}
-        <nav className="flex flex-col px-5">
-          <p className="py-3 typo-caption-sb-1 text-gray-550">ABOUT US</p>
-          <Link href="/busking-map" className="py-4 typo-body-m-3 text-black">버스킹 맵</Link>
-          <Link
-            href="/performance-list"
-            className="py-4 typo-body-m-3 text-black"
-          >
-            공연 정보
-          </Link>
-          <Link href="/community" className="py-4 typo-body-m-3 text-black">커뮤니티</Link>
-          <hr className="my-2 border-gray-200" />
-          <Link
-            href="/performance/register"
-            className="py-4 typo-body-m-3 text-black"
-          >
-            공연 등록하기
-          </Link>
-          <button
-            type="button"
-            className="py-4 text-left typo-body-m-3 text-black"
-          >
-            로그아웃
-          </button>
-        </nav>
-      </SheetContent>
-    </Sheet>
+      )}
+    />
   );
 }
 

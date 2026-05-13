@@ -14,6 +14,7 @@ function XIcon({
 
   return (
     <svg
+      {...props}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
@@ -24,7 +25,6 @@ function XIcon({
       aria-label={ariaLabel}
       aria-labelledby={title ? titleId : ariaLabelledBy}
       className={cn(`block`, className)}
-      {...props}
     >
       {title && <title id={titleId}>{title}</title>}
 
