@@ -1,12 +1,17 @@
 'use client';
 
 import type { ComponentProps } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { useAuth } from '@/hooks';
 import { routePaths } from '@/utils';
-import { RegisterModal } from './register-modal';
+
+const RegisterModal = dynamic(
+  () => import('./register-modal').then(m => m.RegisterModal),
+  { ssr: false },
+);
 
 type PerformanceRegisterButtonProps = ComponentProps<typeof Button>;
 
