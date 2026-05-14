@@ -1,13 +1,18 @@
 'use client';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { Button } from '@/components/common/button';
 import { AvatarCircleIcon } from '@/components/common/icon';
 import { useAuth } from '@/hooks';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { cn } from '@/utils';
-import { ProfileEditModal } from './profile-edit-modal';
+
+const ProfileEditModal = dynamic(
+  () => import('./profile-edit-modal').then(m => m.ProfileEditModal),
+  { ssr: false },
+);
 
 interface DisplayInputProps {
   label: string;
@@ -66,11 +71,13 @@ export function ProfileInfo() {
       </div>
 
       {/* 프로필 수정 모달 */}
-      <ProfileEditModal
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        currentName={name}
-      />
+      {isModalOpen && (
+        <ProfileEditModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          currentName={name}
+        />
+      )}
     </section>
   );
 }

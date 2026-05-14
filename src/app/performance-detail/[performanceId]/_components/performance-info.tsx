@@ -2,6 +2,7 @@
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ImageIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -19,7 +20,11 @@ import { useDeletePerformance } from '@/hooks/performance/use-delete-performance
 import { useAuth } from '@/hooks/use-auth';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { cn } from '@/utils';
-import { PerformanceLocation } from './performance-location';
+
+const PerformanceLocation = dynamic(
+  () => import('./performance-location').then(m => m.PerformanceLocation),
+  { ssr: false },
+);
 
 interface PerformanceInfoProps {
   performanceId: number;
