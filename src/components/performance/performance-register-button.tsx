@@ -44,7 +44,13 @@ export function PerformanceRegisterButton({
       <Button {...buttonProps} disabled={disabled || isPending} onClick={handleClick}>
         {children}
       </Button>
-      <RegisterModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {isModalOpen
+        && (
+          <RegisterModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+        )}
     </>
   );
 }

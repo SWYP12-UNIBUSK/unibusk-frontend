@@ -71,11 +71,13 @@ export function ProfileInfo() {
       </div>
 
       {/* 프로필 수정 모달 */}
-      <ProfileEditModal
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-        currentName={name}
-      />
+      {isModalOpen && (
+        <ProfileEditModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          currentName={name}
+        />
+      )}
     </section>
   );
 }
