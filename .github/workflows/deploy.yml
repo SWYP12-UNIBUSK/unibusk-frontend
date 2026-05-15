@@ -95,3 +95,79 @@ jobs:
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
           echo "| Production | ${{ job.status }} | [https://unibusk.workers.dev](https://unibusk.workers.dev) |" >> $GITHUB_STEP_SUMMARY
+
+  lighthouse:
+    if: github.event_name == 'pull_request'
+    needs: preview
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.26.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Lighthouse CI
+        continue-on-error: true
+        run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
+
+      - name: Comment Lighthouse Results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const baseUrl = process.env.LHCI_BASE_URL;
+            const lhciDir = '.lighthouseci';
+            let body = '## 🔦 Lighthouse CI Results\n\n';
+
+            try {
+              const files = fs.readdirSync(lhciDir)
+                .filter(f => f.startsWith('lhr-') && f.endsWith('.json'))
+                .sort();
+
+              if (files.length === 0) {
+                body += '⚠️ 측정 결과를 찾을 수 없습니다.';
+              } else {
+                const score = s => s >= 90 ? `🟢 ${s}` : s >= 80 ? `🟡 ${s}` : `🔴 ${s}`;
+
+                body += '| URL | Performance | Accessibility | Best Practices | SEO |\n';
+                body += '|-----|:-----------:|:-------------:|:--------------:|:---:|\n';
+
+                const seen = new Set();
+                for (const file of files) {
+                  const lhr = JSON.parse(fs.readFileSync(`${lhciDir}/${file}`, 'utf8'));
+                  const url = (lhr.finalUrl || lhr.requestedUrl).replace(baseUrl, '') || '/';
+                  if (seen.has(url)) continue;
+                  seen.add(url);
+
+                  const perf = Math.round(lhr.categories.performance.score * 100);
+                  const a11y = Math.round(lhr.categories.accessibility.score * 100);
+                  const bp   = Math.round(lhr.categories['best-practices'].score * 100);
+                  const seo  = Math.round(lhr.categories.seo.score * 100);
+
+                  body += `| \`${url}\` | ${score(perf)} | ${score(a11y)} | ${score(bp)} | ${score(seo)} |\n`;
+                }
+              }
+            } catch (e) {
+              body += `⚠️ 결과 파싱 실패: ${e.message}`;
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
