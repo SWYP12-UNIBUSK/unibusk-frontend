@@ -121,8 +121,6 @@ jobs:
 
       - name: Run Lighthouse CI
         continue-on-error: true
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
 
       - name: Comment Lighthouse Results
@@ -167,9 +165,28 @@ jobs:
               body += `⚠️ 결과 파싱 실패: ${e.message}`;
             }
 
-            github.rest.issues.createComment({
+            const { data: comments } = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body
             });
+
+            const existing = comments.find(
+              c => c.user.login === 'github-actions[bot]' && c.body.includes('🔦 Lighthouse CI Results')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+              });
+            }
