@@ -121,6 +121,8 @@ jobs:
 
       - name: Run Lighthouse CI
         continue-on-error: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
 
       - name: Comment Lighthouse Results
@@ -141,7 +143,7 @@ jobs:
               if (files.length === 0) {
                 body += '⚠️ 측정 결과를 찾을 수 없습니다.';
               } else {
-                const score = s => s >= 90 ? `🟢 ${s}` : s >= 80 ? `🟡 ${s}` : `🔴 ${s}`;
+                const score = s => s == null ? 'N/A' : s >= 90 ? `🟢 ${s}` : s >= 80 ? `🟡 ${s}` : `🔴 ${s}`;
 
                 body += '| URL | Performance | Accessibility | Best Practices | SEO |\n';
                 body += '|-----|:-----------:|:-------------:|:--------------:|:---:|\n';
@@ -153,10 +155,10 @@ jobs:
                   if (seen.has(url)) continue;
                   seen.add(url);
 
-                  const perf = Math.round(lhr.categories.performance.score * 100);
-                  const a11y = Math.round(lhr.categories.accessibility.score * 100);
-                  const bp   = Math.round(lhr.categories['best-practices'].score * 100);
-                  const seo  = Math.round(lhr.categories.seo.score * 100);
+                  const perf = lhr.categories.performance?.score != null ? Math.round(lhr.categories.performance.score * 100) : null;
+                  const a11y = lhr.categories.accessibility?.score != null ? Math.round(lhr.categories.accessibility.score * 100) : null;
+                  const bp   = lhr.categories['best-practices']?.score != null ? Math.round(lhr.categories['best-practices'].score * 100) : null;
+                  const seo  = lhr.categories.seo?.score != null ? Math.round(lhr.categories.seo.score * 100) : null;
 
                   body += `| \`${url}\` | ${score(perf)} | ${score(a11y)} | ${score(bp)} | ${score(seo)} |\n`;
                 }
