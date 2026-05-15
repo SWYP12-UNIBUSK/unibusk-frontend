@@ -51,10 +51,7 @@ storybook-static
 
 # Local AI Guideline
 .claude/
-GEMINI.md
-CLAUDE.md
-CHATGPT.md
-SKILL.md
+.agents/
 
 # Lighthouse legacy
 .lighthouseci/*
