@@ -55,3 +55,6 @@ GEMINI.md
 CLAUDE.md
 CHATGPT.md
 SKILL.md
+
+# Lighthouse legacy
+.lighthouseci/*
