@@ -119,6 +119,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Wait for preview to be ready
+        run: |
+          for i in {1..30}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$LHCI_BASE_URL")
+            if [ "$code" = "200" ]; then echo "ready"; exit 0; fi
+            echo "attempt $i: $code"; sleep 5
+          done
+          echo "preview not ready"; exit 1
+
       - name: Run Lighthouse CI
         continue-on-error: true
         run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
@@ -146,19 +155,27 @@ jobs:
                 body += '| URL | Performance | Accessibility | Best Practices | SEO |\n';
                 body += '|-----|:-----------:|:-------------:|:--------------:|:---:|\n';
 
-                const seen = new Set();
+                const median = arr => {
+                  const sorted = arr.filter(v => v != null).sort((a, b) => a - b);
+                  if (sorted.length === 0) return null;
+                  const mid = Math.floor(sorted.length / 2);
+                  return sorted.length % 2 !== 0 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+                };
+
+                const byUrl = new Map();
                 for (const file of files) {
                   const lhr = JSON.parse(fs.readFileSync(`${lhciDir}/${file}`, 'utf8'));
                   const url = (lhr.finalUrl || lhr.requestedUrl).replace(baseUrl, '') || '/';
-                  if (seen.has(url)) continue;
-                  seen.add(url);
+                  if (!byUrl.has(url)) byUrl.set(url, { perf: [], a11y: [], bp: [], seo: [] });
+                  const entry = byUrl.get(url);
+                  entry.perf.push(lhr.categories.performance?.score != null ? Math.round(lhr.categories.performance.score * 100) : null);
+                  entry.a11y.push(lhr.categories.accessibility?.score != null ? Math.round(lhr.categories.accessibility.score * 100) : null);
+                  entry.bp.push(lhr.categories['best-practices']?.score != null ? Math.round(lhr.categories['best-practices'].score * 100) : null);
+                  entry.seo.push(lhr.categories.seo?.score != null ? Math.round(lhr.categories.seo.score * 100) : null);
+                }
 
-                  const perf = lhr.categories.performance?.score != null ? Math.round(lhr.categories.performance.score * 100) : null;
-                  const a11y = lhr.categories.accessibility?.score != null ? Math.round(lhr.categories.accessibility.score * 100) : null;
-                  const bp   = lhr.categories['best-practices']?.score != null ? Math.round(lhr.categories['best-practices'].score * 100) : null;
-                  const seo  = lhr.categories.seo?.score != null ? Math.round(lhr.categories.seo.score * 100) : null;
-
-                  body += `| \`${url}\` | ${score(perf)} | ${score(a11y)} | ${score(bp)} | ${score(seo)} |\n`;
+                for (const [url, entry] of byUrl) {
+                  body += `| \`${url}\` | ${score(median(entry.perf))} | ${score(median(entry.a11y))} | ${score(median(entry.bp))} | ${score(median(entry.seo))} |\n`;
                 }
               }
             } catch (e) {
@@ -172,7 +189,7 @@ jobs:
             });
 
             const existing = comments.find(
-              c => c.user.login === 'github-actions[bot]' && c.body.includes('🔦 Lighthouse CI Results')
+              c => c.user.login === 'github-actions[bot]' && c.body?.includes('🔦 Lighthouse CI Results')
             );
 
             if (existing) {
