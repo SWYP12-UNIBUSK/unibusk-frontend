@@ -50,7 +50,7 @@ jobs:
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev |" >> $GITHUB_STEP_SUMMARY
+          echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev |" >> $GITHUB_STEP_SUMMARY
   
   production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -94,7 +94,7 @@ jobs:
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          echo "| Production | ${{ job.status }} | [https://unibusk.workers.dev](https://unibusk.workers.dev) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Production | ${{ job.status }} | [https://unibusk.site](https://unibusk.site) |" >> $GITHUB_STEP_SUMMARY
 
   lighthouse:
     if: github.event_name == 'pull_request'
@@ -103,7 +103,7 @@ jobs:
     permissions:
       pull-requests: write
     env:
-      LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev
+      LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev
     steps:
       - uses: actions/checkout@v4
 
