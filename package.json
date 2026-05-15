@@ -14,7 +14,8 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy -- --keep-vars",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lhci": "pnpm build && lhci autorun"
   },
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
@@ -53,6 +54,7 @@
     "@commitlint/config-conventional": "^20.2.0",
     "@commitlint/types": "^20.2.0",
     "@eslint-react/eslint-plugin": "^2.5.0",
+    "@lhci/cli": "^0.15.1",
     "@next/bundle-analyzer": "^16.2.6",
     "@storybook/addon-a11y": "^10.1.11",
     "@storybook/addon-docs": "^10.1.11",

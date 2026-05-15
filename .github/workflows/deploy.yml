@@ -50,7 +50,7 @@ jobs:
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.workers.dev |" >> $GITHUB_STEP_SUMMARY
+          echo "| Preview | ${{ job.status }} | https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev |" >> $GITHUB_STEP_SUMMARY
   
   production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -94,4 +94,116 @@ jobs:
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          echo "| Production | ${{ job.status }} | [https://unibusk.workers.dev](https://unibusk.workers.dev) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Production | ${{ job.status }} | [https://unibusk.site](https://unibusk.site) |" >> $GITHUB_STEP_SUMMARY
+
+  lighthouse:
+    if: github.event_name == 'pull_request'
+    needs: preview
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    env:
+      LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.26.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Wait for preview to be ready
+        run: |
+          for i in {1..30}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$LHCI_BASE_URL")
+            if [ "$code" = "200" ]; then echo "ready"; exit 0; fi
+            echo "attempt $i: $code"; sleep 5
+          done
+          echo "preview not ready"; exit 1
+
+      - name: Run Lighthouse CI
+        continue-on-error: true
+        run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
+
+      - name: Comment Lighthouse Results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const baseUrl = process.env.LHCI_BASE_URL;
+            const lhciDir = '.lighthouseci';
+            let body = '## 🔦 Lighthouse CI Results\n\n';
+
+            try {
+              const files = fs.readdirSync(lhciDir)
+                .filter(f => f.startsWith('lhr-') && f.endsWith('.json'))
+                .sort();
+
+              if (files.length === 0) {
+                body += '⚠️ 측정 결과를 찾을 수 없습니다.';
+              } else {
+                const score = s => s == null ? 'N/A' : s >= 90 ? `🟢 ${s}` : s >= 80 ? `🟡 ${s}` : `🔴 ${s}`;
+
+                body += '| URL | Performance | Accessibility | Best Practices | SEO |\n';
+                body += '|-----|:-----------:|:-------------:|:--------------:|:---:|\n';
+
+                const median = arr => {
+                  const sorted = arr.filter(v => v != null).sort((a, b) => a - b);
+                  if (sorted.length === 0) return null;
+                  const mid = Math.floor(sorted.length / 2);
+                  return sorted.length % 2 !== 0 ? sorted[mid] : Math.round((sorted[mid - 1] + sorted[mid]) / 2);
+                };
+
+                const byUrl = new Map();
+                for (const file of files) {
+                  const lhr = JSON.parse(fs.readFileSync(`${lhciDir}/${file}`, 'utf8'));
+                  const url = (lhr.finalUrl || lhr.requestedUrl).replace(baseUrl, '') || '/';
+                  if (!byUrl.has(url)) byUrl.set(url, { perf: [], a11y: [], bp: [], seo: [] });
+                  const entry = byUrl.get(url);
+                  entry.perf.push(lhr.categories.performance?.score != null ? Math.round(lhr.categories.performance.score * 100) : null);
+                  entry.a11y.push(lhr.categories.accessibility?.score != null ? Math.round(lhr.categories.accessibility.score * 100) : null);
+                  entry.bp.push(lhr.categories['best-practices']?.score != null ? Math.round(lhr.categories['best-practices'].score * 100) : null);
+                  entry.seo.push(lhr.categories.seo?.score != null ? Math.round(lhr.categories.seo.score * 100) : null);
+                }
+
+                for (const [url, entry] of byUrl) {
+                  body += `| \`${url}\` | ${score(median(entry.perf))} | ${score(median(entry.a11y))} | ${score(median(entry.bp))} | ${score(median(entry.seo))} |\n`;
+                }
+              }
+            } catch (e) {
+              body += `⚠️ 결과 파싱 실패: ${e.message}`;
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existing = comments.find(
+              c => c.user.login === 'github-actions[bot]' && c.body?.includes('🔦 Lighthouse CI Results')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+              });
+            }
