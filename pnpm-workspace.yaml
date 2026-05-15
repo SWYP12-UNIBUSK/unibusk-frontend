@@ -1,9 +1,15 @@
+minimumReleaseAge: 1440 # 1 day
+
 shellEmulator: true
 
 trustPolicy: no-downgrade
 
 packages:
   - .
+
+overrides:
+  semver@<7: ^7.6.3
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
