@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 /**
  * CSS 미디어 쿼리 결과를 구독하는 훅. 쿼리 조건의 참/거짓이 바뀔 때만 리렌더됩니다.
@@ -19,14 +19,14 @@ import { useSyncExternalStore } from 'react';
  * const isTouchDevice = useMediaQuery('(hover: none) and (pointer: coarse)');
  */
 export function useMediaQuery(query: string): boolean {
-  return useSyncExternalStore(
-    (callback) => {
-      const media = window.matchMedia(query);
-      media.addEventListener('change', callback);
+  const subscribe = useCallback((callback: () => void) => {
+    const media = window.matchMedia(query);
+    media.addEventListener('change', callback);
 
-      return () => media.removeEventListener('change', callback);
-    },
-    () => window.matchMedia(query).matches,
-    () => false,
-  );
+    return () => media.removeEventListener('change', callback);
+  }, [query]);
+
+  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query]);
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }
