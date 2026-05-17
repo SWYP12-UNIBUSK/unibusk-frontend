@@ -1,5 +1,4 @@
-import { Header } from '@/components/common/header';
-import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
+import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from '../_components';
 
 export default function Page() {
   return (
@@ -9,13 +8,6 @@ export default function Page() {
         bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
       `}
       >
-        <div className={`
-          mx-auto flex w-full max-w-360 items-center px-6 pt-6.25
-        `}
-        >
-          <Header />
-        </div>
-
         <HomeHeroSection
           mapBgSrc="/images/main-bg.webp"
           heroIllustSrc="/images/main-image.webp"

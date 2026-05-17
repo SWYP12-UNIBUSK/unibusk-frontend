@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { cache, Suspense } from 'react';
-import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { createPageMetadata } from '@/utils';
@@ -66,8 +65,7 @@ export default async function PerformanceDetailPage(
   );
 
   return (
-    <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
-      <Header />
+    <div className="relative container-1920 flex min-h-screen flex-col">
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense fallback={<div>Loading...</div>}>
