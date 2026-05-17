@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { HomeFooter } from '@/app/_components/home-footer';
+import { HomeFooter } from '@/app/(main)/_components/home-footer';
 import { cn } from '@/utils';
 import { LegalConfirmButton } from '../legal-confirm-button';
 

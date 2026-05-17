@@ -1,4 +1,4 @@
-import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from '../_components';
+import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
 export default function Page() {
   return (
