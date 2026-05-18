@@ -37,8 +37,8 @@ export default function HomePage() {
       <JsonLdScript id="organization-json-ld" data={getHomeOrganizationJsonLd()} />
       <h1 className="sr-only">UNIBUSK 유니버스크 - 버스킹 공연 일정과 장소 플랫폼</h1>
       <HomeHeroSection
-        mapBgSrc="/images/main-bg.webp"
-        heroIllustSrc="/images/main-image.webp"
+        mapBgSrc="/images/compressed-main-bg.avif"
+        heroIllustSrc="/images/compressed-main-image.avif"
       />
 
       <HomeUpcomingBuskingSection

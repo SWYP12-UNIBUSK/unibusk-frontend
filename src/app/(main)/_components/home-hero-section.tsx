@@ -1,10 +1,6 @@
-'use client';
-
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { SearchInput } from '@/components/common/search-input';
 import { MainLayout } from '@/components/layout';
+import { HomeHeroSearch } from './home-hero-search';
 
 interface HomeHeroSectionProps {
   mapBgSrc: string;
@@ -12,20 +8,6 @@ interface HomeHeroSectionProps {
 }
 
 export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProps) {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const trimmed = searchQuery.trim();
-    if (!trimmed) {
-      return;
-    }
-
-    router.push(`/busking-map?keyword=${encodeURIComponent(trimmed)}`);
-  };
-
   return (
     <section className={`
       w-full bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
@@ -107,6 +89,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                 alt=""
                 fill
                 priority
+                  sizes="(max-width: 1280px) 60vw, 800px"
                 className="object-contain opacity-50 blur-[2px]"
               />
 
