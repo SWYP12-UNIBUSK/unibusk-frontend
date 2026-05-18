@@ -16,11 +16,13 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  applicationName: 'UNIBUSK(유니버스크)',
   title: {
     template: '%s | UNIBUSK',
-    default: 'UNIBUSK',
+    default: 'UNIBUSK(유니버스크)',
   },
-  description: '공연이 만들어지고, 보여지고, 시작되는 곳. 버스킹의 모든 순간을 잇다, UNIBUSK',
+  description: '공연이 만들어지고, 보여지고, 시작되는 곳. 버스킹의 모든 순간을 잇다, UNIBUSK(유니버스크)',
+  keywords: ['UNIBUSK', '유니버스크', '버스킹', '거리공연', '공연정보', '버스킹지도'],
   icons: {
     icon: '/logos/small-logo-unibusk-primary.png',
   },

@@ -32,7 +32,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
         <MainLayout className="relative z-10 pt-20">
           <div className="grid grid-cols-12 items-center gap-6">
             <div className="col-span-5">
-              <h1 className={`
+              <h2 className={`
                 typo-title-b-1 leading-[1.15] font-bold tracking-[-0.02em]
                 text-gray-900
               `}
@@ -40,7 +40,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                 누구나 거리 위에서
                 <br />
                 공연을 시작할 수 있도록
-              </h1>
+              </h2>
 
               <p className={`
                 mt-6 typo-title-r-4 leading-[1.6] whitespace-nowrap
