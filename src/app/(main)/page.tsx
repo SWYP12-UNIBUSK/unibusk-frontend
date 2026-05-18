@@ -1,8 +1,19 @@
+import { JsonLdScript } from '@/components/seo';
+import { createPageMetadata } from '@/utils';
+import { getHomeOrganizationJsonLd, getHomeWebsiteJsonLd, HOME_DESCRIPTION } from '@/utils/seo';
 import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
+
+export const metadata = createPageMetadata({
+  title: 'HOME',
+  description: HOME_DESCRIPTION,
+  path: '/',
+});
 
 export default function Page() {
   return (
     <main className="w-full">
+      <JsonLdScript id="website-json-ld" data={getHomeWebsiteJsonLd()} />
+      <JsonLdScript id="organization-json-ld" data={getHomeOrganizationJsonLd()} />
       <section className={`
         min-h-250 w-full
         bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
