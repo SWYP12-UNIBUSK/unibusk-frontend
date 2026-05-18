@@ -4,22 +4,35 @@ import { SITE_URL } from '@/constants';
 import { routePaths } from '../route-paths';
 import { toAbsoluteUrl } from './site-url';
 
+const HTTP_URL_PATTERN = /^https?:\/\//i;
+const PROTOCOL_RELATIVE_URL_PATTERN = /^\/\//;
+
 function toKstDateTime(date: string, time: string) {
   return `${date}T${time}:00+09:00`;
 }
 
 function toAbsoluteImageUrl(imageUrl: string) {
-  if (/^https?:\/\//.test(imageUrl)) {
-    return imageUrl;
+  const normalizedImageUrl = imageUrl.trim();
+
+  if (HTTP_URL_PATTERN.test(normalizedImageUrl)) {
+    return normalizedImageUrl;
   }
 
-  return toAbsoluteUrl(imageUrl);
+  if (PROTOCOL_RELATIVE_URL_PATTERN.test(normalizedImageUrl)) {
+    return `https:${normalizedImageUrl}`;
+  }
+
+  return toAbsoluteUrl(normalizedImageUrl);
 }
 
 export function buildPerformanceEventJsonLd(
   performanceId: number,
   performanceDetail: PerformanceDetailResponseDto,
 ): WithContext<Event> {
+  const imageUrls = performanceDetail.images
+    .filter(imageUrl => imageUrl.trim().length > 0)
+    .map(toAbsoluteImageUrl);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Event',
@@ -31,8 +44,8 @@ export function buildPerformanceEventJsonLd(
     'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
     'eventStatus': 'https://schema.org/EventScheduled',
     'inLanguage': 'ko-KR',
-    ...(performanceDetail.images.length > 0 && {
-      image: performanceDetail.images.map(toAbsoluteImageUrl),
+    ...(imageUrls.length > 0 && {
+      image: imageUrls,
     }),
     'location': {
       '@type': 'Place',

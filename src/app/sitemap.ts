@@ -6,6 +6,10 @@ import { toAbsoluteUrl } from '@/utils/seo';
 
 export const revalidate = 3600;
 
+// API가 잘못된 페이지네이션 응답을 반환해도 사이트맵 생성이 무한 루프에 빠지지 않도록 최대 페이지 수를 제한
+// 추후 최대 공연 수에 따라 변동
+const MAX_PERFORMANCE_PAGES = 200;
+
 const STATIC_PAGES: Array<{
   path: string;
   changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>;
@@ -21,7 +25,7 @@ async function getPerformanceIds(type: PerformanceFilterTab): Promise<number[]> 
   const performanceIds: number[] = [];
   let page = 0;
 
-  while (true) {
+  while (page < MAX_PERFORMANCE_PAGES) {
     const { content, hasNext } = await getPerformanceList(type, page, {
       skipRedirectOn401: true,
     });
@@ -32,12 +36,21 @@ async function getPerformanceIds(type: PerformanceFilterTab): Promise<number[]> 
       return performanceIds;
     }
 
+    if (content.length === 0) {
+      console.warn(`사이트맵: ${type} ${page} 페이지 응답이 비어 있어 순회를 중단`);
+      return performanceIds;
+    }
+
     page += 1;
   }
+
+  // 변경: 최대 페이지 상한에 도달한 경우에도 현재까지 수집한 ID로 사이트맵 생성
+  console.warn(`사이트맵: ${type} 페이지 상한(${MAX_PERFORMANCE_PAGES})에 도달함`);
+  return performanceIds;
 }
 
 function getUniqueValues<TValue>(values: TValue[]): TValue[] {
-  return values.filter((value, index) => values.indexOf(value) === index);
+  return Array.from(new Set(values));
 }
 
 async function getPerformanceIdsSafely(): Promise<number[]> {
@@ -75,8 +88,6 @@ async function getPerformanceDetailEntries(): Promise<MetadataRoute.Sitemap> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // 현재 sitemap 생성 시각입니다.
-  // 지금은 모든 엔트리에 공통으로 넣고, 추후에는 페이지별 실제 수정 시각으로 고도화할 수 있습니다.
   const lastModified = new Date();
   const performanceDetailEntries = await getPerformanceDetailEntries();
 
