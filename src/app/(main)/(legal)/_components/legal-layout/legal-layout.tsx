@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
-import { HomeFooter } from '@/app/_components/home-footer';
-import { Header } from '@/components/common/header';
-import { MainLayout } from '@/components/layout';
+import { HomeFooter } from '@/app/(main)/_components/home-footer';
 import { cn } from '@/utils';
 import { LegalConfirmButton } from '../legal-confirm-button';
 
@@ -13,10 +11,6 @@ interface LegalLayoutProps {
 export function LegalLayout({ title, children }: LegalLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
-      <MainLayout className="pt-6.25">
-        <Header />
-      </MainLayout>
-
       <main
         className={cn(
           'container-1920 py-17.5',

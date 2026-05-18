@@ -1,7 +1,6 @@
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { cookies } from 'next/headers';
 import { getUser } from '@/apis/user';
-import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { createPageMetadata } from '@/utils';
@@ -28,8 +27,7 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
-      <Header />
+    <div className="relative container-1920 flex min-h-screen flex-col">
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <ProfileTab />

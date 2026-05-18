@@ -1,7 +1,6 @@
 import type { PerformanceFilterTab } from '@/types/performance';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
-import { Header } from '@/components/common/header';
 import { getQueryClient } from '@/queries';
 import { performanceListInfiniteQueryOptions } from '@/queries/performance';
 import { isValidPerformanceTab } from '@/types/performance';
@@ -34,8 +33,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   await queryClient.prefetchInfiniteQuery(performanceListInfiniteQueryOptions(tab));
 
   return (
-    <div className="relative mt-6.25 container-1920 flex min-h-screen flex-col">
-      <Header />
+    <div className="relative container-1920 flex min-h-screen flex-col">
       <main className="min-h-screen bg-white pt-[57px]">
 
         <Hero />
