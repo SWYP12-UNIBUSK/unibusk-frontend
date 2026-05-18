@@ -100,7 +100,6 @@ export function UpcomingBuskingCarousel() {
                     alt=""
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-                    unoptimized={true}
                     className={cn(`
                       block transition-transform duration-500
                       group-hover/upcoming-card:scale-105
