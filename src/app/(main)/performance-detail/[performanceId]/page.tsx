@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { cache, Suspense } from 'react';
-import { Header } from '@/components/common/header';
 import { JsonLdScript } from '@/components/seo';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
