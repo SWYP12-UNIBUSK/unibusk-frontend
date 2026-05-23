@@ -56,7 +56,7 @@ function Label({
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   showCount?: boolean;
-  currentCount?: number;
+  currentCount?: React.ReactNode;
   /** Input 컴포넌트의 최상위 래퍼 div에 적용될 클래스 */
   containerClassName?: string;
 }
