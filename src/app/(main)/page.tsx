@@ -1,13 +1,34 @@
+import type { Metadata } from 'next';
 import { JsonLdScript } from '@/components/seo';
-import { createPageMetadata } from '@/utils';
+import { SHARED_OPEN_GRAPH } from '@/utils';
 import { getHomeOrganizationJsonLd, getHomeWebsiteJsonLd, HOME_DESCRIPTION } from '@/utils/seo';
 import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
-export const metadata = createPageMetadata({
-  title: '',
+const HOME_TITLE = 'UNIBUSK';
+const HOME_OG_IMAGE = '/logos/logo-unibusk-stacked-vertical.webp';
+
+export const metadata: Metadata = {
+  title: {
+    absolute: HOME_TITLE,
+  },
   description: HOME_DESCRIPTION,
-  path: '/',
-});
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    ...SHARED_OPEN_GRAPH,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: '/',
+    images: [HOME_OG_IMAGE],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    images: [HOME_OG_IMAGE],
+  },
+};
 
 export default function HomePage() {
   return (
