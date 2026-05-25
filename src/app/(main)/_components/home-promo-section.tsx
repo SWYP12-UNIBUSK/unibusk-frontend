@@ -17,24 +17,36 @@ interface HomePromoSectionProps {
 
 export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
   return (
-    <section className="w-full bg-white py-20">
-      <MainLayout>
+    <section className={`
+      w-full bg-white py-14
+      md:py-20
+    `}
+    >
+      <MainLayout className={`
+        px-5
+        md:px-6
+      `}
+      >
         <div className="text-center">
           <h2 className="typo-title-sb-2 text-black">공연을 홍보해 보세요</h2>
           <p className="mt-3.75 typo-title-r-4 text-gray-600">나의 공연 정보를 등록하고 홍보해 보세요</p>
         </div>
         <div
           className={cn(
-            'mt-7.5',
+            'mt-12.5',
+            'lg:mt-7.5',
             'w-full rounded-xl',
             'bg-[linear-gradient(90deg,#FFF7ED_0%,#FEF2F2_50%,#FDF2F8F7_100%)]',
-            'px-26 py-18.5',
+            'px-3 py-6',
+            'md:px-10 md:py-12',
+            'lg:px-26 lg:py-18.5',
           )}
         >
 
           <div className={`
-            grid grid-cols-1 gap-6
-            md:grid-cols-2
+            grid grid-cols-2 gap-2.5
+            sm:gap-4
+            md:gap-6
             lg:grid-cols-4
           `}
           >
@@ -44,7 +56,11 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
             <PromoStepCard step="Step 4" title="Ready to Go?" description="마지막으로 체크하면 끝!" iconSrc={PROMO_STEP_ICONS.step4} />
           </div>
 
-          <div className="mt-20 flex justify-center">
+          <div className={`
+            mt-10 flex justify-center
+            md:mt-20
+          `}
+          >
             <Button
               asChild
               size="lg"

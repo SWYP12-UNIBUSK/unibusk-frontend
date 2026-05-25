@@ -56,13 +56,14 @@ export function UpcomingBuskingCarousel() {
 
   return (
     <EmblaCardCarousel
-      perView={4}
+      perView={{ base: 2, md: 3, lg: 4 }}
       slidesToScroll={1}
       gapPx={24}
       showArrows={true}
       showProgress={true}
       progressVariant="thumb"
       className="relative"
+      arrowClassName="hidden lg:flex"
     >
       {items.map((item) => {
         const isSkeleton = Boolean(item.isSkeleton);
@@ -70,15 +71,15 @@ export function UpcomingBuskingCarousel() {
         const isPlaceholder = isSkeleton || !item.imageUrl;
 
         return (
-          <article key={item.id} className="w-full">
+          <article key={item.id} className="h-full w-full">
             <Link
               href={`/performance-detail/${item.id}`}
-              className="group/upcoming-card block"
+              className="group/upcoming-card block h-full"
             >
               <Card
                 className={cn(
                   `
-                    mx-auto h-141 w-85.5 cursor-pointer overflow-hidden
+                    mx-auto h-full w-full cursor-pointer overflow-hidden
                     rounded-xl bg-white transition-all duration-300 ease-in-out
                   `,
                   'shadow-[0_0_10px_0_rgba(0,0,0,0.2)]',
@@ -90,14 +91,15 @@ export function UpcomingBuskingCarousel() {
                 )}
               >
                 <div className={`
-                  relative h-112 w-80.5 overflow-hidden rounded-lg bg-white
+                  relative aspect-[161/224] w-full overflow-hidden rounded-lg
+                  bg-white
                 `}
                 >
                   <Image
                     src={imageSrc}
                     alt=""
                     fill
-                    sizes="322px"
+                    sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
                     unoptimized={true}
                     className={cn(`
                       block transition-transform duration-500

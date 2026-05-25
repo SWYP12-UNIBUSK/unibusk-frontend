@@ -14,14 +14,26 @@ export function HomeUpcomingBuskingSection({
   viewAllHref,
 }: HomeUpcomingBuskingSectionProps) {
   return (
-    <section className="w-full bg-white py-20">
-      <MainLayout>
+    <section className={`
+      w-full bg-white py-14
+      md:py-20
+    `}
+    >
+      <MainLayout className={`
+        px-5
+        md:px-6
+      `}
+      >
         <div className="text-center">
           <h2 className="typo-title-sb-2 text-black">{title}</h2>
-          <p className="mt-3.75 typo-title-r-4 text-gray-600">{tags.join(' ')}</p>
+          <p className="mt-3.75 typo-title-r-4 break-keep text-gray-600">{tags.join(' ')}</p>
         </div>
 
-        <div className="mt-14.75 flex justify-end">
+        <div className={`
+          mt-12.5 flex justify-end
+          md:mt-14.75
+        `}
+        >
           <Link
             href={viewAllHref}
             className={`
@@ -33,7 +45,11 @@ export function HomeUpcomingBuskingSection({
           </Link>
         </div>
 
-        <div className="mt-8">
+        <div className={`
+          mt-3
+          md:mt-8
+        `}
+        >
           <UpcomingBuskingCarousel />
         </div>
       </MainLayout>
