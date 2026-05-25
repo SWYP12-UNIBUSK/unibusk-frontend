@@ -10,6 +10,12 @@ function clamp01(value: number) {
 
 type ProgressVariant = 'thumb' | 'fill';
 
+export interface ResponsivePerView {
+  base: number;
+  md?: number;
+  lg?: number;
+}
+
 interface EmblaSnapshot {
   progress: number;
   snapCount: number;
@@ -28,7 +34,7 @@ export interface EmblaCardCarouselProps {
   children: React.ReactNode;
   className?: string;
 
-  perView?: number;
+  perView?: number | ResponsivePerView;
   slidesToScroll?: number;
   loop?: boolean;
 
@@ -53,6 +59,39 @@ function flattenChildren(node: React.ReactNode): React.ReactNode[] {
   }
 
   return [node];
+}
+
+function normalizePerView(value: number) {
+  return Math.max(1, Math.min(value, 12));
+}
+
+function useResponsivePerView(base: number, md: number, lg: number) {
+  const subscribe = useCallback((onStoreChange: () => void) => {
+    const mediaQueries = [
+      window.matchMedia('(min-width: 48rem)'),
+      window.matchMedia('(min-width: 64rem)'),
+    ];
+
+    mediaQueries.forEach(query => query.addEventListener('change', onStoreChange));
+
+    return () => {
+      mediaQueries.forEach(query => query.removeEventListener('change', onStoreChange));
+    };
+  }, []);
+
+  const getSnapshot = useCallback(() => {
+    if (window.matchMedia('(min-width: 64rem)').matches) {
+      return lg;
+    }
+
+    if (window.matchMedia('(min-width: 48rem)').matches) {
+      return md;
+    }
+
+    return base;
+  }, [base, lg, md]);
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => base);
 }
 
 export function EmblaCardCarousel({
@@ -137,7 +176,10 @@ export function EmblaCardCarousel({
     () => DEFAULT_SNAPSHOT,
   );
 
-  const safePerView = Math.max(1, Math.min(perView, 12));
+  const safePerViewBase = normalizePerView(typeof perView === 'number' ? perView : perView.base);
+  const safePerViewMd = normalizePerView(typeof perView === 'number' ? perView : (perView.md ?? safePerViewBase));
+  const safePerViewLg = normalizePerView(typeof perView === 'number' ? perView : (perView.lg ?? safePerViewMd));
+  const safePerView = useResponsivePerView(safePerViewBase, safePerViewMd, safePerViewLg);
   const hasScrollable = totalSlides > safePerView;
 
   const thumbWidthPct
@@ -174,11 +216,19 @@ export function EmblaCardCarousel({
 
   return (
     <section
-      className={cn('group relative w-full', className)}
+      className={cn(
+        'group relative w-full',
+        '[--carousel-per-view:var(--carousel-per-view-base)]',
+        'md:[--carousel-per-view:var(--carousel-per-view-md)]',
+        'lg:[--carousel-per-view:var(--carousel-per-view-lg)]',
+        className,
+      )}
       style={
         {
-          ['--carousel-gap' as any]: `${gapPx}px`,
-          ['--carousel-per-view' as any]: String(safePerView),
+          '--carousel-gap': `${gapPx}px`,
+          '--carousel-per-view-base': String(safePerViewBase),
+          '--carousel-per-view-md': String(safePerViewMd),
+          '--carousel-per-view-lg': String(safePerViewLg),
         } as React.CSSProperties
       }
     >
