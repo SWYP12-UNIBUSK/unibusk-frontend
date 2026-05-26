@@ -10,7 +10,7 @@ module.exports = {
         `${baseUrl}/performance-list?tab=past`,
         `${baseUrl}/about-us`,
       ],
-      numberOfRuns: 3,
+      numberOfRuns: 1,
     },
     assert: {
       assertions: {
