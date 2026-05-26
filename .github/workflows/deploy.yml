@@ -102,6 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      issues: write
     env:
       LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev
     steps:
@@ -127,6 +128,21 @@ jobs:
             echo "attempt $i: $code"; sleep 5
           done
           echo "preview not ready"; exit 1
+
+      - name: Warm up pages before Lighthouse
+        run: |
+          urls=(
+            "$LHCI_BASE_URL"
+            "$LHCI_BASE_URL/busking-map"
+            "$LHCI_BASE_URL/performance-list?tab=upcoming"
+            "$LHCI_BASE_URL/performance-list?tab=past"
+            "$LHCI_BASE_URL/about-us"
+          )
+          for url in "${urls[@]}"; do
+            echo "Warming up: $url"
+            curl -s -o /dev/null "$url"
+          done
+          sleep 3
 
       - name: Run Lighthouse CI
         continue-on-error: true
