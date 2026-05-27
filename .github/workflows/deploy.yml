@@ -139,12 +139,15 @@ jobs:
             "$LHCI_BASE_URL/about-us"
           )
           for url in "${URLS[@]}"; do
+            echo "Warming up: $url"
             google-chrome \
               --headless \
               --disable-gpu \
               --no-sandbox \
-              --dump-dom "$url" > /dev/null 2>&1 || true
+              --disable-dev-shm-usage \
+              --dump-dom "$url" > /dev/null 2>&1 && echo "✓ Success" || echo "✗ Failed"
           done
+          sleep 5
 
       - name: Run Lighthouse CI
         continue-on-error: true
