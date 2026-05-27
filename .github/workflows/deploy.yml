@@ -102,6 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      issues: write
     env:
       LHCI_BASE_URL: https://unibusk-preview-${{ github.event.pull_request.number }}.swyp.workers.dev
     steps:
