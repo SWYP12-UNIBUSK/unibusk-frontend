@@ -139,11 +139,12 @@ jobs:
             "$LHCI_BASE_URL/about-us"
           )
           for url in "${URLS[@]}"; do
-            for i in {1..5}; do
-              curl -s -o /dev/null "$url" || true
-            done
+            google-chrome \
+              --headless \
+              --disable-gpu \
+              --no-sandbox \
+              --dump-dom "$url" > /dev/null 2>&1 || true
           done
-          sleep 3
 
       - name: Run Lighthouse CI
         continue-on-error: true
