@@ -129,6 +129,22 @@ jobs:
           done
           echo "preview not ready"; exit 1
 
+      - name: Warm up Cloudflare Workers
+        run: |
+          URLS=(
+            "$LHCI_BASE_URL"
+            "$LHCI_BASE_URL/busking-map"
+            "$LHCI_BASE_URL/performance-list?tab=upcoming"
+            "$LHCI_BASE_URL/performance-list?tab=past"
+            "$LHCI_BASE_URL/about-us"
+          )
+          for url in "${URLS[@]}"; do
+            for i in {1..3}; do
+              curl -s -o /dev/null "$url" || true
+            done
+          done
+          sleep 3
+
       - name: Run Lighthouse CI
         continue-on-error: true
         run: pnpm exec lhci autorun --config=.lighthouserc.ci.js
