@@ -19,6 +19,7 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
   const { title, performanceDate, startTime, endTime, locationName, images } = performance;
 
   const showPlaceholder = !images[0] || imageError;
+  const formattedDate = performanceDate.replaceAll('-', '.');
 
   return (
     <Link href={href} className="group block h-full">
@@ -91,7 +92,7 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
           >
             <div className="shrink-0">
               <p className="tabular-nums">
-                {`${performanceDate} (${startTime}~${endTime})`}
+                {`${formattedDate} (${startTime}~${endTime})`}
               </p>
 
               <div className="flex items-center gap-1.5">
