@@ -13,47 +13,66 @@ export default function LoginPage() {
   };
 
   return (
+    <div className={`
+      mx-auto mt-40 w-full max-w-62.5
+      sm:mt-[211.5px] sm:max-w-87.5
+    `}
+    >
+      <h1 className={`
+        pb-10 text-center typo-title-b-5
+        sm:pb-[80.5px] sm:typo-title-b-3
+      `}
+      >
+        UNIBUSK 로그인
+      </h1>
 
-    <div className="mt-[211.5px] flex items-center justify-center">
-      <div className="w-87.5 items-center">
-        <h1 className="pb-[80.5px] text-center typo-title-b-3">UNIBUSK 로그인</h1>
+      <div className={`
+        flex w-full items-center justify-center pb-[45px]
+        sm:pb-17.5
+      `}
+      >
+        <Image
+          src="/images/logo_gray.webp"
+          alt="login_logo"
+          width={100}
+          height={90}
+          priority
+          className={`
+            h-20 w-22
+            md:h-22.5 md:w-25
+          `}
+        />
+      </div>
 
-        <div className="flex w-full items-center justify-center pb-17.5">
-          <Image src="/images/logo_gray.webp" alt="login_logo" width={100} height={90} priority />
-        </div>
+      <div className={`
+        flex flex-col space-y-5 text-center typo-body-m-3
+        sm:typo-body-m-1
+      `}
+      >
+        <button
+          type="button"
+          onClick={handleKakaoLogin}
+          className={`
+            flex h-12.5 w-full cursor-pointer items-center justify-center
+            rounded-full bg-kakao p-0 text-black
+            sm:h-15
+          `}
+        >
+          카카오로 로그인 하기
+        </button>
 
-        <div className="flex flex-col space-y-1.25 text-center typo-body-m-1">
-          <button
-            type="button"
-            onClick={handleKakaoLogin}
-            className={`
-              flex h-15 w-full cursor-pointer items-center justify-center
-              rounded-full bg-kakao p-0 text-black
-            `}
-          >
-            카카오로 로그인 하기
-          </button>
-
-          <Link
-            href={routePaths.terms()}
-            className={`
-              inline-flex h-15 items-center justify-center text-gray-400
-              transition-colors
-            `}
-          >
+        <div className={`
+          flex h-15 flex-col justify-center space-y-2.5 typo-caption-m-1
+          text-gray-400
+        `}
+        >
+          <Link href={routePaths.terms()}>
             UNIBUSK 서비스 약관
           </Link>
 
-          <Link
-            href={routePaths.privacy()}
-            className={`
-              inline-flex h-15 items-center justify-center text-gray-400
-              transition-colors
-            `}
-          >
+          <Link href={routePaths.privacy()}>
             UNIBUSK 개인정보 처리방침
           </Link>
-
         </div>
       </div>
     </div>
