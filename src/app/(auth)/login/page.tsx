@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ENV, routePaths } from '@/utils';
+import { cn, ENV, routePaths } from '@/utils';
 
 export default function LoginPage() {
   const handleKakaoLogin = () => {
@@ -13,68 +13,80 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`
-      mx-auto mt-40 w-full max-w-62.5
-      sm:mt-[211.5px] sm:max-w-87.5
-    `}
+    <main className={cn('flex min-h-dvh items-center justify-center', `
+      sm:block sm:min-h-0
+    `)}
     >
-      <h1 className={`
-        pb-10 text-center typo-title-b-5
-        sm:pb-[80.5px] sm:typo-title-b-3
-      `}
+      <div className={cn('mx-auto w-full max-w-62.5', `
+        sm:mt-[211.5px] sm:max-w-87.5
+      `)}
       >
-        UNIBUSK 로그인
-      </h1>
-
-      <div className={`
-        flex w-full items-center justify-center pb-[45px]
-        sm:pb-17.5
-      `}
-      >
-        <Image
-          src="/images/logo_gray.webp"
-          alt="login_logo"
-          width={100}
-          height={90}
-          priority
-          className={`
-            h-20 w-22
-            md:h-22.5 md:w-25
-          `}
-        />
-      </div>
-
-      <div className={`
-        flex flex-col space-y-5 text-center typo-body-m-3
-        sm:typo-body-m-1
-      `}
-      >
-        <button
-          type="button"
-          onClick={handleKakaoLogin}
-          className={`
-            flex h-12.5 w-full cursor-pointer items-center justify-center
-            rounded-full bg-kakao p-0 text-black
-            sm:h-15
-          `}
+        <h1 className={cn('pb-10 text-center typo-title-b-5', `
+          sm:pb-[80.5px] sm:typo-title-b-3
+        `)}
         >
-          카카오로 로그인 하기
-        </button>
+          UNIBUSK 로그인
+        </h1>
 
-        <div className={`
-          flex h-15 flex-col justify-center space-y-2.5 typo-caption-m-1
-          text-gray-400
-        `}
+        <div className={cn('flex w-full items-center justify-center pb-[45px]', `
+          sm:pb-17.5
+        `)}
         >
-          <Link href={routePaths.terms()}>
-            UNIBUSK 서비스 약관
-          </Link>
+          <Image
+            src="/images/logo_gray.webp"
+            alt="login_logo"
+            width={100}
+            height={90}
+            priority
+            className={cn('h-20 w-22', 'md:h-22.5 md:w-25')}
+          />
+        </div>
 
-          <Link href={routePaths.privacy()}>
-            UNIBUSK 개인정보 처리방침
-          </Link>
+        <div className={cn('flex flex-col space-y-5 text-center typo-body-m-3', `
+          sm:typo-body-m-1
+        `)}
+        >
+          <button
+            type="button"
+            onClick={handleKakaoLogin}
+            className={cn(
+              `
+                flex h-12.5 w-full cursor-pointer items-center justify-center
+                rounded-full bg-kakao p-0 text-black
+              `,
+              'sm:h-15',
+            )}
+          >
+            카카오로 로그인 하기
+          </button>
+
+          <div className={cn(`
+            flex h-15 flex-col justify-center space-y-2.5 typo-caption-m-1
+            text-gray-600
+          `)}
+          >
+            <Link
+              href={routePaths.terms()}
+              className={`
+                hover:text-gray-800
+                focus-visible:underline focus-visible:outline-none
+              `}
+            >
+              UNIBUSK 서비스 약관
+            </Link>
+
+            <Link
+              href={routePaths.privacy()}
+              className={`
+                hover:text-gray-800
+                focus-visible:underline focus-visible:outline-none
+              `}
+            >
+              UNIBUSK 개인정보 처리방침
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
