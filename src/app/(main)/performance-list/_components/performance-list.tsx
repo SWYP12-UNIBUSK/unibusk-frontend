@@ -65,12 +65,9 @@ export function PerformanceList({
       `}
       >
         {performanceCards}
-        {isLoading && (
-          <>
-            <PerformanceCardSkeleton className="w-full" />
-            <PerformanceCardSkeleton className="w-full" />
-          </>
-        )}
+        {isLoading && Array.from({ length: 12 }, (_, i) => (
+          <PerformanceCardSkeleton key={i} className="w-full" />
+        ))}
       </div>
       {hasMore && (
         <div ref={observerTarget} className="h-4" />
