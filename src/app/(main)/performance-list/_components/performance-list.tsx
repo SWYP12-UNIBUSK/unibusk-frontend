@@ -3,7 +3,7 @@
 import type { Performances } from '@/types/performance';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
-import { PerformanceCard } from '@/components/performance';
+import { PerformanceCard, PerformanceCardSkeleton } from '@/components/performance';
 import { routePaths } from '@/utils';
 
 interface PerformanceListProps {
@@ -65,14 +65,12 @@ export function PerformanceList({
       `}
       >
         {performanceCards}
+        {isLoading && Array.from({ length: 12 }, (_, i) => (
+          <PerformanceCardSkeleton key={i} className="w-full" />
+        ))}
       </div>
       {hasMore && (
-        <div
-          ref={observerTarget}
-          className="flex h-20 items-center justify-center"
-        >
-          {isLoading && <div>로딩 중...</div>}
-        </div>
+        <div ref={observerTarget} className="h-4" />
       )}
     </div>
   );
