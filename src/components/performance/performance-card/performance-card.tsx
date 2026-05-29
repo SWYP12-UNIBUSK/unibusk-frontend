@@ -56,7 +56,7 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
                       group-hover:scale-110
                     `}
                     >
-                      <ImageIcon className="h-full w-16" strokeWidth={1.5} />
+                      <ImageIcon className="h-16 w-16" strokeWidth={1.5} />
                     </div>
                   </div>
                 )
@@ -66,7 +66,7 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
                     alt={`${title} 포스터`}
                     fill
                     className={cn(`
-                      h-auto w-full transition-transform duration-500
+                      object-cover transition-transform duration-500
                       group-hover:scale-105
                     `)}
                     onError={() => {
