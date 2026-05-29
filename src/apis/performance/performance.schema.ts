@@ -73,6 +73,19 @@ export const PerformanceCreateRequestDtoSchema = z.object({
   ]).optional(),
 });
 
+export const PerformancePreviewItemDtoSchema = z.object({
+  performanceId: z.number(),
+  title: z.string(),
+  performanceDate: z.string().regex(
+    /^\d{4}-\d{2}-\d{2}$/,
+    'Invalid date format: expected YYYY-MM-DD',
+  ),
+  startTime: transformerISOToHHmmSchema,
+  endTime: transformerISOToHHmmSchema,
+  locationName: z.string(),
+  images: z.array(z.string()).default([]),
+});
+
 /**
  * 공연 리스트 조회 API 응답 스키마
  *
@@ -81,25 +94,7 @@ export const PerformanceCreateRequestDtoSchema = z.object({
  */
 export const PerformanceListResponseDtoSchema = z.object({
   /** 공연 목록 배열 */
-  content: z.array(z.object({
-    /** 공연 고유 ID */
-    performanceId: z.number(),
-    /** 공연 제목 */
-    title: z.string(),
-    /** 공연 날짜 (YYYY-MM-DD 형식) */
-    performanceDate: z.string().regex(
-      /^\d{4}-\d{2}-\d{2}$/,
-      'Invalid date format: expected YYYY-MM-DD',
-    ),
-    /** 공연 시작 시간 (ISO 형식 → HH:mm 형식으로 변환) */
-    startTime: transformerISOToHHmmSchema,
-    /** 공연 종료 시간 (ISO 형식 → HH:mm 형식으로 변환) */
-    endTime: transformerISOToHHmmSchema,
-    /** 공연 장소명 */
-    locationName: z.string(),
-    /** 공연 이미지 URL 배열 */
-    images: z.array(z.string()).default([]),
-  })),
+  content: z.array(PerformancePreviewItemDtoSchema),
   /** 현재 페이지 번호 (0부터 시작) */
   page: z.int().nonnegative(),
   /** 페이지당 항목 수 */
@@ -165,6 +160,9 @@ export type PerformanceListResponseDto = z.infer<typeof PerformanceListResponseD
 /** 공연 상세 조회 API 응답 타입 */
 export type PerformanceDetailResponseDto = z.infer<typeof PerformanceDetailResponseDtoSchema>;
 
+/** 공연 목록·홈 프리뷰 공통 아이템 타입 */
+export type PerformancePreviewItemDto = z.infer<typeof PerformancePreviewItemDtoSchema>;
+
 // 공연 장소별 공연 리스트 아이템(카드 1개)
 export const performanceByLocationItemSchema = z.object({
   performanceId: z.number(),
@@ -187,15 +185,7 @@ export type PerformanceByLocationItem = z.infer<typeof performanceByLocationItem
 export type PerformanceByLocationCursorResponse = z.infer<typeof performanceByLocationCursorSchema>;
 
 // home: 다가오는 공연 8개
-export const PerformanceUpcomingPreviewItemDtoSchema = z.object({
-  performanceId: z.number(),
-  title: z.string(),
-  performanceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  startTime: transformerISOToHHmmSchema,
-  endTime: transformerISOToHHmmSchema,
-  locationName: z.string(),
-  images: z.array(z.string()).default([]),
-});
+export const PerformanceUpcomingPreviewItemDtoSchema = PerformancePreviewItemDtoSchema;
 
 export const PerformanceUpcomingPreviewResponseDtoSchema = z.array(
   PerformanceUpcomingPreviewItemDtoSchema,
