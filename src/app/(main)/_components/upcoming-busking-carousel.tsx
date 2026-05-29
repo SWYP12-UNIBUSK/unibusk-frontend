@@ -75,6 +75,7 @@ export function UpcomingBuskingCarousel() {
             <Link
               href={`/performance-detail/${item.id}`}
               className="group/upcoming-card block h-full"
+              aria-label={isSkeleton ? undefined : `${item.title} 공연 상세 보기`}
             >
               <Card
                 className={cn(
