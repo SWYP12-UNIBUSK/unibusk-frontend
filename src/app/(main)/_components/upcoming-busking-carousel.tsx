@@ -25,10 +25,7 @@ function formatDateText(performanceDate: string, startTime: string, endTime: str
   const mm = m ?? '00';
   const dd = d ?? '00';
 
-  const start = startTime.length >= 16 ? startTime.slice(11, 16) : startTime;
-  const end = endTime.length >= 16 ? endTime.slice(11, 16) : endTime;
-
-  return `${yyyy}.${mm}.${dd} (${start}~${end})`;
+  return `${yyyy}.${mm}.${dd} (${startTime}~${endTime})`;
 }
 
 function mapDtoToItem(dto: PerformanceUpcomingPreviewItemDto): UpcomingItem {
