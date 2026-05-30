@@ -12,7 +12,7 @@ export function UpcomingBuskingCarousel() {
     <EmblaCardCarousel
       perView={{ base: 2, md: 3, lg: 4 }}
       slidesToScroll={1}
-      gapPx={24}
+      gapPx={4.5}
       showArrows={true}
       showProgress={true}
       progressVariant="thumb"
