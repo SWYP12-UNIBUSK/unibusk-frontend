@@ -29,9 +29,9 @@ export function buildPerformanceEventJsonLd(
   performanceId: number,
   performanceDetail: PerformanceDetailResponseDto,
 ): WithContext<Event> {
-  const imageUrls = performanceDetail.images
-    .filter(imageUrl => imageUrl.trim().length > 0)
-    .map(toAbsoluteImageUrl);
+  const absoluteImageUrl = performanceDetail.imageUrl?.trim()
+    ? toAbsoluteImageUrl(performanceDetail.imageUrl)
+    : undefined;
 
   return {
     '@context': 'https://schema.org',
@@ -44,8 +44,8 @@ export function buildPerformanceEventJsonLd(
     'eventAttendanceMode': 'https://schema.org/OfflineEventAttendanceMode',
     'eventStatus': 'https://schema.org/EventScheduled',
     'inLanguage': 'ko-KR',
-    ...(imageUrls.length > 0 && {
-      image: imageUrls,
+    ...(absoluteImageUrl && {
+      image: absoluteImageUrl,
     }),
     'location': {
       '@type': 'Place',

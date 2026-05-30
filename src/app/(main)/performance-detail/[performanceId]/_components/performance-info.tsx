@@ -32,7 +32,7 @@ interface PerformanceInfoProps {
 
 export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
   const { data: performanceDetail } = useSuspenseQuery(performanceDetailQueryOptions(performanceId));
-  const { title, performanceDate, locationName, images, summary, startTime, endTime, performers, description, latitude, longitude, memberId } = performanceDetail;
+  const { title, performanceDate, locationName, imageUrl, summary, startTime, endTime, performers, description, latitude, longitude, memberId } = performanceDetail;
   const router = useRouter();
   const { user, isAuthenticated, isPending } = useAuth();
   const isOwner = !isPending && isAuthenticated && user?.memberId === memberId;
@@ -50,7 +50,7 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
       </Suspense>
       <Content
         title={title}
-        posterUrl={images[0]}
+        posterUrl={imageUrl}
         summary={summary}
         startTime={startTime}
         endTime={endTime}
@@ -224,7 +224,7 @@ function PerformanceOwnerMenu({ performanceId }: PerformanceOwnerMenuProps) {
 
 interface ContentProps {
   title: string;
-  posterUrl: string;
+  posterUrl: string | null | undefined;
   summary: string;
   startTime: string;
   endTime: string;
