@@ -1,25 +1,24 @@
 import type { FormEvent } from 'react';
-import { useRef, useState } from 'react';
 import { SearchInput } from '@/components/common/search-input';
 
 interface HeaderSearchProps {
+  searchKeyword: string;
+  onSearchKeywordChange: (searchKeyword: string) => void;
   onSearch: (searchKeyword: string) => void;
-  onSearchClear?: () => void;
-  initialSearchKeyword?: string;
   placeholder?: string;
+  compact?: boolean;
 }
 
 export function HeaderSearch({
+  searchKeyword,
+  onSearchKeywordChange,
   onSearch,
-  onSearchClear,
-  initialSearchKeyword = '',
   placeholder = '지역명이나 장소를 검색해보세요',
+  compact = false,
 }: HeaderSearchProps) {
-  const [searchKeyword, setSearchKeyword] = useState(initialSearchKeyword);
-  const lastKeywordRef = useRef(initialSearchKeyword);
-
   return (
     <form
+      className={compact ? 'w-full max-w-[335px]' : undefined}
       onSubmit={(event: FormEvent) => {
         event.preventDefault();
         onSearch(searchKeyword);
@@ -28,18 +27,9 @@ export function HeaderSearch({
       <SearchInput
         theme="black"
         value={searchKeyword}
+        compact={compact}
         onChange={(event) => {
-          const nextKeyword = event.target.value;
-
-          setSearchKeyword(nextKeyword);
-
-          const wasEmpty = lastKeywordRef.current.trim() === '';
-          const isEmpty = nextKeyword.trim() === '';
-          if (!wasEmpty && isEmpty) {
-            onSearchClear?.();
-          }
-
-          lastKeywordRef.current = nextKeyword;
+          onSearchKeywordChange(event.target.value);
         }}
         placeholder={placeholder}
       />

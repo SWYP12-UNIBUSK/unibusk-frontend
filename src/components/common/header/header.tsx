@@ -1,12 +1,12 @@
 'use client';
 
-import { HeaderAuth } from './header-auth';
-import { HeaderLogo } from './header-logo';
-import { HeaderNav } from './header-nav';
+import { useRef, useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { DesktopHeader } from './desktop-header';
 import { HeaderSearch } from './header-search';
-import { HeaderShell } from './header-shell';
+import { MobileHeader } from './mobile-header';
 
-type HeaderProps
+export type HeaderProps
   = | {
     layout?: 'DEFAULT';
   }
@@ -19,45 +19,80 @@ type HeaderProps
   };
 
 export function Header(props: HeaderProps) {
-  if (props.layout === 'SEARCH') {
-    return (
-      <HeaderShell
-        layout="search"
-        left={(
-          <div className="flex items-center gap-8">
-            <HeaderLogo />
-            <div className="w-116">
-              <HeaderSearch
-                onSearch={props.onSearch}
-                onSearchClear={props.onSearchClear}
-                initialSearchKeyword={props.initialSearchKeyword}
-                placeholder={props.searchPlaceholder}
-              />
-            </div>
-          </div>
-        )}
-        middle={<div className="min-w-0 flex-1" />}
-        right={(
-          <div className="flex items-center gap-8">
-            <HeaderNav align="right" />
-            <HeaderAuth slotWidthClassName="w-36" />
-          </div>
-        )}
+  const auth = useAuth();
 
-      />
-    );
+  if (props.layout === 'SEARCH') {
+    return <SearchHeader auth={auth} props={props} />;
   }
 
   return (
-    <HeaderShell
-      layout="default"
-      left={<HeaderLogo />}
-      middle={(
-        <div className="flex w-full items-center justify-center px-8">
-          <HeaderNav align="center" />
-        </div>
-      )}
-      right={<HeaderAuth />}
-    />
+    <>
+      <div className="md:hidden">
+        <MobileHeader auth={auth} />
+      </div>
+      <div className={`
+        hidden
+        md:block
+      `}
+      >
+        <DesktopHeader auth={auth} />
+      </div>
+    </>
+  );
+}
+
+function SearchHeader({
+  auth,
+  props,
+}: {
+  auth: ReturnType<typeof useAuth>;
+  props: Extract<HeaderProps, { layout: 'SEARCH' }>;
+}) {
+  const [searchKeyword, setSearchKeyword] = useState(props.initialSearchKeyword ?? '');
+  const lastKeywordRef = useRef(props.initialSearchKeyword ?? '');
+
+  const handleSearchKeywordChange = (nextKeyword: string) => {
+    const wasEmpty = lastKeywordRef.current.trim() === '';
+    const isEmpty = nextKeyword.trim() === '';
+
+    setSearchKeyword(nextKeyword);
+    lastKeywordRef.current = nextKeyword;
+
+    if (!wasEmpty && isEmpty) {
+      props.onSearchClear?.();
+    }
+  };
+
+  const search = {
+    keyword: searchKeyword,
+    onKeywordChange: handleSearchKeywordChange,
+    onSearch: props.onSearch,
+    placeholder: props.searchPlaceholder,
+  };
+
+  return (
+    <>
+      <div className="md:hidden">
+        <MobileHeader
+          auth={auth}
+          search={(
+            <HeaderSearch
+              searchKeyword={search.keyword}
+              onSearchKeywordChange={search.onKeywordChange}
+              onSearch={search.onSearch}
+              placeholder={search.placeholder}
+              compact={true}
+            />
+          )}
+        />
+      </div>
+      <div className={`
+        hidden
+        md:block
+      `}
+      >
+        <DesktopHeader auth={auth} search={search} />
+      </div>
+    </>
   );
 }
