@@ -61,11 +61,10 @@ export function PerformanceTabs({
         value={validTab}
         onValueChange={handleTabChange}
       >
-        <div className={`
-          flex w-full flex-col gap-7.5
+        <div className={cn('flex w-full flex-col gap-7.5', `
           md:flex-row md:items-center md:justify-between md:gap-0 md:border-b-2
           md:border-gray-300
-        `}
+        `)}
         >
           <TabsList className={cn(`
             h-auto w-auto translate-y-0.5 gap-6 rounded-none border-b-2
@@ -91,10 +90,9 @@ export function PerformanceTabs({
         </div>
 
         <div className="w-full justify-between">
-          <p className={`
+          <p className={cn(`
             pt-10 pb-7.5 text-center typo-caption-m-1 text-black
-            md:py-20 md:typo-body-sb-2
-          `}
+          `, `md:py-20 md:typo-body-sb-2`)}
           >
             지금 준비중인 소규모 공연을 만나보세요
           </p>
