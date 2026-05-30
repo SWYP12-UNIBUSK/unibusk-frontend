@@ -17,7 +17,7 @@ export function PerformanceCardSkeleton({ className }: PerformanceCardSkeletonPr
         className,
       )}
     >
-      <CardContent className="flex h-full flex-col p-2.5">
+      <CardContent className="flex h-full flex-col p-[4.5px]">
         <Skeleton className="aspect-5/8 w-full shrink-0 rounded-lg" />
         <div className={`
           flex flex-1 flex-col gap-1.5 p-1.5
