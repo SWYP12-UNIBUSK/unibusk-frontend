@@ -49,6 +49,7 @@ function SheetOverlay({
 function SheetContent({
   className,
   children,
+  overlayClassName,
   side = 'right',
   rounded = false,
   showCloseButton = true,
@@ -57,10 +58,11 @@ function SheetContent({
   side?: 'top' | 'right' | 'bottom' | 'left';
   rounded?: boolean;
   showCloseButton?: boolean;
+  overlayClassName?: string;
 }) {
   return (
     <SheetPortal>
-      <SheetOverlay />
+      <SheetOverlay className={overlayClassName} />
       <SheetPrimitive.Content
         data-slot="sheet-content"
         className={cn(
