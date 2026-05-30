@@ -83,7 +83,7 @@ export const PerformancePreviewItemDtoSchema = z.object({
   startTime: transformerISOToHHmmSchema,
   endTime: transformerISOToHHmmSchema,
   locationName: z.string(),
-  images: z.array(z.string()).default([]),
+  imageUrl: z.string().nullish(),
 });
 
 /**
@@ -128,7 +128,7 @@ export const PerformanceDetailResponseDtoSchema = z.object({
   /** 공연 상세 설명 */
   description: z.string(),
   /** 공연 이미지 URL 목록 */
-  images: z.array(z.string()).default([]),
+  imageUrl: z.string().nullish(),
   /** 공연자 정보 목록 */
   performers: z.array(z.object({
     /** 공연자 이름 */
@@ -170,7 +170,7 @@ export const performanceByLocationItemSchema = z.object({
   performanceDate: z.string(),
   startTime: z.string(),
   endTime: z.string(),
-  images: z.array(z.string()),
+  imageUrl: z.string().nullish(),
 });
 
 // cursor 기반 리스트 응답
@@ -207,7 +207,7 @@ export const MyPerformanceSummarySchema = z.object({
   startTime: z.string(), // ISO 8601 그대로 유지 (date-fns format 사용)
   endTime: z.string(),
   performanceLocationName: z.string(),
-  imageUrls: z.array(z.string()).default([]),
+  imageUrl: z.string().nullish(),
 });
 
 // 내 공연 목록 커서 응답 스키마

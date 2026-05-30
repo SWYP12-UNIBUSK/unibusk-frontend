@@ -12,8 +12,8 @@ export interface Performance {
   endTime: string;
   /** 공연 장소명 */
   locationName: string;
-  /** 공연 이미지 URL 배열 */
-  images: string[];
+  /** 공연 이미지 URL */
+  imageUrl?: string | null;
 }
 
 /** 공연 목록 타입 */

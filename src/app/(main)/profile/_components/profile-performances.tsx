@@ -27,7 +27,7 @@ interface MyPerformanceCardProps {
   startTime: string;
   endTime: string;
   performanceLocationName: string;
-  imageUrls: string[];
+  imageUrl?: string | null;
 }
 
 interface MyPerformanceCardMoreMenuProps {
@@ -108,7 +108,7 @@ function Performances({ performances, onLoadMore, hasMore, isLoading }: Performa
           startTime={performance.startTime}
           endTime={performance.endTime}
           performanceLocationName={performance.performanceLocationName}
-          imageUrls={performance.imageUrls}
+          imageUrl={performance.imageUrl}
         />
       ))}
       {hasMore && (
@@ -129,12 +129,12 @@ function MyPerformanceCard({
   startTime,
   endTime,
   performanceLocationName,
-  imageUrls,
+  imageUrl,
 }: MyPerformanceCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { mutate: deleteMyPerformance, isPending: isDeletePending } = useDeletePerformance();
   const { date, time } = formatPerformanceTime(startTime, endTime);
-  const thumbnailSrc = imageUrls[0];
+  const thumbnailSrc = imageUrl;
 
   return (
     <>

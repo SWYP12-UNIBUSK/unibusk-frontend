@@ -16,9 +16,9 @@ interface PerformanceCardProps {
 
 export const PerformanceCard = memo(({ performance, href, className }: PerformanceCardProps) => {
   const [imageError, setImageError] = useState(false);
-  const { title, performanceDate, startTime, endTime, locationName, images } = performance;
+  const { title, performanceDate, startTime, endTime, locationName, imageUrl } = performance;
 
-  const showPlaceholder = !images[0] || imageError;
+  const showPlaceholder = !imageUrl || imageError;
   const formattedDate = performanceDate.replaceAll('-', '.');
 
   return (
@@ -63,7 +63,7 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
                 )
               : (
                   <Image
-                    src={images[0]}
+                    src={imageUrl!}
                     alt={`${title} 포스터`}
                     fill
                     className={cn(`

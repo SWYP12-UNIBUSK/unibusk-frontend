@@ -42,7 +42,7 @@ interface LocationPerformanceItem {
   performanceDate: string;
   startTime: string;
   endTime: string;
-  images: string[];
+  imageUrl?: string;
 }
 
 interface LocationPerformancesResponse {
@@ -214,7 +214,7 @@ function LocationPerformancesSection({ performanceLocationId }: { performanceLoc
       return {
         id: String(item.performanceId),
         dateText: formatPerformanceDateText(item),
-        imageUrl: item.images?.[0] ?? null,
+        imageUrl: item.imageUrl ?? null,
         title: item.title ?? '',
       };
     });

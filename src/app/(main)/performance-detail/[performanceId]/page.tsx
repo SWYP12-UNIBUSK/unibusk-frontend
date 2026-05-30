@@ -39,7 +39,7 @@ export async function generateMetadata(
     title: performanceDetail.title,
     description: `${performanceDetail.title} 공연의 일정, 장소, 상세 정보를 확인해보세요.`,
     path: `/performance-detail/${performanceId}`,
-    image: performanceDetail.images[0],
+    image: performanceDetail.imageUrl ?? undefined,
   });
 }
 
