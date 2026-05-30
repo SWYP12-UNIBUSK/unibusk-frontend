@@ -57,13 +57,13 @@ export function ProfilePerformances() {
       md:px-0
     `}
     >
-      <h1 className={`
+      <h2 className={`
         mb-2.5 py-5 typo-title-b-5 text-black
         md:hidden
       `}
       >
         내가 등록한 공연
-      </h1>
+      </h2>
       {performances.length === 0
         ? (
             <EmptyPerformances />

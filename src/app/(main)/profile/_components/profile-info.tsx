@@ -32,10 +32,10 @@ export function ProfileInfo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className={`
-      flex w-full flex-col items-center gap-12.5
-      md:gap-16.75
-    `}
+    <section className={cn(
+      'flex w-full flex-col items-center gap-12.5',
+      'md:gap-16.75',
+    )}
     >
       {/* 아바타 아이콘 */}
       <div className={`
@@ -50,19 +50,19 @@ export function ProfileInfo() {
       </div>
 
       {/* 프로필 정보 */}
-      <div className={`
-        relative flex w-full flex-col gap-7.5 px-1.5
-        md:max-w-91.5 md:px-0
-      `}
+      <div className={cn(
+        'relative flex w-full flex-col gap-7.5 px-1.5',
+        'md:max-w-91.5 md:px-0',
+      )}
       >
         <Button
           theme="orange"
           appearance="outline"
           size="xs"
-          className={`
-            absolute right-1.5
-            md:right-0
-          `}
+          className={cn(
+            'absolute right-1.5',
+            'md:right-0',
+          )}
           onClick={() => setIsModalOpen(true)}
         >
           수정하기
@@ -72,10 +72,10 @@ export function ProfileInfo() {
       </div>
 
       {/* 이탈 버튼 */}
-      <div className={`
-        flex w-full justify-center gap-3 px-9 pt-[15px]
-        md:w-auto md:gap-2.5 md:px-0 md:pt-0
-      `}
+      <div className={cn(
+        'flex w-full justify-center gap-3 px-9 pt-[15px]',
+        'md:w-auto md:gap-2.5 md:px-0 md:pt-0',
+      )}
       >
         <Button
           theme="lightOrange"

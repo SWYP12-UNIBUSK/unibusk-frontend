@@ -107,15 +107,7 @@ function MobileProfileEditModal({
             <AvatarCircleIcon className="size-14 text-gray-400" />
           </div>
 
-          <FormInput
-            label="닉네임"
-            placeholder="닉네임을 입력해 주세요"
-            showCount
-            maxLength={15}
-            currentCount={nameValue.length}
-            error={errors.name?.message}
-            {...register('name')}
-          />
+          <ProfileNameInput nameValue={nameValue} errors={errors} register={register} />
 
           <Button
             type="submit"
@@ -153,15 +145,7 @@ function DesktopProfileEditModal({
           onSubmit={onSubmit}
           className="mt-12.5 flex flex-col gap-16.75"
         >
-          <FormInput
-            label="닉네임"
-            placeholder="닉네임을 입력해 주세요"
-            showCount
-            maxLength={15}
-            currentCount={nameValue.length}
-            error={errors.name?.message}
-            {...register('name')}
-          />
+          <ProfileNameInput nameValue={nameValue} errors={errors} register={register} />
           <div className="flex justify-center gap-2.5">
             <Button
               type="button"
@@ -186,5 +170,23 @@ function DesktopProfileEditModal({
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ProfileNameInput({
+  nameValue,
+  errors,
+  register,
+}: Pick<ProfileEditViewProps, 'nameValue' | 'errors' | 'register'>) {
+  return (
+    <FormInput
+      label="닉네임"
+      placeholder="닉네임을 입력해 주세요"
+      showCount
+      maxLength={15}
+      currentCount={nameValue.length}
+      error={errors.name?.message}
+      {...register('name')}
+    />
   );
 }
