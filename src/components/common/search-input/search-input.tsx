@@ -91,6 +91,8 @@ interface SearchInputProps
 
   /** 부모 컴포넌트에서 ref를 전달할 때 사용 */
   ref?: React.Ref<HTMLInputElement>;
+  /** 좁은 영역에서 사용하는 축소형 검색 입력 */
+  compact?: boolean;
 }
 
 function SearchInput({
@@ -100,6 +102,7 @@ function SearchInput({
   disabled,
   onChange,
   ref,
+  compact = false,
   ...props
 }: SearchInputProps) {
   const innerRef = useRef<HTMLInputElement>(null);
@@ -125,11 +128,17 @@ function SearchInput({
         type="search"
         value={value}
         onChange={onChange}
-        className={cn(inputThemeVariants({ theme }))}
+        className={cn(inputThemeVariants({ theme }), compact && `
+          h-10 py-0 pr-10 pl-3 typo-caption-r-1
+        `)}
         disabled={disabled}
         {...props}
       />
-      <div className="absolute right-4 flex items-center gap-[2px]">
+      <div className={cn(
+        'absolute right-4 flex items-center gap-[2px]',
+        compact && 'right-2.5 gap-1',
+      )}
+      >
         {!!value && !disabled && (
           <button
             type="button"
@@ -142,8 +151,8 @@ function SearchInput({
             <Image
               src="/icons/xCircle-gray.svg"
               alt=""
-              width={24}
-              height={24}
+              width={compact ? 16 : 24}
+              height={compact ? 16 : 24}
               unoptimized={true}
               aria-hidden="true"
             />
@@ -153,7 +162,7 @@ function SearchInput({
           aria-hidden="true"
           className={
             cn(
-              'size-6',
+              compact ? 'size-4' : 'size-6',
               theme === 'black'
                 ? 'text-gray-800'
                 : `text-gray-550`,

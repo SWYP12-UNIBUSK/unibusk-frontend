@@ -1,5 +1,6 @@
 'use client';
 
+import type { useAuth } from '@/hooks/use-auth';
 import Link from 'next/link';
 import { AvatarButton, Button } from '@/components/common/button';
 import {
@@ -9,10 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/common/dropdown-menu';
-import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/utils';
 
 interface HeaderAuthProps {
+  auth: ReturnType<typeof useAuth>;
   slotWidthClassName?: string;
 }
 
@@ -58,8 +59,8 @@ function ProfileDropdownMenu({ logout, isLogoutPending }: ProfileDropdownMenuPro
   );
 }
 
-export function HeaderAuth({ slotWidthClassName = 'w-24' }: HeaderAuthProps) {
-  const { isAuthenticated, isPending, logout, isLogoutPending } = useAuth();
+export function HeaderAuth({ auth, slotWidthClassName = 'w-24' }: HeaderAuthProps) {
+  const { isAuthenticated, isPending, logout, isLogoutPending } = auth;
 
   if (isPending) {
     return (
