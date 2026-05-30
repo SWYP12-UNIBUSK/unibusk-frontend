@@ -41,8 +41,9 @@ export const PerformanceCard = memo(({ performance, href, className }: Performan
         <CardContent className="flex h-full flex-col p-[4.5px]">
           {/* Thumbnail */}
           <div className={`
-            relative aspect-5/8 w-full shrink-0 overflow-hidden rounded-lg
+            relative aspect-5/8 w-full shrink-0 overflow-hidden rounded-sm
             bg-muted
+            md:rounded-lg
           `}
           >
             {showPlaceholder
