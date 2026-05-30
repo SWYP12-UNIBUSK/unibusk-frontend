@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SearchInput } from '@/components/common/search-input';
+import { cn } from '@/utils';
 
 interface PerformanceSearchProps {
   /** 검색 실행 핸들러 */
@@ -36,7 +37,7 @@ export function PerformanceSearch({ onSearch }: PerformanceSearchProps) {
   };
 
   return (
-    <div className="relative min-w-115.75">
+    <div className={cn('relative w-full', 'md:w-auto md:min-w-115.75')}>
       <SearchInput
         value={inputValue}
         onChange={handleChange}
