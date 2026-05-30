@@ -42,8 +42,8 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
           <Suspense
             fallback={(
               <div className={`
-                grid w-full grid-cols-1 gap-6 px-4 pt-8
-                sm:grid-cols-2
+                grid w-full grid-cols-2 gap-3 px-4 pt-8
+                sm:gap-6
                 lg:grid-cols-3
                 xl:grid-cols-4
               `}

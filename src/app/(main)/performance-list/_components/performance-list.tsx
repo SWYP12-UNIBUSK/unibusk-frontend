@@ -58,8 +58,8 @@ export function PerformanceList({
   return (
     <div>
       <div className={`
-        grid w-full grid-cols-1 gap-6
-        sm:grid-cols-2
+        grid w-full grid-cols-2 gap-3
+        sm:gap-6
         lg:grid-cols-3
         xl:grid-cols-4
       `}
