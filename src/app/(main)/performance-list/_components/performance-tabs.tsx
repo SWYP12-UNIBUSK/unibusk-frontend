@@ -17,7 +17,10 @@ interface PerformanceTabsProps {
 
 const TAB_TRIGGER_STYLES = cn(
   'rounded-none border-b-2 border-transparent px-0 py-5.25',
-  'cursor-pointer typo-title-b-3 text-gray-300',
+  `
+    cursor-pointer typo-body-sb-2 text-gray-300
+    md:typo-title-b-3
+  `,
   'hover:text-gray-400',
   'data-[state=active]:border-b-primary data-[state=active]:text-primary',
   'data-[state=active]:bg-transparent data-[state=active]:shadow-none',
@@ -59,11 +62,15 @@ export function PerformanceTabs({
         onValueChange={handleTabChange}
       >
         <div className={`
-          flex w-full items-center justify-between border-b-2 border-gray-300
+          flex w-full flex-col gap-7.5
+          md:flex-row md:items-center md:justify-between md:gap-0 md:border-b-2
+          md:border-gray-300
         `}
         >
           <TabsList className={cn(`
-            h-auto w-auto translate-y-0.5 gap-6 bg-transparent p-0 text-gray-300
+            h-auto w-auto translate-y-0.5 gap-6 rounded-none border-b-2
+            border-gray-300 bg-transparent p-0 text-gray-300
+            md:border-none
           `)}
           >
             <TabsTrigger
@@ -84,7 +91,13 @@ export function PerformanceTabs({
         </div>
 
         <div className="w-full justify-between">
-          <p className="py-20 text-center typo-body-sb-2 text-black">지금 준비중인 소규모 공연을 만나보세요</p>
+          <p className={`
+            pt-10 pb-7.5 text-center typo-caption-m-1 text-black
+            md:py-20 md:typo-body-sb-2
+          `}
+          >
+            지금 준비중인 소규모 공연을 만나보세요
+          </p>
 
           <TabsContent value="upcoming">
             <Suspense fallback={<output className="flex justify-center py-20">로딩 중...</output>}>
