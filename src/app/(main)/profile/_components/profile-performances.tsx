@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useRef, useState } from 'react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/common/dropdown-menu';
+import { Skeleton } from '@/components/common/skeleton';
 import { Spinner } from '@/components/common/spinner';
 import { PerformanceDeleteConfirmDialog, PerformanceRegisterButton } from '@/components/performance';
 import { useDeletePerformance } from '@/hooks/performance';
@@ -51,18 +52,33 @@ export function ProfilePerformances() {
   const performances = data.pages.flatMap(page => page.content);
 
   return (
-    <div className="flex w-full flex-1 flex-col">
+    <div className={`
+      flex w-full flex-1 flex-col px-1.5
+      md:px-0
+    `}
+    >
+      <h2 className={`
+        mb-2.5 py-5 typo-title-b-5 text-black
+        md:hidden
+      `}
+      >
+        내가 등록한 공연
+      </h2>
       {performances.length === 0
         ? (
             <EmptyPerformances />
           )
         : (
             <>
-              {/*
-            absolute 버튼: 이 div는 relative 없음
-            → 상위 profile-tab.tsx의 div.relative 기준으로 위치됨
-          */}
-              <PerformanceRegisterButton className="absolute -top-17.5 right-0" theme="lightGray" size="md">
+              <PerformanceRegisterButton
+                className={`
+                  mb-2.5 self-start
+                  md:absolute md:-top-17.5 md:right-0 md:mb-0
+                `}
+                theme="lightGray"
+                size="md"
+                mobileSize="sm"
+              >
                 내 공연 등록하기
               </PerformanceRegisterButton>
               <Performances
@@ -99,7 +115,11 @@ function Performances({ performances, onLoadMore, hasMore, isLoading }: Performa
   }, [onLoadMore]);
 
   return (
-    <section className="flex w-full flex-1 flex-col gap-7.5">
+    <section className={`
+      flex w-full flex-1 flex-col gap-[15px]
+      md:gap-7.5
+    `}
+    >
       {performances.map(performance => (
         <MyPerformanceCard
           key={performance.performanceId}
@@ -139,13 +159,15 @@ function MyPerformanceCard({
   return (
     <>
       <article className={`
-        relative flex w-full items-center rounded-lg bg-white p-2.5
+        relative flex w-full items-center rounded-lg bg-white p-2
         shadow-elevate-2
+        md:p-2.5
       `}
       >
         {/* 썸네일 */}
         <div className={`
-          relative h-45 w-37.5 shrink-0 overflow-hidden rounded-lg bg-gray-300
+          relative h-30 w-25 shrink-0 overflow-hidden rounded-lg bg-gray-300
+          md:h-45 md:w-37.5
         `}
         >
           {thumbnailSrc && (
@@ -154,16 +176,24 @@ function MyPerformanceCard({
               alt={title}
               fill
               className="object-cover"
-              sizes="150px"
+              sizes="(min-width: 768px) 150px, 100px"
             />
           )}
         </div>
 
         {/* 콘텐츠 */}
-        <div className="flex h-45 flex-1 flex-col justify-center gap-7.5 px-10">
+        <div className={`
+          flex h-30 min-w-0 flex-1 flex-col justify-center gap-3 px-4
+          md:h-45 md:gap-7.5 md:px-10
+        `}
+        >
           {/* 상단: 제목 + 더보기 */}
           <div className="flex items-center justify-between">
-            <h3 className="typo-body-sb-1 text-black">
+            <h3 className={`
+              min-w-0 flex-1 truncate typo-body-sb-2 text-black
+              md:typo-body-sb-1
+            `}
+            >
               {/*
                 ::after overlay 패턴: 이 <a> 의 ::after 가 <article> 전체를 덮어
                 카드 아무 곳이나 클릭하면 상세로 이동. nesting 없음.
@@ -171,7 +201,7 @@ function MyPerformanceCard({
               <Link
                 href={routePaths.performanceDetail(performanceId)}
                 className={`
-                  text-black outline-0
+                  block truncate text-black outline-0
                   after:absolute after:inset-0 after:content-['']
                   focus-visible:underline
                 `}
@@ -190,7 +220,11 @@ function MyPerformanceCard({
 
           {/* 하단: 날짜/시간 + 장소 */}
           <div className="flex flex-col gap-1.25">
-            <div className="typo-caption-m-1 text-gray-700">
+            <div className={`
+              typo-caption-r-1 text-gray-700
+              md:typo-caption-m-1
+            `}
+            >
               <p>{date}</p>
               <p>{time}</p>
             </div>
@@ -203,7 +237,11 @@ function MyPerformanceCard({
                 aria-hidden="true"
                 unoptimized
               />
-              <p className="typo-caption-m-1 text-gray-700">
+              <p className={`
+                truncate typo-caption-r-1 text-gray-700
+                md:typo-caption-m-1
+              `}
+              >
                 {performanceLocationName}
               </p>
             </div>
@@ -308,5 +346,63 @@ function EmptyPerformances() {
         </PerformanceRegisterButton>
       </div>
     </section>
+  );
+}
+
+function MyPerformanceCardSkeleton() {
+  return (
+    <div className={`
+      flex w-full items-center rounded-lg bg-white p-2 shadow-elevate-2
+      md:p-2.5
+    `}
+    >
+      <Skeleton className={`
+        h-30 w-25 shrink-0 rounded-lg
+        md:h-45 md:w-37.5
+      `}
+      />
+      <div className={`
+        flex h-30 flex-1 flex-col justify-center gap-3 px-4
+        md:h-45 md:gap-7.5 md:px-10
+      `}
+      >
+        <Skeleton className="h-5 w-3/4 rounded" />
+        <div className="flex flex-col gap-1.25">
+          <Skeleton className="h-3.5 w-2/3 rounded" />
+          <Skeleton className="h-3.5 w-1/2 rounded" />
+          <Skeleton className="h-3.5 w-1/2 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ProfilePerformancesSkeleton() {
+  return (
+    <div className={`
+      flex w-full flex-1 flex-col px-1.5
+      md:px-0
+    `}
+    >
+      <div className={`
+        mb-2.5 h-17
+        md:hidden
+      `}
+      />
+      <Skeleton className={`
+        mb-2.5 h-9 w-30 self-start rounded-full
+        md:hidden
+      `}
+      />
+      <div className={`
+        flex w-full flex-1 flex-col gap-[15px]
+        md:gap-7.5
+      `}
+      >
+        {Array.from({ length: 4 }).map((_, i) => (
+          <MyPerformanceCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
   );
 }

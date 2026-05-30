@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/common/tags/tabs';
 import { cn } from '@/utils';
 import { ProfileInfo } from './profile-info';
-import { ProfilePerformances } from './profile-performances';
+import { ProfilePerformances, ProfilePerformancesSkeleton } from './profile-performances';
 
 interface ProfileTabTriggerProps {
   filter: 'my-info' | 'my-performances';
@@ -36,14 +36,26 @@ function BaseProfileTab() {
   };
 
   return (
-    <div className="flex w-full flex-1 flex-col pt-21.25">
+    <div className={`
+      flex w-full flex-1 flex-col pt-5
+      md:pt-21.25
+    `}
+    >
       <Tabs
         value={activeTab}
         onValueChange={handleTabChange}
         className="flex min-h-125 flex-1"
       >
-        <div className="flex w-full flex-row gap-11">
-          <div className="flex w-55 flex-col">
+        <div className={`
+          flex w-full flex-1 flex-col
+          md:flex-row md:gap-11
+        `}
+        >
+          <div className={`
+            hidden w-55 flex-col
+            md:flex
+          `}
+          >
             <h1 className="mb-25 pl-5 typo-title-sb-2 text-black">마이페이지</h1>
 
             <TabsList className="h-auto w-full flex-col bg-transparent p-0">
@@ -54,7 +66,7 @@ function BaseProfileTab() {
             </TabsList>
           </div>
 
-          <div className="flex flex-1 flex-col">
+          <div className="flex w-full flex-1 flex-col">
             <TabsContent
               value="my-info"
               className="mt-0 flex flex-1 outline-none"
@@ -64,9 +76,14 @@ function BaseProfileTab() {
 
             <TabsContent
               value="my-performances"
-              className="relative mt-40 flex flex-1 outline-none"
+              className={`
+                relative mt-0 flex flex-1 outline-none
+                md:mt-40
+              `}
             >
-              <ProfilePerformances />
+              <Suspense fallback={<ProfilePerformancesSkeleton />}>
+                <ProfilePerformances />
+              </Suspense>
             </TabsContent>
           </div>
         </div>

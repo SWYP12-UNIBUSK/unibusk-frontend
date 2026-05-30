@@ -19,6 +19,12 @@ interface DisplayInputProps {
   value?: string | number;
 }
 
+const exitButtonClassName = cn(
+  'h-11 w-33.75',
+  'sm:h-15 sm:min-w-0 sm:flex-1',
+  'md:h-11.25 md:min-w-37.5 md:flex-none',
+);
+
 export function ProfileInfo() {
   const { data: { email, name } } = useSuspenseQuery(userQueryOptions);
   const { logout, isLogoutPending } = useAuth();
@@ -26,29 +32,37 @@ export function ProfileInfo() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="flex w-full flex-col items-center gap-16.75">
+    <section className={cn(
+      'flex w-full flex-col items-center gap-12.5',
+      'md:gap-16.75',
+    )}
+    >
       {/* 아바타 아이콘 */}
-      <div className="flex items-center justify-center">
-        <div className={`
-          flex size-[85.85px] items-center justify-center rounded-full
-          bg-gray-200
-        `}
-        >
-          <AvatarCircleIcon
-            aria-hidden={true}
-            width={80}
-            height={80}
-          />
-        </div>
+      <div className={`
+        flex size-[85.85px] items-center justify-center rounded-full bg-gray-200
+      `}
+      >
+        <AvatarCircleIcon
+          aria-hidden={true}
+          width={80}
+          height={80}
+        />
       </div>
 
       {/* 프로필 정보 */}
-      <div className="relative flex w-full flex-col gap-7.5 px-91.5">
+      <div className={cn(
+        'relative flex w-full flex-col gap-7.5 px-1.5',
+        'md:max-w-91.5 md:px-0',
+      )}
+      >
         <Button
           theme="orange"
           appearance="outline"
           size="xs"
-          className="absolute right-0 mr-91.5"
+          className={cn(
+            'absolute right-1.5',
+            'md:right-0',
+          )}
           onClick={() => setIsModalOpen(true)}
         >
           수정하기
@@ -58,11 +72,22 @@ export function ProfileInfo() {
       </div>
 
       {/* 이탈 버튼 */}
-      <div className="flex gap-2.5">
-        <Button theme="lightOrange" size="md">회원탈퇴</Button>
+      <div className={cn(
+        'flex w-full justify-center gap-3 px-9 pt-[15px]',
+        'md:w-auto md:gap-2.5 md:px-0 md:pt-0',
+      )}
+      >
+        <Button
+          theme="lightOrange"
+          size="md"
+          className={exitButtonClassName}
+        >
+          회원탈퇴
+        </Button>
         <Button
           theme="gray"
           size="md"
+          className={exitButtonClassName}
           disabled={isLogoutPending}
           onClick={() => void logout()}
         >
@@ -92,8 +117,9 @@ export function DisplayInput({
       <div
         className={cn(
           `
-            flex h-15 w-full items-center rounded-full border border-gray-300
-            bg-gray-100 p-5
+            flex h-[55px] w-full items-center rounded-full border
+            border-gray-300 bg-gray-100 px-6
+            md:h-15 md:p-5
           `,
           'typo-body-m-3',
           'cursor-default outline-none',
