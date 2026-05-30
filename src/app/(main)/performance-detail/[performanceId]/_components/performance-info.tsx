@@ -38,7 +38,11 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
   const isOwner = !isPending && isAuthenticated && user?.memberId === memberId;
 
   return (
-    <section className="pt-37.5">
+    <section className={`
+      pt-15
+      lg:pt-37.5
+    `}
+    >
       <Suspense fallback={<div>로딩 중...</div>}>
         <Summary
           title={title}
@@ -58,7 +62,11 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
         description={description}
       />
       <PerformanceLocation coordinate={{ lat: latitude, lng: longitude }} />
-      <div className="flex justify-center pt-17.5 pb-20.75">
+      <div className={`
+        flex justify-center py-10
+        lg:pt-17.5 lg:pb-20.75
+      `}
+      >
         <Button
           onClick={() => {
             if (window.history.length > 1) {
@@ -70,6 +78,7 @@ export function PerformanceInfo({ performanceId }: PerformanceInfoProps) {
           }}
           theme="lightGray"
           size="lg"
+          mobileSize="md"
         >
           목록
         </Button>
@@ -90,11 +99,22 @@ function Summary({ title, performanceDate, locationName, isOwner, performanceId 
   const currentTab = useSearchParams().get('tab') ?? 'upcoming';
 
   return (
-    <div className="flex flex-col gap-5 border-b-2 border-orange-200">
+    <div className={`
+      flex flex-col gap-3 border-b-2 border-orange-200
+      lg:gap-5
+    `}
+    >
       {/* 현재 공연 탭 */}
-      <div className="flex items-center gap-2.5">
+      <div className={`
+        flex items-center gap-2
+        lg:gap-2.5
+      `}
+      >
         <div className={cn(
-          'typo-body-sb-2',
+          `
+            typo-caption-sb-1
+            lg:typo-body-sb-2
+          `,
           currentTab === 'upcoming' ? 'text-primary' : 'text-gray-300',
         )}
         >
@@ -102,7 +122,10 @@ function Summary({ title, performanceDate, locationName, isOwner, performanceId 
         </div>
         <div className="h-1.25 w-1.25 rounded-full bg-gray-300" />
         <div className={cn(
-          'typo-body-sb-2',
+          `
+            typo-caption-sb-1
+            lg:typo-body-sb-2
+          `,
           currentTab === 'past' ? 'text-primary' : 'text-gray-300',
         )}
         >
@@ -111,13 +134,41 @@ function Summary({ title, performanceDate, locationName, isOwner, performanceId 
       </div>
 
       {/* 공연 요약 */}
-      <div className="flex items-center justify-between gap-5">
-        <div className="flex flex-col gap-3.75">
-          <h1 className="typo-title-b-3 text-black">{title}</h1>
-          <div className="flex items-center gap-5 pb-5">
-            <span className="typo-body-sb-2 text-gray-500">{performanceDate}</span>
+      <div className={`
+        flex items-center justify-between gap-2.5
+        lg:gap-5
+      `}
+      >
+        <div className={`
+          flex min-w-0 flex-col gap-2
+          lg:gap-3.75
+        `}
+        >
+          <h1 className={`
+            typo-body-b-1 wrap-break-word text-black
+            lg:typo-title-b-3
+          `}
+          >
+            {title}
+          </h1>
+          <div className={`
+            flex flex-wrap items-center gap-2.5 pb-3
+            lg:gap-5 lg:pb-5
+          `}
+          >
+            <span className={`
+              typo-caption-sb-1 text-gray-500
+              lg:typo-body-sb-2
+            `}
+            >
+              {performanceDate}
+            </span>
             <div className="h-3 w-px bg-gray-300" />
-            <span className="typo-body-sb-2 text-gray-500">
+            <span className={`
+              typo-caption-sb-1 wrap-break-word text-gray-500
+              lg:typo-body-sb-2
+            `}
+            >
               {locationName}
             </span>
           </div>
@@ -240,16 +291,16 @@ function Content({ posterUrl, summary, startTime, endTime, performers, descripti
   return (
     <div>
       <div className={`
-        flex flex-col gap-10 border-b-2 border-gray-200 pt-10.5 pb-12.5
-        lg:flex-row lg:gap-17.5
+        flex flex-col gap-5 border-b-2 border-gray-200 pt-5 pb-6
+        lg:flex-row lg:gap-17.5 lg:pt-10.5 lg:pb-12.5
       `}
       >
         {/* 공연 포스터 */}
         <div className={`
-          relative overflow-hidden rounded-lg
-          sm:h-[400px] sm:w-[300px]
-          md:h-[600px] md:w-[500px]
-          lg:h-[808px] lg:w-[708px]
+          relative aspect-3/4 w-full overflow-hidden rounded-lg
+          sm:aspect-auto sm:h-100 sm:w-75
+          md:h-150 md:w-125
+          lg:h-202 lg:w-177
         `}
         >
           {posterUrl
@@ -259,6 +310,12 @@ function Content({ posterUrl, summary, startTime, endTime, performers, descripti
                   alt={`${title} 공연 포스터`}
                   fill
                   className="object-cover"
+                  sizes={`
+                    (max-width: 575px) calc(100vw - 40px),
+                    (max-width: 767px) 300px,
+                    (max-width: 1023px) 500px,
+                    708px
+                  `}
                 />
               )
             : (
@@ -279,7 +336,11 @@ function Content({ posterUrl, summary, startTime, endTime, performers, descripti
         </div>
 
         {/* 공연 정보 */}
-        <div className="flex flex-col pt-7.5">
+        <div className={`
+          flex min-w-0 flex-col
+          lg:pt-7.5
+        `}
+        >
           <InfoRow label="공연소개" className="pb-3.75">
             {summary}
           </InfoRow>
@@ -292,14 +353,15 @@ function Content({ posterUrl, summary, startTime, endTime, performers, descripti
             <div className="flex flex-col gap-2">
               <div>{performers.name}</div>
               <div>{performers.phoneNumber}</div>
-              <div>{performers.email}</div>
+              <div className="break-all">{performers.email}</div>
             </div>
           </InfoRow>
         </div>
       </div>
       <div className={`
-        min-h-[622px] border-b-2 border-gray-200 py-2.5 typo-title-b-5
-        text-black
+        min-h-100 border-b-2 border-gray-200 py-2.5 typo-body-m-3
+        wrap-break-word whitespace-pre-wrap text-black
+        lg:min-h-155.5 lg:typo-title-b-5
       `}
       >
         {description}
@@ -316,15 +378,24 @@ interface InfoRowProps {
 
 function InfoRow({ label, children, className }: InfoRowProps) {
   return (
-    <div className={cn('flex items-start gap-7.5', className)}>
+    <div className={cn(`
+      flex min-w-0 items-start gap-3
+      lg:gap-7.5
+    `, className)}
+    >
       <div className={`
-        flex h-[44px] w-[85px] flex-none items-center justify-center
-        rounded-full border border-gray-200 typo-body-m-3 text-gray-700
+        flex h-8 w-16 flex-none items-center justify-center rounded-full border
+        border-gray-200 typo-caption-r-2 text-gray-700
+        lg:h-11 lg:w-[85px] lg:typo-body-m-3
       `}
       >
         {label}
       </div>
-      <div className="flex flex-col p-2.5 typo-body-m-3 text-black">
+      <div className={`
+        flex min-w-0 flex-col p-1 typo-caption-r-1 wrap-break-word text-black
+        lg:p-2.5 lg:typo-body-m-3
+      `}
+      >
         {children}
       </div>
     </div>
