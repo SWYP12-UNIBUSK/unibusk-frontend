@@ -1,10 +1,22 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import localFont from 'next/font/local';
 import { Toaster } from '@/components/common/toast';
 import { SITE_URL } from '@/constants';
 import { QueryProvider } from '@/providers';
 import { SHARED_OPEN_GRAPH } from '@/utils';
 import '../styles/globals.css';
+
+const pretendard = localFont({
+  src: [
+    { path: '../styles/fonts/Pretendard-Regular.subset.woff2', weight: '400' },
+    { path: '../styles/fonts/Pretendard-Medium.subset.woff2', weight: '500' },
+    { path: '../styles/fonts/Pretendard-SemiBold.subset.woff2', weight: '600' },
+    { path: '../styles/fonts/Pretendard-Bold.subset.woff2', weight: '700' },
+  ],
+  display: 'swap',
+  variable: '--font-pretendard',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -28,15 +40,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ko">
-      <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          crossOrigin="anonymous"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css"
-        />
-      </head>
+    <html lang="ko" className={pretendard.variable}>
       <body className="antialiased">
         <QueryProvider>{children}</QueryProvider>
         <Toaster />
