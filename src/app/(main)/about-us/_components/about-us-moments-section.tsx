@@ -24,11 +24,14 @@ export function AboutUsMomentsSection({ heading, items }: AboutUsMomentsSectionP
       `}
       >
         <h2
-          className={`
-            text-center typo-body-b-1 text-black
-            md:typo-title-b-5
-            lg:typo-title-b-1
-          `}
+          className={cn(
+            `
+              text-center typo-body-b-1
+              md:typo-title-b-5
+              lg:typo-title-b-1
+            `,
+            'text-black',
+          )}
         >
           {heading}
         </h2>
@@ -92,18 +95,24 @@ function MomentCard({
       )}
     >
       <h3
-        className={`
-          typo-caption-b-1 break-keep text-gray-800
-          lg:typo-title-b-3
-        `}
+        className={cn(
+          `
+            typo-caption-b-1 break-keep
+            lg:typo-title-b-3
+          `,
+          'text-gray-800',
+        )}
       >
         {title}
       </h3>
       <p
-        className={`
-          mt-3.5 typo-caption-r-2 break-keep whitespace-pre-line text-gray-700
-          lg:typo-title-r-4
-        `}
+        className={cn(
+          `
+            mt-3.5 typo-caption-r-2 break-keep whitespace-pre-line
+            lg:typo-title-r-4
+          `,
+          'text-gray-700',
+        )}
       >
         {description}
       </p>

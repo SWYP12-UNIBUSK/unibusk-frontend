@@ -27,11 +27,14 @@ export function AboutUsVisionSection({ heading, cards }: AboutUsVisionSectionPro
       `}
       >
         <h2
-          className={`
-            text-center typo-body-b-1 text-white
-            md:typo-title-b-5
-            lg:typo-title-b-1
-          `}
+          className={cn(
+            `
+              text-center typo-body-b-1
+              md:typo-title-b-5
+              lg:typo-title-b-1
+            `,
+            'text-white',
+          )}
         >
           {heading}
         </h2>
