@@ -40,6 +40,13 @@
   letter-spacing: -0.011em;
 }
 
+@utility typo-title-sb-5 {
+  font-size: var(--text-title-5);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: -0.011em;
+}
+
 @utility typo-body-b-1 {
   font-size: var(--text-body-1);
   line-height: 1.5;
@@ -89,8 +96,22 @@
   letter-spacing: -0.011em;
 }
 
+@utility typo-caption-b-1 {
+  font-size: var(--text-caption-1);
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: -0.011em;
+}
+
 @utility typo-caption-m-1 {
   font-size: var(--text-caption-1);
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: -0.011em;
+}
+
+@utility typo-caption-m-2 {
+  font-size: var(--text-caption-2);
   line-height: 1.5;
   font-weight: 500;
   letter-spacing: -0.011em;
