@@ -14,16 +14,46 @@ interface AboutUsMomentsSectionProps {
 export function AboutUsMomentsSection({ heading, items }: AboutUsMomentsSectionProps) {
   return (
     <section className={`
-      flex h-full min-h-350 w-full flex-col items-center justify-center bg-white
+      flex w-full flex-col items-center justify-center bg-white py-18
+      lg:h-full lg:min-h-350 lg:py-0
     `}
     >
-      <MainLayout>
-        <h2 className="text-center typo-title-b-1 text-black">{heading}</h2>
+      <MainLayout className={`
+        px-5
+        md:px-6
+      `}
+      >
+        <h2
+          className={cn(
+            `
+              text-center typo-body-b-1
+              md:typo-title-b-5
+              lg:typo-title-b-1
+            `,
+            'text-black',
+          )}
+        >
+          {heading}
+        </h2>
 
-        <div className="mt-33.25 flex w-full flex-col items-center">
-          <div className="flex flex-col gap-16.5">
+        <div className={`
+          mt-12.5 flex w-full flex-col items-center
+          lg:mt-33.25
+        `}
+        >
+          <div className={`
+            flex w-full flex-col gap-5
+            lg:w-auto lg:gap-16.5
+          `}
+          >
             {items.map((item, index) => (
-              <div key={item.title} className="flex items-center gap-12">
+              <div
+                key={item.title}
+                className={`
+                  flex items-center
+                  lg:gap-12
+                `}
+              >
                 <TimelineDot
                   isLast={index === items.length - 1}
                   connectorVariant={index % 2 === 0 ? 'down-right' : 'down-left'}
@@ -52,21 +82,37 @@ function MomentCard({
   description: string;
   align: 'left' | 'right';
 }) {
-  const shiftClass = align === 'right' ? 'ml-20' : '';
+  const shiftClass = align === 'right' ? 'lg:ml-20' : '';
 
   return (
     <div
       className={cn(
-        'h-full min-h-46 w-full max-w-360 rounded-2xl bg-gray-200 px-12 py-10',
+        'w-full rounded-2xl bg-gray-200 px-5 py-6',
+        'md:px-8 md:py-7',
+        'lg:h-full lg:min-h-46 lg:max-w-360 lg:px-12 lg:py-10',
         'shadow-[0_6px_14px_rgba(0,0,0,0.10)] ring-1 ring-black/10',
         shiftClass,
       )}
     >
-      <h3 className="typo-title-b-3 break-keep text-gray-800">{title}</h3>
+      <h3
+        className={cn(
+          `
+            typo-caption-b-1 break-keep
+            lg:typo-title-b-3
+          `,
+          'text-gray-800',
+        )}
+      >
+        {title}
+      </h3>
       <p
-        className={`
-          mt-3.5 typo-title-r-4 break-keep whitespace-pre-line text-gray-700
-        `}
+        className={cn(
+          `
+            mt-3.5 typo-caption-r-2 break-keep whitespace-pre-line
+            lg:typo-title-r-4
+          `,
+          'text-gray-700',
+        )}
       >
         {description}
       </p>
@@ -102,7 +148,8 @@ function TimelineDot({
   return (
     <div
       className={`
-        relative flex h-46 w-30 items-center
+        hidden h-46 w-30 items-center
+        lg:relative lg:flex
         ${justifyClass}
       `}
       aria-hidden

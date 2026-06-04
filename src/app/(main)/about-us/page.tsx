@@ -1,4 +1,5 @@
 import { createPageMetadata } from '@/utils';
+import { HomeFooter } from '../_components';
 import {
   AboutUsHeroSection,
   AboutUsMomentsSection,
@@ -64,10 +65,13 @@ const MOMENT_ITEMS = [
 
 export default function AboutUsPage() {
   return (
-    <main className="w-full bg-white">
-      <AboutUsHeroSection {...HERO_ITEMS} />
-      <AboutUsVisionSection heading="UNIBUSK가 꿈꾸는 거리" cards={VISION_CARDS} />
-      <AboutUsMomentsSection heading="UNIBUSK가 연결하는 순간들" items={MOMENT_ITEMS} />
-    </main>
+    <>
+      <main className="w-full bg-white">
+        <AboutUsHeroSection {...HERO_ITEMS} />
+        <AboutUsVisionSection heading="UNIBUSK가 꿈꾸는 거리" cards={VISION_CARDS} />
+        <AboutUsMomentsSection heading="UNIBUSK가 연결하는 순간들" items={MOMENT_ITEMS} />
+      </main>
+      <HomeFooter />
+    </>
   );
 }
