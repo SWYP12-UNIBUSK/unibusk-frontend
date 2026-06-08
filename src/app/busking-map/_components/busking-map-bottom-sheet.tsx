@@ -323,7 +323,7 @@ export function BuskingMapBottomSheet({
   const isDetailOpen = Boolean(selectedPlace || focusedPlace);
   const isCollapsed = activeSnapPoint === BUSKING_MAP_SHEET_SNAP.collapsed;
   const isDetailFullscreen = isDetailOpen && activeSnapPoint === BUSKING_MAP_SHEET_SNAP.detail;
-  const isExpanded = !isDetailFullscreen && !isCollapsed && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default;
+  const isExpanded = !isDetailFullscreen && !isCollapsed && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.detail;
   const isExpandedSnapPoint = activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.collapsed
     && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default
     && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.detail;

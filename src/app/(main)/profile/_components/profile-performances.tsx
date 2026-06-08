@@ -116,7 +116,7 @@ function Performances({ performances, onLoadMore, hasMore, isLoading }: Performa
 
   return (
     <section className={`
-      flex w-full flex-1 flex-col gap-[15px]
+      flex w-full flex-1 flex-col gap-3.75
       md:gap-7.5
     `}
     >
@@ -395,7 +395,7 @@ export function ProfilePerformancesSkeleton() {
       `}
       />
       <div className={`
-        flex w-full flex-1 flex-col gap-[15px]
+        flex w-full flex-1 flex-col gap-3.75
         md:gap-7.5
       `}
       >

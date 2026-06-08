@@ -1,3 +1,5 @@
+'use client';
+
 import type { UIEvent } from 'react';
 import type { BuskingPlace } from '@/types/busking-map';
 import { cva } from 'class-variance-authority';
