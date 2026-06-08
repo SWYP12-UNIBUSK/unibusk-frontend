@@ -1,3 +1,4 @@
+import { cva } from 'class-variance-authority';
 import * as React from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
@@ -50,13 +51,37 @@ function DrawerOverlay({
 interface DrawerContentProps extends React.ComponentProps<typeof DrawerPrimitive.Content> {
   showOverlay?: boolean;
   overlayClassName?: string;
+  direction?: 'top' | 'right' | 'bottom' | 'left';
 }
+
+const drawerContentVariants = cva(`
+  group/drawer-content fixed z-50 flex h-auto flex-col bg-background
+`, {
+  variants: {
+    direction: {
+      top: 'inset-x-0 top-0 mb-24 max-h-[80vh] rounded-b-lg border-b',
+      bottom: 'inset-x-0 bottom-0 mt-24 max-h-[80vh] rounded-t-lg border-t',
+      right: `
+        inset-y-0 right-0 w-3/4 border-l
+        sm:max-w-sm
+      `,
+      left: `
+        inset-y-0 left-0 w-3/4 border-r
+        sm:max-w-sm
+      `,
+    },
+  },
+  defaultVariants: {
+    direction: 'bottom',
+  },
+});
 
 function DrawerContent({
   className,
   children,
   showOverlay = true,
   overlayClassName,
+  direction = 'bottom',
   ...props
 }: DrawerContentProps) {
   return (
@@ -64,40 +89,8 @@ function DrawerContent({
       {showOverlay ? <DrawerOverlay className={overlayClassName} /> : null}
       <DrawerPrimitive.Content
         data-slot="drawer-content"
-        className={cn(
-          'group/drawer-content fixed z-50 flex h-auto flex-col bg-background',
-          `
-            data-[vaul-drawer-direction=top]:inset-x-0
-            data-[vaul-drawer-direction=top]:top-0
-            data-[vaul-drawer-direction=top]:mb-24
-            data-[vaul-drawer-direction=top]:max-h-[80vh]
-            data-[vaul-drawer-direction=top]:rounded-b-lg
-            data-[vaul-drawer-direction=top]:border-b
-          `,
-          `
-            data-[vaul-drawer-direction=bottom]:inset-x-0
-            data-[vaul-drawer-direction=bottom]:bottom-0
-            data-[vaul-drawer-direction=bottom]:mt-24
-            data-[vaul-drawer-direction=bottom]:max-h-[80vh]
-            data-[vaul-drawer-direction=bottom]:rounded-t-lg
-            data-[vaul-drawer-direction=bottom]:border-t
-          `,
-          `
-            data-[vaul-drawer-direction=right]:inset-y-0
-            data-[vaul-drawer-direction=right]:right-0
-            data-[vaul-drawer-direction=right]:w-3/4
-            data-[vaul-drawer-direction=right]:border-l
-            data-[vaul-drawer-direction=right]:sm:max-w-sm
-          `,
-          `
-            data-[vaul-drawer-direction=left]:inset-y-0
-            data-[vaul-drawer-direction=left]:left-0
-            data-[vaul-drawer-direction=left]:w-3/4
-            data-[vaul-drawer-direction=left]:border-r
-            data-[vaul-drawer-direction=left]:sm:max-w-sm
-          `,
-          className,
-        )}
+        data-vaul-drawer-direction={direction}
+        className={cn(drawerContentVariants({ direction }), className)}
         {...props}
       >
         <div
@@ -149,7 +142,7 @@ function DrawerTitle({
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn('font-semibold text-foreground', className)}
+      className={cn('typo-body-sb-2 text-foreground', className)}
       {...props}
     />
   );
@@ -162,7 +155,7 @@ function DrawerDescription({
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('typo-caption-r-1 text-muted-foreground', className)}
       {...props}
     />
   );

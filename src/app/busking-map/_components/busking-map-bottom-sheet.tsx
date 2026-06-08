@@ -18,6 +18,7 @@ import { DetailPanel } from './detail-panel';
 const BUSKING_MAP_SHEET_SNAP = {
   collapsed: '116px',
   default: 0.48,
+  detail: 1,
 } as const;
 
 const MOBILE_HEADER_HEIGHT_FALLBACK_PX = 96;
@@ -253,7 +254,7 @@ export function BuskingMapBottomSheet({
 
   const expandedSnapPoint = useMemo(() => {
     if (typeof window === 'undefined') {
-      return `calc(100dvh - ${MOBILE_HEADER_HEIGHT_FALLBACK_PX}px)`;
+      return `${MOBILE_HEADER_HEIGHT_FALLBACK_PX}px`;
     }
 
     return `${Math.max(window.innerHeight - headerHeightPx, 0)}px`;
@@ -264,6 +265,7 @@ export function BuskingMapBottomSheet({
       BUSKING_MAP_SHEET_SNAP.collapsed,
       BUSKING_MAP_SHEET_SNAP.default,
       expandedSnapPoint,
+      BUSKING_MAP_SHEET_SNAP.detail,
     ];
   }, [expandedSnapPoint]);
 
@@ -300,12 +302,12 @@ export function BuskingMapBottomSheet({
     previousInteractionKeyRef.current = interactionKey;
 
     if (mapState.selectedPlaceId) {
-      setActiveSnapPoint(expandedSnapPoint);
+      setActiveSnapPoint(BUSKING_MAP_SHEET_SNAP.detail);
       return;
     }
 
     if (mapState.focusedPlaceId) {
-      setActiveSnapPoint(BUSKING_MAP_SHEET_SNAP.collapsed);
+      setActiveSnapPoint(BUSKING_MAP_SHEET_SNAP.detail);
       return;
     }
 
@@ -320,7 +322,19 @@ export function BuskingMapBottomSheet({
 
   const isDetailOpen = Boolean(selectedPlace || focusedPlace);
   const isCollapsed = activeSnapPoint === BUSKING_MAP_SHEET_SNAP.collapsed;
-  const isExpanded = !isCollapsed && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default;
+  const isDetailFullscreen = isDetailOpen && activeSnapPoint === BUSKING_MAP_SHEET_SNAP.detail;
+  const isExpanded = !isDetailFullscreen && !isCollapsed && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default;
+  const isExpandedSnapPoint = activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.collapsed
+    && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.default
+    && activeSnapPoint !== BUSKING_MAP_SHEET_SNAP.detail;
+
+  useEffect(() => {
+    if (!isExpandedSnapPoint) {
+      return;
+    }
+
+    setActiveSnapPoint(expandedSnapPoint);
+  }, [expandedSnapPoint, isExpandedSnapPoint]);
 
   const handlePreviewClick = () => {
     if (!previewPlace) {
@@ -328,12 +342,12 @@ export function BuskingMapBottomSheet({
     }
 
     onListItemClick(previewPlace.id);
-    setActiveSnapPoint(expandedSnapPoint);
+    setActiveSnapPoint(BUSKING_MAP_SHEET_SNAP.detail);
   };
 
   const handleListItemClick = (placeId: string) => {
     onListItemClick(placeId);
-    setActiveSnapPoint(expandedSnapPoint);
+    setActiveSnapPoint(BUSKING_MAP_SHEET_SNAP.detail);
   };
 
   const handleDetailCloseClick = () => {
@@ -362,22 +376,31 @@ export function BuskingMapBottomSheet({
       autoFocus={false}
     >
       <DrawerContent
+        direction="bottom"
         showOverlay={false}
         className={cn(
           'z-sidebar mt-0! h-dvh! max-h-dvh! border-none! bg-white',
-          isExpanded ? 'shadow-none' : 'shadow-sidebar',
-          isExpanded
+          isExpanded || isDetailFullscreen ? 'shadow-none' : 'shadow-sidebar',
+          isExpanded || isDetailFullscreen
             ? `
               rounded-none
-              *:data-[slot=drawer-handle]:hidden
               data-[vaul-drawer-direction=bottom]:rounded-none
             `
             : 'rounded-t-[20px]',
+          isDetailFullscreen
+            ? `
+              *:data-[slot=drawer-handle]:absolute
+              *:data-[slot=drawer-handle]:top-4
+              *:data-[slot=drawer-handle]:left-1/2
+              *:data-[slot=drawer-handle]:z-10
+              *:data-[slot=drawer-handle]:-translate-x-1/2
+            `
+            : '',
         )}
       >
         <DrawerTitle className="sr-only">버스킹 장소 목록</DrawerTitle>
 
-        {isExpanded
+        {isExpanded && !isDetailFullscreen
           ? (
               <div
                 aria-hidden={true}
@@ -389,10 +412,18 @@ export function BuskingMapBottomSheet({
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           {isDetailOpen && !isCollapsed
             ? (
-                <div className="min-h-0 flex-1 px-2 pb-2">
+                <div
+                  className={cn(
+                    'min-h-0 flex-1',
+                    isDetailFullscreen
+                      ? 'px-0 pb-0'
+                      : 'px-2 pb-2',
+                  )}
+                >
                   <DetailPanel
                     place={selectedPlace ?? focusedPlace}
                     onCloseClick={handleDetailCloseClick}
+                    variant={isDetailFullscreen ? 'detail' : 'focused'}
                   />
                 </div>
               )
