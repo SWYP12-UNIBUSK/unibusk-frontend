@@ -1,5 +1,8 @@
+'use client';
+
 import type { UIEvent } from 'react';
 import type { BuskingPlace } from '@/types/busking-map';
+import { cva } from 'class-variance-authority';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useMemo, useState } from 'react';
@@ -28,6 +31,35 @@ interface DetailPanelProps {
   onCloseClick: () => void;
   variant?: DetailPanelVariant;
 }
+
+const detailPanelVariants = cva(`
+  relative h-full w-full overflow-hidden bg-white
+`, {
+  variants: {
+    variant: {
+      focused: 'rounded-4xl shadow-sidebar',
+      detail: 'rounded-none shadow-none',
+    },
+  },
+  defaultVariants: {
+    variant: 'focused',
+  },
+});
+
+const detailPanelBodyVariants = cva(
+  'absolute inset-x-0 bottom-0 z-10 bg-white transition-all duration-200',
+  {
+    variants: {
+      variant: {
+        focused: 'rounded-t-4xl',
+        detail: 'rounded-none',
+      },
+    },
+    defaultVariants: {
+      variant: 'focused',
+    },
+  },
+);
 
 interface PerformanceItem {
   id: string;
@@ -307,15 +339,24 @@ function ApplicationGuidePanel({
   guides,
   onBackClick,
   onCloseClick,
+  variant = 'focused',
 }: {
   title: string;
   operatorUrl: string | null;
   guides: ApplicationGuideItem[];
   onBackClick: () => void;
   onCloseClick: () => void;
+  variant?: DetailPanelVariant;
 }) {
   return (
-    <div className="absolute inset-0 z-40 rounded-4xl bg-white">
+    <div
+      className={cn(
+        'absolute inset-0 z-40 bg-white',
+        variant === 'detail'
+          ? 'rounded-none'
+          : 'rounded-4xl',
+      )}
+    >
       <div className="absolute inset-x-0 top-0 z-20">
         <div className={`
           flex h-17 items-center justify-between border-b border-gray-200
@@ -424,7 +465,7 @@ function ApplicationGuidePanel({
   );
 }
 
-export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
+export function DetailPanel({ place, onCloseClick, variant = 'focused' }: DetailPanelProps) {
   const [isHeaderSolid, setIsHeaderSolid] = useState(false);
   const [isApplicationGuideOpen, setIsApplicationGuideOpen] = useState(false);
 
@@ -461,10 +502,7 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
 
   return (
     <section
-      className={`
-        relative h-full w-full overflow-hidden rounded-4xl bg-white
-        shadow-sidebar
-      `}
+      className={detailPanelVariants({ variant })}
     >
       {isApplicationGuideOpen
         ? (
@@ -472,6 +510,7 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
               title={place.title}
               operatorUrl={operatorUrl}
               guides={(applicationGuides?.applicationGuideResponses ?? []) as ApplicationGuideItem[]}
+              variant={variant}
               onBackClick={() => {
                 setIsApplicationGuideOpen(false);
               }}
@@ -515,10 +554,7 @@ export function DetailPanel({ place, onCloseClick }: DetailPanelProps) {
 
       <div
         className={cn(
-          `
-            absolute inset-x-0 bottom-0 z-10 rounded-t-4xl bg-white
-            transition-all duration-200
-          `,
+          detailPanelBodyVariants({ variant }),
           isHeaderSolid ? 'top-0' : 'top-44',
         )}
       >
