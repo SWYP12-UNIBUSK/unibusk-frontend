@@ -20,14 +20,14 @@ export function Footer() {
     <footer
       className={cn(
         'relative left-1/2 w-screen -translate-x-1/2 border-t border-gray-100',
-        'bg-gray-100 py-9',
+        'bg-gray-100 py-8',
         'md:py-12',
       )}
     >
       <MainLayout className={cn('px-5', 'md:px-6')}>
         <div
           className={cn(
-            'grid gap-8',
+            'grid gap-7',
             'md:grid-cols-[1fr_auto] md:items-start md:gap-14',
           )}
         >
@@ -36,18 +36,30 @@ export function Footer() {
               <Image
                 src="/logos/logo-unibusk-stacked-vertical-small.webp"
                 alt="UNIBUSK"
-                width={148}
-                height={76}
+                width={112}
+                height={57}
+                className="md:h-[76px] md:w-[148px]"
               />
             </Link>
 
-            <div className="mt-1 pl-4 typo-caption-r-2 break-keep text-gray-400">
+            <div
+              className={cn(
+                'mt-2 typo-caption-r-2 leading-[1.6] break-keep text-gray-400',
+                'md:mt-1 md:pl-4 md:leading-normal',
+              )}
+            >
               <p>버스킹의 모든 순간을 잇다, UNIBUSK</p>
               <p>© UNIBUSK. All rights reserved.</p>
             </div>
           </div>
 
-          <div className={cn('grid grid-cols-2 gap-8', 'md:min-w-90 md:gap-14')}>
+          <div
+            className={cn(
+              'grid gap-7',
+              'sm:grid-cols-2 sm:gap-8',
+              'md:min-w-90 md:gap-14',
+            )}
+          >
             <FooterLinkGroup title="사이트맵" links={SITEMAP_LINKS} />
             <FooterLinkGroup title="정책" links={POLICY_LINKS} />
           </div>
@@ -69,7 +81,12 @@ function FooterLinkGroup({ title, links }: FooterLinkGroupProps) {
   return (
     <nav aria-label={`푸터 ${title}`}>
       <h2 className="typo-body-sb-3 text-black">{title}</h2>
-      <ul className="mt-3 flex flex-col gap-2.5">
+      <ul
+        className={cn(
+          'mt-3 grid grid-cols-2 gap-x-6 gap-y-2.5',
+          'sm:flex sm:flex-col',
+        )}
+      >
         {links.map(link => (
           <li key={link.href}>
             <Link
