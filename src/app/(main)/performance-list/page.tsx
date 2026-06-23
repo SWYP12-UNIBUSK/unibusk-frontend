@@ -1,6 +1,7 @@
 import type { PerformanceFilterTab } from '@/types/performance';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
+import { Footer } from '@/components/layout';
 import { PerformanceCardSkeleton } from '@/components/performance';
 import { getQueryClient } from '@/queries';
 import { performanceListInfiniteQueryOptions } from '@/queries/performance';
@@ -35,8 +36,9 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
 
   return (
     <div className="relative container-1920 flex min-h-screen flex-col">
-      <main className="min-h-screen bg-white pt-[57px]">
+      <main className="min-h-screen bg-white pt-14.25 pb-10">
         <h1 className="sr-only">버스킹 공연 정보</h1>
+
         <Hero />
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense
@@ -60,6 +62,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
           </Suspense>
         </HydrationBoundary>
       </main>
+      <Footer />
     </div>
   );
 }

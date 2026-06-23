@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { notFound } from 'next/navigation';
 import { cache, Suspense } from 'react';
+import { Footer } from '@/components/layout';
 import { JsonLdScript } from '@/components/seo';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
@@ -11,7 +12,7 @@ import {
   buildPerformanceEventJsonLd,
   NO_INDEX_FOLLOW_ROBOTS,
 } from '@/utils/seo';
-import { Footer, PerformanceInfo } from './_components';
+import { PerformanceInfo } from './_components';
 
 const getPerformanceDetail = cache(async (performanceId: number) => {
   const queryClient = getQueryClient();

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { HomeFooter } from '@/app/(main)/_components/home-footer';
+import { Footer } from '@/components/layout';
 import { cn } from '@/utils';
 import { LegalConfirmButton } from '../legal-confirm-button';
 
@@ -50,9 +50,7 @@ export function LegalLayout({ title, children }: LegalLayoutProps) {
         </section>
       </main>
 
-      <div className={cn('hidden', 'md:block')}>
-        <HomeFooter />
-      </div>
+      <Footer />
     </div>
   );
 }

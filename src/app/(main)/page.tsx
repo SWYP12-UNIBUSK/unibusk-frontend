@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
+import { Footer } from '@/components/layout';
 import { JsonLdScript } from '@/components/seo';
 import { SHARED_OPEN_GRAPH } from '@/utils';
 import { getHomeOrganizationJsonLd, getHomeWebsiteJsonLd, HOME_DESCRIPTION } from '@/utils/seo';
-import { HomeFooter, HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
+import { HomeHeroSection, HomePromoSection, HomeUpcomingBuskingSection } from './_components';
 
 const HOME_TITLE = 'UNIBUSK';
 const HOME_OG_IMAGE = '/logos/logo-unibusk-stacked-vertical.webp';
@@ -48,7 +49,7 @@ export default function HomePage() {
       />
 
       <HomePromoSection ctaHref="/performance-list" />
-      <HomeFooter />
+      <Footer />
     </main>
   );
 }
