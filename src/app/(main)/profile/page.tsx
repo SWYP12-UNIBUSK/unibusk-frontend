@@ -4,12 +4,14 @@ import { getUser } from '@/apis/user';
 import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { createPageMetadata } from '@/utils';
+import { NO_INDEX_FOLLOW_ROBOTS } from '@/utils/seo';
 import { Footer, ProfileTab } from './_components';
 
 export const metadata = createPageMetadata({
   title: '마이페이지',
   description: '내가 등록한 공연과 계정 정보를 한곳에서 확인해보세요.',
   path: '/profile',
+  robots: NO_INDEX_FOLLOW_ROBOTS,
 });
 
 export default async function ProfilePage() {

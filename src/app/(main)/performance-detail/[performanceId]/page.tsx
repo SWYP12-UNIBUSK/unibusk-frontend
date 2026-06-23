@@ -6,13 +6,19 @@ import { JsonLdScript } from '@/components/seo';
 import { getQueryClient } from '@/queries';
 import { performanceDetailQueryOptions } from '@/queries/performance';
 import { createPageMetadata } from '@/utils';
-import { buildPerformanceBreadcrumbJsonLd, buildPerformanceEventJsonLd } from '@/utils/seo';
+import {
+  buildPerformanceBreadcrumbJsonLd,
+  buildPerformanceEventJsonLd,
+  NO_INDEX_FOLLOW_ROBOTS,
+} from '@/utils/seo';
 import { Footer, PerformanceInfo } from './_components';
 
 const getPerformanceDetail = cache(async (performanceId: number) => {
   const queryClient = getQueryClient();
 
-  return queryClient.fetchQuery(performanceDetailQueryOptions(performanceId));
+  return queryClient.fetchQuery(
+    performanceDetailQueryOptions(performanceId),
+  );
 });
 
 export async function generateMetadata(
@@ -30,6 +36,7 @@ export async function generateMetadata(
       title: '공연 상세',
       description: '버스킹 공연 상세 정보와 일정, 장소, 진행 내용을 확인해보세요.',
       path: '/performance-detail',
+      robots: NO_INDEX_FOLLOW_ROBOTS,
     });
   }
 
@@ -40,6 +47,7 @@ export async function generateMetadata(
     description: `${performanceDetail.title} 공연의 일정, 장소, 상세 정보를 확인해보세요.`,
     path: `/performance-detail/${performanceId}`,
     image: performanceDetail.imageUrl ?? undefined,
+    robots: NO_INDEX_FOLLOW_ROBOTS,
   });
 }
 
@@ -70,8 +78,15 @@ export default async function PerformanceDetailPage(
 
   return (
     <div className="relative container-1920 flex min-h-screen flex-col">
-      <JsonLdScript id="performance-event-json-ld" data={eventJsonLd} />
-      <JsonLdScript id="performance-breadcrumb-json-ld" data={breadcrumbJsonLd} />
+      <JsonLdScript
+        id="performance-event-json-ld"
+        data={eventJsonLd}
+      />
+      <JsonLdScript
+        id="performance-breadcrumb-json-ld"
+        data={breadcrumbJsonLd}
+      />
+
       <main className="flex flex-1 flex-col">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense fallback={<div>Loading...</div>}>
@@ -79,6 +94,7 @@ export default async function PerformanceDetailPage(
           </Suspense>
         </HydrationBoundary>
       </main>
+
       <Footer />
     </div>
   );

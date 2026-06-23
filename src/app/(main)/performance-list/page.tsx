@@ -36,7 +36,7 @@ export default async function PerformanceListPage({ searchParams }: PageProps) {
   return (
     <div className="relative container-1920 flex min-h-screen flex-col">
       <main className="min-h-screen bg-white pt-[57px]">
-
+        <h1 className="sr-only">버스킹 공연 정보</h1>
         <Hero />
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense
