@@ -1,5 +1,5 @@
+import { Footer } from '@/components/layout';
 import { createPageMetadata } from '@/utils';
-import { HomeFooter } from '../_components';
 import {
   AboutUsHeroSection,
   AboutUsMomentsSection,
@@ -71,7 +71,7 @@ export default function AboutUsPage() {
         <AboutUsVisionSection heading="UNIBUSK가 꿈꾸는 거리" cards={VISION_CARDS} />
         <AboutUsMomentsSection heading="UNIBUSK가 연결하는 순간들" items={MOMENT_ITEMS} />
       </main>
-      <HomeFooter />
+      <Footer />
     </>
   );
 }

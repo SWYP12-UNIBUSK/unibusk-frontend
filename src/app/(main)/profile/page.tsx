@@ -5,7 +5,7 @@ import { getQueryClient } from '@/queries';
 import { userQueryOptions } from '@/queries/user/user.query';
 import { createPageMetadata } from '@/utils';
 import { NO_INDEX_FOLLOW_ROBOTS } from '@/utils/seo';
-import { Footer, ProfileTab } from './_components';
+import { ProfileTab } from './_components';
 
 export const metadata = createPageMetadata({
   title: '마이페이지',
@@ -35,7 +35,6 @@ export default async function ProfilePage() {
           <ProfileTab />
         </HydrationBoundary>
       </main>
-      <Footer />
     </div>
   );
 }
