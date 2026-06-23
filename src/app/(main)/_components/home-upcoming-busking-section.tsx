@@ -25,8 +25,20 @@ export function HomeUpcomingBuskingSection({
       `}
       >
         <div className="text-center">
-          <h2 className="typo-title-sb-2 text-black">{title}</h2>
-          <p className="mt-3.75 typo-title-r-4 break-keep text-gray-600">{tags.join(' ')}</p>
+          <h2 className={`
+            typo-body-sb-1 text-black
+            md:typo-title-sb-2
+          `}
+          >
+            {title}
+          </h2>
+          <p className={`
+            mt-2 typo-caption-r-1 break-keep text-gray-600
+            md:mt-3.75 md:typo-title-r-4
+          `}
+          >
+            {tags.join(' ')}
+          </p>
         </div>
 
         <div className={`

@@ -28,8 +28,20 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
       `}
       >
         <div className="text-center">
-          <h2 className="typo-title-sb-2 text-black">공연을 홍보해 보세요</h2>
-          <p className="mt-3.75 typo-title-r-4 text-gray-600">나의 공연 정보를 등록하고 홍보해 보세요</p>
+          <h2 className={`
+            typo-body-sb-1 text-black
+            md:typo-title-sb-2
+          `}
+          >
+            공연을 홍보해 보세요
+          </h2>
+          <p className={`
+            mt-2 typo-caption-r-1 text-gray-600
+            md:mt-3.75 md:typo-title-r-4
+          `}
+          >
+            나의 공연 정보를 등록하고 홍보해 보세요
+          </p>
         </div>
         <div
           className={cn(
