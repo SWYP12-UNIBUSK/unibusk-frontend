@@ -46,6 +46,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
           >
             <h2 className={`
               typo-title-b-4 text-gray-900
+              sm:typo-title-b-3
               md:typo-title-b-1
             `}
             >
@@ -67,6 +68,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
 
             <p className={`
               mt-3 typo-caption-r-1 text-black
+              sm:typo-body-sb-3
               md:mt-6 md:typo-title-r-4 md:text-gray-700
               lg:whitespace-nowrap
             `}

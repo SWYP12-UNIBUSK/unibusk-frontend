@@ -30,6 +30,7 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
         <div className="text-center">
           <h2 className={`
             typo-body-sb-1 text-black
+            sm:typo-title-b-5
             md:typo-title-sb-2
           `}
           >
@@ -37,6 +38,7 @@ export function HomePromoSection({ ctaHref }: HomePromoSectionProps) {
           </h2>
           <p className={`
             mt-2 typo-caption-r-1 text-gray-600
+            sm:typo-body-m-3
             md:mt-3.75 md:typo-title-r-4
           `}
           >
