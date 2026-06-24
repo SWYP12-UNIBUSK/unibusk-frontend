@@ -38,14 +38,14 @@ export function Footer() {
                 alt="UNIBUSK"
                 width={112}
                 height={57}
-                className="md:h-[76px] md:w-[148px]"
+                className="md:h-19 md:w-37"
               />
             </Link>
 
             <div
               className={cn(
-                'mt-2 typo-caption-r-2 leading-[1.6] break-keep text-gray-400',
-                'md:mt-1 md:pl-4 md:leading-normal',
+                'mt-2 typo-caption-r-2 break-keep text-gray-400',
+                'md:mt-1 md:pl-4',
               )}
             >
               <p>버스킹의 모든 순간을 잇다, UNIBUSK</p>

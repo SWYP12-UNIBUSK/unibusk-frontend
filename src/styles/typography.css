@@ -26,6 +26,13 @@
   letter-spacing: -0.011em;
 }
 
+@utility typo-title-b-4 {
+  font-size: var(--text-title-4);
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: -0.011em;
+}
+
 @utility typo-title-r-4 {
   font-size: var(--text-title-4);
   line-height: 1.5;
