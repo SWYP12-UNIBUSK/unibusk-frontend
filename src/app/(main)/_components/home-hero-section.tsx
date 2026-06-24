@@ -131,7 +131,6 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                     priority
                     fetchPriority="high"
                     sizes="(max-width: 1023px) 100vw, 1280px"
-                    quality={70}
                     className="object-contain"
                   />
                 </div>
