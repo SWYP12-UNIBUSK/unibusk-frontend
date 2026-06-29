@@ -94,7 +94,7 @@ jobs:
           echo "## 🚀 Deployment Status" >> $GITHUB_STEP_SUMMARY
           echo "| Type | Status | URL |" >> $GITHUB_STEP_SUMMARY
           echo "|------|--------|-----|" >> $GITHUB_STEP_SUMMARY
-          echo "| Production | ${{ job.status }} | [https://unibusk.site](https://unibusk.site) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Production | ${{ job.status }} | [https://unibusk.xyz](https://unibusk.xyz) |" >> $GITHUB_STEP_SUMMARY
 
   lighthouse:
     if: github.event_name == 'pull_request'
