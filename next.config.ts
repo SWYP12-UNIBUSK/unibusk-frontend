@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
     // 최신 형식 우선 (AVIF > WebP > JPEG)
     formats: ['image/avif', 'image/webp'],
 
+    // 배경 이미지 q=45와 기본 q=75 허용
+    qualities: [45, 75],
+
     // 캐싱 1년 (Cloudflare 활용)
     minimumCacheTTL: 31536000,
 

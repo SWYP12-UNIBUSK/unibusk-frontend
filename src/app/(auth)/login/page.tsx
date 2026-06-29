@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import { cn } from '@/utils';
+import { NO_INDEX_FOLLOW_ROBOTS } from '@/utils/seo';
 
 import { LoginHeader, LoginKakaoSection } from './_components';
+
+export const metadata: Metadata = {
+  title: '로그인',
+  robots: NO_INDEX_FOLLOW_ROBOTS,
+};
 
 export default function LoginPage() {
   return (

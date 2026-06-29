@@ -1,4 +1,3 @@
-export { HomeFooter } from './home-footer';
 export { HomeHeroSection } from './home-hero-section';
 export { HomePromoSection } from './home-promo-section';
 export { HomeUpcomingBuskingSection } from './home-upcoming-busking-section';

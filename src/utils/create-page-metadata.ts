@@ -5,6 +5,7 @@ interface CreatePageMetadataParams {
   description?: string;
   path?: string;
   image?: string;
+  robots?: Metadata['robots'];
 }
 
 const DEFAULT_DESCRIPTION
@@ -27,6 +28,7 @@ export function createPageMetadata({
   description = DEFAULT_DESCRIPTION,
   path = '/',
   image = DEFAULT_IMAGE,
+  robots,
 }: CreatePageMetadataParams): Metadata {
   return {
     title,
@@ -47,5 +49,6 @@ export function createPageMetadata({
       description,
       images: [image],
     },
+    robots,
   };
 }

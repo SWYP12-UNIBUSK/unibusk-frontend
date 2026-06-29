@@ -27,29 +27,27 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
   };
 
   return (
-    <section className={`
-      w-full bg-[radial-gradient(circle_at_center,#FAFAFA_0%,#FFF7F2CC_100%)]
-    `}
-    >
+    <section className="w-full overflow-hidden bg-white">
       <MainLayout className={`
         relative z-10 px-5.25 pt-8 pb-16
         md:px-6 md:pt-14 md:pb-20
-        lg:flex lg:min-h-250 lg:items-center lg:py-0
+        lg:flex lg:min-h-190 lg:items-start lg:pt-28 lg:pb-24
       `}
       >
         <div className={`
           grid grid-cols-1 gap-8
-          lg:grid-cols-12 lg:items-center lg:gap-6
+          lg:grid-cols-12 lg:items-start lg:gap-0
         `}
         >
           <div className={`
             order-2
-            lg:order-1 lg:col-span-6
+            lg:order-1 lg:col-span-5 lg:pt-16
           `}
           >
             <h2 className={`
-              typo-title-b-1 leading-[1.15] font-bold tracking-[-0.02em]
-              text-gray-900
+              typo-title-b-4 text-gray-900
+              sm:typo-title-b-3
+              md:typo-title-b-1
             `}
             >
               <span className={`
@@ -69,7 +67,9 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
             </h2>
 
             <p className={`
-              mt-6 typo-title-r-4 leading-[1.6] text-gray-700
+              mt-3 typo-caption-r-1 text-black
+              sm:typo-body-sb-3
+              md:mt-6 md:typo-title-r-4 md:text-gray-700
               lg:whitespace-nowrap
             `}
             >
@@ -78,7 +78,10 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
 
             <form
               onSubmit={handleSubmit}
-              className="mt-10 w-full max-w-115.75"
+              className={`
+                mt-5 w-full max-w-115.75
+                md:mt-10
+              `}
             >
               <SearchInput
                 theme="white"
@@ -92,21 +95,22 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
 
           <div className={`
             relative order-1
-            lg:order-2 lg:col-span-6
+            lg:order-2 lg:col-span-7
           `}
           >
             <div className={`
               relative h-80 w-full overflow-visible
               sm:h-105
               md:h-125
-              lg:h-180
+              lg:h-185
             `}
             >
               <Image
                 src={mapBgSrc}
                 alt=""
                 fill
-                priority
+                sizes="(max-width: 1023px) 100vw, 1200px"
+                quality={45}
                 className="object-contain opacity-50 blur-[2px]"
               />
 
@@ -117,7 +121,7 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
               >
                 <div className={`
                   relative h-full w-full
-                  lg:h-185 lg:w-265
+                  lg:h-210 lg:w-320 lg:translate-x-12 lg:-translate-y-30
                 `}
                 >
                   <Image
@@ -125,6 +129,8 @@ export function HomeHeroSection({ mapBgSrc, heroIllustSrc }: HomeHeroSectionProp
                     alt="UNIBUSK 지도 일러스트"
                     fill
                     priority
+                    fetchPriority="high"
+                    sizes="(max-width: 1023px) 100vw, 1280px"
                     className="object-contain"
                   />
                 </div>
